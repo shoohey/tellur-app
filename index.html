@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TELLUR - 介護施設AI支援システム</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="config.js"></script>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1a3a4a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+:root {
+  --primary: #1a3a4a; --primary-light: #234e62; --primary-dark: #0f2530;
+  --accent: #4ecdc4; --accent-light: #7ee8e0; --accent-muted: #3ba89f;
+  --warning-soft: #f0c674; --warning-bg: #fef9e7;
+  --confirmed: #6bcb77; --confirmed-bg: #eafaec;
+  --thin-soft: #e8a87c; --thin-bg: #fef3eb;
+  --unconfirmed-bg: #fdf2f2; --unconfirmed-soft: #d4726a;
+  --surface: #f7f9fb; --surface-card: #ffffff;
+  --text: #2c3e50; --text-light: #6b7c8a; --text-muted: #95a5b6;
+  --border: #e2e8f0;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08); --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  --radius: 16px; --radius-sm: 10px;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --danger: #e74c3c;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: var(--surface); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.app { max-width: 430px; margin: 0 auto; min-height: 100vh; background: var(--surface); position: relative; }
+.screen { display: none; animation: fadeIn 0.35s ease; padding-bottom: 100px; }
+.screen.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.08); opacity: 0.8; } }
+
+.header { background: linear-gradient(135deg, var(--primary), var(--primary-light)); padding: 20px 24px 24px; color: white; position: sticky; top: 0; z-index: 100; }
+.header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.header .back-btn { background: rgba(255,255,255,0.15); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.header .logo { font-size: 13px; font-weight: 600; letter-spacing: 3px; opacity: 0.7; }
+.header .spacer { width: 36px; }
+.header h1 { font-size: 20px; font-weight: 700; text-align: center; margin-top: 2px; }
+.header .subtitle { font-size: 12px; text-align: center; opacity: 0.7; margin-top: 2px; }
+.content { padding: 20px; }
+
+.card { background: var(--surface-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); animation: slideUp 0.4s ease; }
+.card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.card-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.card-header h3 { font-size: 15px; font-weight: 700; color: var(--primary); }
+
+.hero-section { background: linear-gradient(135deg, var(--primary), var(--primary-light)); border-radius: var(--radius); padding: 28px 24px; color: white; margin-bottom: 24px; text-align: center; box-shadow: var(--shadow-lg); }
+.hero-section .app-name { font-size: 28px; font-weight: 800; letter-spacing: 4px; margin-bottom: 4px; }
+.hero-section p { font-size: 13px; opacity: 0.7; }
+
+.section-label { font-size: 12px; font-weight: 700; color: var(--text-light); letter-spacing: 1px; margin-bottom: 12px; padding-left: 4px; }
+
+/* メニューグリッド */
+.menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+.menu-tile { background: var(--surface-card); border-radius: var(--radius); padding: 20px 16px; text-align: center; box-shadow: var(--shadow); border: 1px solid var(--border); cursor: pointer; transition: var(--transition); text-decoration: none; color: var(--text); }
+.menu-tile:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
+.menu-tile:active { transform: scale(0.97); }
+.menu-tile .tile-icon { font-size: 32px; margin-bottom: 8px; display: block; }
+.menu-tile .tile-label { font-size: 14px; font-weight: 700; color: var(--primary); }
+.menu-tile .tile-desc { font-size: 11px; color: var(--text-light); margin-top: 4px; }
+.menu-tile.highlight { border-color: var(--accent); background: linear-gradient(135deg, rgba(78,205,196,0.05), rgba(78,205,196,0.02)); }
+
+/* フォーム共通 */
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.form-input, .form-select, .form-textarea { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 15px; color: var(--text); background: white; font-family: inherit; transition: var(--transition); }
+.form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(78,205,196,0.15); }
+.form-textarea { min-height: 100px; resize: vertical; }
+.form-hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+/* チェックボックスグループ */
+.check-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.check-pill { padding: 8px 14px; border-radius: 20px; border: 1.5px solid var(--border); background: white; font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); }
+.check-pill.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+/* ボタン共通 */
+.btn-primary { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 16px; background: linear-gradient(135deg, var(--accent), var(--accent-muted)); color: white; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 16px rgba(78,205,196,0.3); transition: var(--transition); font-family: inherit; }
+.btn-primary:hover { transform: translateY(-2px); }
+.btn-primary:active { transform: translateY(0); }
+.btn-secondary { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; background: var(--surface-card); color: var(--primary); border: 2px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: var(--transition); font-family: inherit; }
+.btn-secondary:hover { border-color: var(--accent); }
+.btn-danger { background: linear-gradient(135deg, var(--danger), #c0392b); }
+.btn-download { background: linear-gradient(135deg, #27ae60, #219a52); }
+
+/* 音声入力ボタン */
+.voice-btn-wrapper { text-align: center; margin: 24px 0; }
+.voice-btn { width: 80px; height: 80px; border-radius: 50%; border: none; background: linear-gradient(135deg, var(--danger), #c0392b); color: white; font-size: 32px; cursor: pointer; box-shadow: 0 4px 20px rgba(231,76,60,0.4); transition: var(--transition); display: inline-flex; align-items: center; justify-content: center; }
+.voice-btn.recording { animation: pulse 1.2s infinite; box-shadow: 0 0 0 12px rgba(231,76,60,0.15), 0 4px 20px rgba(231,76,60,0.4); }
+.voice-btn-label { font-size: 13px; color: var(--text-light); margin-top: 8px; }
+.voice-text-preview { background: var(--surface); border-radius: var(--radius-sm); padding: 14px; margin-top: 12px; font-size: 14px; color: var(--text); min-height: 60px; border: 1px dashed var(--border); line-height: 1.7; }
+.voice-text-preview.has-text { border-style: solid; border-color: var(--accent); }
+
+/* 報告書リスト */
+.report-list-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--surface-card); border-radius: var(--radius-sm); margin-bottom: 8px; box-shadow: var(--shadow); border: 1px solid var(--border); cursor: pointer; transition: var(--transition); }
+.report-list-item:hover { border-color: var(--accent); }
+.report-type-badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.report-type-badge.accident { background: #fce4ec; color: #c62828; }
+.report-type-badge.hiyari { background: #fff3e0; color: #e65100; }
+.report-type-badge.incident { background: #e3f2fd; color: #1565c0; }
+
+/* AI相談 */
+.chat-bubble { padding: 14px 16px; border-radius: 16px; margin-bottom: 10px; max-width: 90%; font-size: 14px; line-height: 1.7; animation: slideUp 0.3s ease; }
+.chat-bubble.user { background: var(--accent); color: white; margin-left: auto; border-bottom-right-radius: 4px; }
+.chat-bubble.ai { background: var(--surface-card); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+.chat-input-row { display: flex; gap: 8px; position: sticky; bottom: 80px; background: var(--surface); padding: 12px 0; }
+.chat-input-row input { flex: 1; }
+.chat-send-btn { width: 48px; height: 48px; border-radius: 50%; border: none; background: var(--accent); color: white; font-size: 18px; cursor: pointer; flex-shrink: 0; }
+
+/* 加算カード */
+.kasan-card { background: var(--surface-card); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 10px; border: 1px solid var(--border); border-left: 4px solid var(--confirmed); }
+.kasan-card.potential { border-left-color: var(--warning-soft); }
+.kasan-card .kasan-name { font-size: 14px; font-weight: 700; color: var(--primary); }
+.kasan-card .kasan-amount { font-size: 13px; color: var(--accent-muted); font-weight: 600; }
+.kasan-card .kasan-req { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+
+/* ユーザーメニュー */
+.user-menu-bar { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; color: white; }
+.user-menu-info { display: flex; align-items: center; gap: 10px; }
+.user-menu-avatar { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+.user-menu-name { font-size: 14px; font-weight: 600; }
+.user-menu-facility { font-size: 11px; opacity: 0.7; }
+.user-menu-actions { display: flex; gap: 8px; }
+.user-menu-logout { padding: 6px 12px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: inherit; }
+
+/* ログイン */
+.auth-wrapper { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; background: linear-gradient(135deg, var(--primary-dark), var(--primary)); }
+.auth-branding { text-align: center; color: white; margin-bottom: 32px; }
+.auth-app-name { font-size: 36px; font-weight: 800; letter-spacing: 5px; margin-bottom: 4px; }
+.auth-tagline { font-size: 13px; opacity: 0.6; }
+.auth-subtitle { font-size: 13px; opacity: 0.7; margin-bottom: 4px; }
+.auth-card { background: white; border-radius: var(--radius); padding: 28px 24px; width: 100%; max-width: 360px; box-shadow: var(--shadow-lg); }
+.auth-card-title { font-size: 18px; font-weight: 700; color: var(--primary); margin-bottom: 16px; text-align: center; }
+.auth-field { margin-bottom: 14px; }
+.auth-field label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.auth-field input, .auth-field select { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; }
+.auth-field input:focus, .auth-field select:focus { outline: none; border-color: var(--accent); }
+.auth-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--accent), var(--accent-muted)); color: white; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit; margin-top: 8px; }
+.auth-error { color: var(--danger); font-size: 13px; text-align: center; margin-bottom: 12px; display: none; }
+.auth-error.visible { display: block; }
+.auth-toggle { text-align: center; margin-top: 16px; font-size: 13px; color: var(--text-light); }
+.auth-toggle a { color: var(--accent-muted); font-weight: 600; cursor: pointer; }
+.auth-register-fields { display: none; }
+.auth-register-fields.visible { display: block; }
+.auth-demo-badge { margin-top: 16px; font-size: 12px; color: rgba(255,255,255,0.5); display: none; }
+
+/* ボトムナビ */
+.bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; padding: 6px 8px; padding-bottom: max(6px, env(safe-area-inset-bottom)); z-index: 100; }
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 10px; font-weight: 600; transition: var(--transition); font-family: inherit; }
+.nav-item.active { color: var(--accent-muted); }
+.nav-item .nav-icon { font-size: 20px; }
+
+/* 施設選択バー */
+.facility-bar { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: rgba(78,205,196,0.08); border: 1px solid rgba(78,205,196,0.2); border-radius: var(--radius-sm); margin-bottom: 16px; font-size: 13px; }
+.facility-bar select { flex: 1; padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: inherit; background: white; }
+
+/* モーダル */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal-content { background: var(--surface-card); border-radius: var(--radius); padding: 28px 24px; width: 90%; max-width: 400px; max-height: 85vh; overflow-y: auto; box-shadow: var(--shadow-lg); }
+
+/* トースト通知 */
+.toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 12px 24px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; z-index: 2000; box-shadow: var(--shadow-lg); animation: slideUp 0.3s ease; }
+.toast.success { background: var(--confirmed); }
+.toast.error { background: var(--danger); }
+
+@media print { .bottom-nav, .header .back-btn, .btn-primary, .btn-secondary { display: none !important; } }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ========== Screen 0: ログイン ========== -->
+<div class="screen active" id="screen0">
+  <div class="auth-wrapper">
+    <div class="auth-branding">
+      <div class="auth-subtitle">介護施設AI支援システム</div>
+      <div class="auth-app-name">TELLUR</div>
+      <div class="auth-tagline">現場の業務を、AIでもっとスマートに</div>
+    </div>
+    <div class="auth-card">
+      <div class="auth-card-title" id="authCardTitle">ログイン</div>
+      <div class="auth-error" id="authError"></div>
+      <form id="authForm" onsubmit="handleAuth(event)">
+        <div class="auth-register-fields" id="registerFields">
+          <div class="auth-field">
+            <label>アカウント種別</label>
+            <select id="authRole">
+              <option value="staff">一般職員</option>
+              <option value="facility">施設管理者</option>
+              <option value="honbu">本部管理者</option>
+            </select>
+          </div>
+          <div class="auth-field">
+            <label>表示名</label>
+            <input type="text" id="authDisplayName" placeholder="例: 田中太郎">
+          </div>
+          <div class="auth-field">
+            <label>所属施設</label>
+            <select id="authFacilitySelect"></select>
+          </div>
+        </div>
+        <div class="auth-field">
+          <label>メールアドレス</label>
+          <input type="email" id="authEmail" placeholder="example@tellur.jp" required>
+        </div>
+        <div class="auth-field">
+          <label>パスワード</label>
+          <input type="password" id="authPassword" placeholder="パスワードを入力" required>
+        </div>
+        <button type="submit" class="auth-btn" id="authBtn">ログイン</button>
+      </form>
+      <div class="auth-toggle">
+        <span id="authToggleText">アカウントをお持ちでない方は</span>
+        <a onclick="toggleAuthMode()" id="authToggleLink">新規登録</a>
+      </div>
+    </div>
+    <div class="auth-demo-badge" id="authDemoBadge">デモモードで動作中</div>
+  </div>
+</div>
+
+<!-- ========== Screen 1: ホーム ========== -->
+<div class="screen" id="screen1">
+  <div class="user-menu-bar" id="userMenuBar">
+    <div class="user-menu-info">
+      <div class="user-menu-avatar" id="userMenuAvatar">-</div>
+      <div>
+        <div class="user-menu-name" id="userMenuName">-</div>
+        <div class="user-menu-facility" id="userMenuFacility">-</div>
+      </div>
+    </div>
+    <div class="user-menu-actions">
+      <button class="user-menu-logout" onclick="handleLogout()">ログアウト</button>
+    </div>
+  </div>
+  <div class="content" style="padding-top:20px;">
+    <div class="hero-section">
+      <div class="auth-subtitle" style="color:rgba(255,255,255,0.7);">介護施設AI支援システム</div>
+      <div class="app-name">TELLUR</div>
+      <p>現場の業務を、AIでもっとスマートに</p>
+    </div>
+
+    <div class="facility-bar" id="facilityBar">
+      <span>🏥</span>
+      <select id="currentFacilitySelect" onchange="switchFacility(this.value)"></select>
+    </div>
+
+    <div class="section-label">メインメニュー</div>
+    <div class="menu-grid">
+      <div class="menu-tile highlight" onclick="goTo(10)">
+        <span class="tile-icon">📝</span>
+        <div class="tile-label">事故報告書</div>
+        <div class="tile-desc">音声入力・Excel出力</div>
+      </div>
+      <div class="menu-tile highlight" onclick="goTo(11)">
+        <span class="tile-icon">⚠️</span>
+        <div class="tile-label">ヒヤリハット</div>
+        <div class="tile-desc">音声入力・Excel出力</div>
+      </div>
+      <div class="menu-tile" onclick="goTo(20)">
+        <span class="tile-icon">🏥</span>
+        <div class="tile-label">入居検討</div>
+        <div class="tile-desc">AI受入判定支援</div>
+      </div>
+      <div class="menu-tile" onclick="goTo(30)">
+        <span class="tile-icon">👨‍⚕️</span>
+        <div class="tile-label">AI施設長</div>
+        <div class="tile-desc">ケア相談・対応支援</div>
+      </div>
+      <div class="menu-tile" onclick="goTo(40)">
+        <span class="tile-icon">💰</span>
+        <div class="tile-label">加算アドバイザー</div>
+        <div class="tile-desc">取得可能加算の提案</div>
+      </div>
+      <div class="menu-tile" onclick="goTo(50)">
+        <span class="tile-icon">📋</span>
+        <div class="tile-label">ケア記録</div>
+        <div class="tile-desc">音声入力で記録</div>
+      </div>
+    </div>
+
+    <div class="section-label">最近の報告書</div>
+    <div id="recentReports">
+      <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">まだ報告書がありません</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== Screen 10: 事故報告書作成 ========== -->
+<div class="screen" id="screen10">
+  <div class="header">
+    <div class="header-top">
+      <button class="back-btn" onclick="goTo(1)">←</button>
+      <span class="logo">TELLUR</span>
+      <span class="spacer"></span>
+    </div>
+    <h1>事故報告書</h1>
+    <div class="subtitle">音声入力で簡単作成・施設フォーマットでExcel出力</div>
+  </div>
+  <div class="content">
+    <!-- Step 1: 音声入力 -->
+    <div class="card" id="reportStep1">
+      <div class="card-header">
+        <div class="card-icon" style="background:#fce4ec;color:#c62828;">🎤</div>
+        <h3>Step 1: 音声で状況を説明</h3>
+      </div>
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:16px;">何が起きたか、ゆっくり話してください。AIが報告書の形に整えます。</p>
+      <div class="voice-btn-wrapper">
+        <button class="voice-btn" id="voiceBtnAccident" onclick="toggleVoiceInput('accident')">🎤</button>
+        <div class="voice-btn-label" id="voiceLabelAccident">タップして録音開始</div>
+      </div>
+      <div class="voice-text-preview" id="voicePreviewAccident">ここに音声認識結果が表示されます...</div>
+      <button class="btn-primary" style="margin-top:16px;" onclick="processVoiceToReport('accident')">✨ AIで報告書を整形する</button>
+    </div>
+
+    <!-- Step 2: フォーム入力・確認 -->
+    <div class="card" id="reportStep2" style="display:none;">
+      <div class="card-header">
+        <div class="card-icon" style="background:#e3f2fd;color:#1565c0;">📋</div>
+        <h3>Step 2: 内容を確認・修正</h3>
+      </div>
+      <div class="form-group">
+        <label class="form-label">報告種別</label>
+        <div class="check-group">
+          <span class="check-pill active" onclick="selectReportType(this,'事故')">事故</span>
+          <span class="check-pill" onclick="selectReportType(this,'インシデント')">インシデント</span>
+          <span class="check-pill" onclick="selectReportType(this,'アクシデント')">アクシデント</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">対象利用者名</label>
+        <input class="form-input" type="text" id="rptResidentName" placeholder="例: 山田 太郎 様">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label">年齢</label>
+          <input class="form-input" type="number" id="rptAge" placeholder="85">
+        </div>
+        <div class="form-group">
+          <label class="form-label">性別</label>
+          <select class="form-select" id="rptGender"><option value="">選択</option><option>男性</option><option>女性</option></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">要介護度</label>
+        <select class="form-select" id="rptCareLevel">
+          <option value="">選択</option><option>要支援1</option><option>要支援2</option><option>要介護1</option><option>要介護2</option><option>要介護3</option><option>要介護4</option><option>要介護5</option>
+        </select>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label">発生日</label>
+          <input class="form-input" type="date" id="rptDate">
+        </div>
+        <div class="form-group">
+          <label class="form-label">発生時刻</label>
+          <input class="form-input" type="time" id="rptTime">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">発生場所</label>
+        <input class="form-input" type="text" id="rptLocation" placeholder="例: 居室、食堂、トイレ">
+        <!-- フォーマットC用チェックボックス（岩見沢の場合表示） -->
+        <div class="check-group" id="locationChecks" style="display:none;margin-top:8px;">
+          <span class="check-pill" onclick="this.classList.toggle('active')">居室</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">廊下</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">食堂等ホール</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">トイレ</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">浴室・脱衣室</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">駐車場</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">玄関</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">その他</span>
+        </div>
+      </div>
+      <!-- フォーマットC用: 事故の原因 -->
+      <div class="form-group" id="causeChecksGroup" style="display:none;">
+        <label class="form-label">事故の原因</label>
+        <div class="check-group">
+          <span class="check-pill" onclick="this.classList.toggle('active')">転倒</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">転落</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">離設</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">誤嚥</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">異食</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">誤薬</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">介護中の負荷</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">その他</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">事故発生時の状況</label>
+        <textarea class="form-textarea" id="rptSituation" placeholder="何が起きたのか、具体的に記載"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">発生直後の対応と経過</label>
+        <textarea class="form-textarea" id="rptResponse" placeholder="バイタル測定、看護師への報告など"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">発生に至る経緯と背景</label>
+        <textarea class="form-textarea" id="rptBackground" placeholder="なぜこの事故が起きたのか"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">考えられる要因と対策</label>
+        <textarea class="form-textarea" id="rptCauseMeasure" placeholder="再発防止に向けた考察"></textarea>
+      </div>
+      <!-- フォーマットB用: 対処方法 -->
+      <div class="form-group" id="treatmentGroup" style="display:none;">
+        <label class="form-label">対処方法</label>
+        <div class="check-group">
+          <span class="check-pill" onclick="this.classList.toggle('active')">受診</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">往診</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">訪問看護</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">様子観察</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">その他</span>
+        </div>
+      </div>
+      <div class="form-group" id="medicalFacilityGroup" style="display:none;">
+        <label class="form-label">受診した医療機関</label>
+        <input class="form-input" type="text" id="rptMedicalFacility" placeholder="例: ○○クリニック">
+      </div>
+      <div class="form-group" id="treatmentSummaryGroup" style="display:none;">
+        <label class="form-label">治療の概要</label>
+        <input class="form-input" type="text" id="rptTreatmentSummary" placeholder="例: 経過観察、鎮痛剤内服">
+      </div>
+      <div class="form-group">
+        <label class="form-label">記入者名</label>
+        <input class="form-input" type="text" id="rptReporterName" placeholder="例: 田中 花子">
+      </div>
+
+      <button class="btn-primary" onclick="saveAndPreviewReport('accident')">💾 保存する</button>
+      <button class="btn-primary btn-download" style="margin-top:10px;" onclick="downloadReportExcel('accident')">📥 Excelでダウンロード</button>
+      <button class="btn-secondary" onclick="document.getElementById('reportStep1').style.display='';document.getElementById('reportStep2').style.display='none';">← 音声入力に戻る</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== Screen 11: ヒヤリハット作成 ========== -->
+<div class="screen" id="screen11">
+  <div class="header">
+    <div class="header-top">
+      <button class="back-btn" onclick="goTo(1)">←</button>
+      <span class="logo">TELLUR</span>
+      <span class="spacer"></span>
+    </div>
+    <h1>ヒヤリハット報告書</h1>
+    <div class="subtitle">音声入力で簡単作成</div>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:#fff3e0;color:#e65100;">🎤</div>
+        <h3>音声で状況を説明</h3>
+      </div>
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:16px;">ヒヤリとした内容を話してください。</p>
+      <div class="voice-btn-wrapper">
+        <button class="voice-btn" id="voiceBtnHiyari" onclick="toggleVoiceInput('hiyari')">🎤</button>
+        <div class="voice-btn-label" id="voiceLabelHiyari">タップして録音開始</div>
+      </div>
+      <div class="voice-text-preview" id="voicePreviewHiyari">ここに音声認識結果が表示されます...</div>
+      <button class="btn-primary" style="margin-top:16px;" onclick="processVoiceToReport('hiyari')">✨ AIで報告書を整形する</button>
+    </div>
+
+    <div class="card" id="hiyariForm" style="display:none;">
+      <div class="card-header">
+        <div class="card-icon" style="background:#e3f2fd;color:#1565c0;">📋</div>
+        <h3>内容を確認・修正</h3>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label">発生日</label>
+          <input class="form-input" type="date" id="hiyariDate">
+        </div>
+        <div class="form-group">
+          <label class="form-label">発生時刻</label>
+          <input class="form-input" type="time" id="hiyariTime">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">発生場所</label>
+        <input class="form-input" type="text" id="hiyariLocation" placeholder="例: 居室、食堂">
+      </div>
+      <div class="form-group">
+        <label class="form-label">対象利用者名</label>
+        <input class="form-input" type="text" id="hiyariResident" placeholder="例: 山田 太郎 様">
+      </div>
+      <div class="form-group">
+        <label class="form-label">ヒヤリ・ハットの内容</label>
+        <textarea class="form-textarea" id="hiyariContent" placeholder="何が起きかけたか、具体的に" style="min-height:120px;"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">改善策</label>
+        <div class="check-group" style="margin-bottom:8px;">
+          <span class="check-pill" onclick="this.classList.toggle('active')">設備環境面の整備</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">再アセスメント</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">業務内容の見直し</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">研修・勉強会</span>
+          <span class="check-pill" onclick="this.classList.toggle('active')">その他</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">防止に向けた取り組み</label>
+        <textarea class="form-textarea" id="hiyariPrevention" placeholder="具体的な再発防止策"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">記入者名</label>
+        <input class="form-input" type="text" id="hiyariReporter">
+      </div>
+      <button class="btn-primary" onclick="saveAndPreviewReport('hiyari')">💾 保存する</button>
+      <button class="btn-primary btn-download" style="margin-top:10px;" onclick="downloadReportExcel('hiyari')">📥 Excelでダウンロード</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== Screen 20: 入居検討 ========== -->
+<div class="screen" id="screen20">
+  <div class="header">
+    <div class="header-top">
+      <button class="back-btn" onclick="goTo(1)">←</button>
+      <span class="logo">TELLUR</span>
+      <span class="spacer"></span>
+    </div>
+    <h1>入居検討</h1>
+    <div class="subtitle">AI受入判定支援</div>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:#e3f2fd;color:#1565c0;">🏥</div>
+        <h3>入居検討情報入力</h3>
+      </div>
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:16px;">申込者の情報を入力すると、AIが受け入れ可否の判定を支援します。</p>
+      <div class="form-group">
+        <label class="form-label">申込者氏名</label>
+        <input class="form-input" type="text" id="admName" placeholder="例: 鈴木 一郎 様">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label">年齢</label>
+          <input class="form-input" type="number" id="admAge" placeholder="85">
+        </div>
+        <div class="form-group">
+          <label class="form-label">性別</label>
+          <select class="form-select" id="admGender"><option>男性</option><option>女性</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">介護度</label>
+          <select class="form-select" id="admCareLevel"><option>要介護1</option><option>要介護2</option><option>要介護3</option><option>要介護4</option><option>要介護5</option></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">主病名</label>
+        <input class="form-input" type="text" id="admDiagnosis" placeholder="例: アルツハイマー型認知症">
+      </div>
+      <div class="form-group">
+        <label class="form-label">医療処置</label>
+        <input class="form-input" type="text" id="admMedical" placeholder="例: インスリン注射、吸引">
+      </div>
+      <div class="form-group">
+        <label class="form-label">ADL状況</label>
+        <textarea class="form-textarea" id="admADL" placeholder="移動・食事・排泄・入浴の状況" style="min-height:80px;"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">生活背景・リスク</label>
+        <textarea class="form-textarea" id="admBackground" placeholder="現在の生活状況、注意点" style="min-height:80px;"></textarea>
+      </div>
+      <button class="btn-primary" onclick="runAdmissionAssessment()">🤖 AI判定を実行</button>
+    </div>
+    <div class="card" id="admissionResult" style="display:none;">
+      <div class="card-header">
+        <div class="card-icon" style="background:#e8f5e9;color:#2e7d32;">📊</div>
+        <h3>AI判定結果</h3>
+      </div>
+      <div id="admissionResultContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== Screen 30: AI施設長相談 ========== -->
+<div class="screen" id="screen30">
+  <div class="header">
+    <div class="header-top">
+      <button class="back-btn" onclick="goTo(1)">←</button>
+      <span class="logo">TELLUR</span>
+      <span class="spacer"></span>
+    </div>
+    <h1>AI施設長に相談</h1>
+    <div class="subtitle">ケアの困りごとに、AIが対応策を提案</div>
+  </div>
+  <div class="content">
+    <div class="card" style="padding:14px 16px;">
+      <label class="form-label" style="margin-bottom:8px;">相談カテゴリ</label>
+      <div class="check-group">
+        <span class="check-pill active" onclick="selectConsultCategory(this,'認知症対応')">認知症対応</span>
+        <span class="check-pill" onclick="selectConsultCategory(this,'拒否対応')">拒否対応</span>
+        <span class="check-pill" onclick="selectConsultCategory(this,'急変時')">急変時</span>
+        <span class="check-pill" onclick="selectConsultCategory(this,'その他')">その他</span>
+      </div>
+    </div>
+    <div id="chatMessages" style="min-height:200px;margin-bottom:16px;">
+      <div class="chat-bubble ai">こんにちは。AI施設長です。ケアで困っていることを教えてください。認知症の方への対応、拒否された場合の対処法など、具体的な選択肢を提案します。</div>
+    </div>
+    <div class="chat-input-row">
+      <input class="form-input" type="text" id="chatInput" placeholder="相談内容を入力..." onkeydown="if(event.key==='Enter')sendConsultation()">
+      <button class="voice-btn" style="width:48px;height:48px;font-size:18px;" id="voiceBtnChat" onclick="toggleVoiceInput('chat')">🎤</button>
+      <button class="chat-send-btn" onclick="sendConsultation()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== Screen 40: 加算取得アドバイザー ========== -->
+<div class="screen" id="screen40">
+  <div class="header">
+    <div class="header-top">
+      <button class="back-btn" onclick="goTo(1)">←</button>
+      <span class="logo">TELLUR</span>
+      <span class="spacer"></span>
+    </div>
+    <h1>加算取得アドバイザー</h1>
+    <div class="subtitle">職員体制から取得可能な加算を提案</div>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:#e8f5e9;color:#2e7d32;">💰</div>
+        <h3>現在取得中の加算</h3>
+      </div>
+      <div class="kasan-card"><div class="kasan-name">認知症専門ケア加算(I)</div><div class="kasan-amount">+3単位/日</div><div class="kasan-req">認知症介護実践リーダー研修修了者を配置</div></div>
+      <div class="kasan-card"><div class="kasan-name">夜間支援体制加算(I)</div><div class="kasan-amount">+25単位/日</div><div class="kasan-req">夜勤職員を基準+1名配置</div></div>
+      <div class="kasan-card"><div class="kasan-name">医療連携体制加算</div><div class="kasan-amount">+39単位/日</div><div class="kasan-req">看護師を確保、24時間連絡体制</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:#fff3e0;color:#e65100;">💡</div>
+        <h3>取得可能な加算（提案）</h3>
+      </div>
+      <div class="kasan-card potential"><div class="kasan-name">看取り介護加算</div><div class="kasan-amount">+72〜780単位</div><div class="kasan-req">💡 看取りに関する指針の策定、職員研修の実施で取得可能</div></div>
+      <div class="kasan-card potential"><div class="kasan-name">口腔衛生管理体制加算</div><div class="kasan-amount">+30単位/月</div><div class="kasan-req">💡 歯科衛生士による助言を受ける体制を整備で取得可能</div></div>
+      <div class="kasan-card potential"><div class="kasan-name">生活機能向上連携加算</div><div class="kasan-amount">+200単位/月</div><div class="kasan-req">💡 あと1名PT/OTと連携すれば取得可能</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== Screen 50: ケア記録 ========== -->
+<div class="screen" id="screen50">
+  <div class="header">
+    <div class="header-top">
+      <button class="back-btn" onclick="goTo(1)">←</button>
+      <span class="logo">TELLUR</span>
+      <span class="spacer"></span>
+    </div>
+    <h1>ケア記録</h1>
+    <div class="subtitle">音声入力で日々の記録を簡単に</div>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label">対象利用者</label>
+        <input class="form-input" type="text" id="careRecordResident" placeholder="例: 山田 太郎 様">
+      </div>
+      <div class="voice-btn-wrapper">
+        <button class="voice-btn" id="voiceBtnCare" onclick="toggleVoiceInput('care')">🎤</button>
+        <div class="voice-btn-label" id="voiceLabelCare">タップして録音開始</div>
+      </div>
+      <div class="voice-text-preview" id="voicePreviewCare">音声で記録内容を話してください...</div>
+      <div class="form-group" style="margin-top:12px;">
+        <label class="form-label">記録内容</label>
+        <textarea class="form-textarea" id="careRecordContent" placeholder="音声入力または直接入力" style="min-height:120px;"></textarea>
+      </div>
+      <button class="btn-primary" onclick="saveCareRecord()">💾 記録を保存</button>
+    </div>
+    <div class="section-label">最近の記録</div>
+    <div id="careRecordList">
+      <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">まだ記録がありません</div>
+    </div>
+  </div>
+</div>
+
+<!-- ボトムナビ -->
+<div class="bottom-nav" id="bottomNav" style="display:none;">
+  <button class="nav-item active" onclick="goTo(1)" id="nav1"><span class="nav-icon">🏠</span>ホーム</button>
+  <button class="nav-item" onclick="goTo(10)" id="nav10"><span class="nav-icon">📝</span>報告書</button>
+  <button class="nav-item" onclick="goTo(20)" id="nav20"><span class="nav-icon">🏥</span>入居検討</button>
+  <button class="nav-item" onclick="goTo(30)" id="nav30"><span class="nav-icon">👨‍⚕️</span>AI相談</button>
+  <button class="nav-item" onclick="goTo(40)" id="nav40"><span class="nav-icon">💰</span>加算</button>
+</div>
+
+</div><!-- .app -->
+
+<script>
+// ============================================================
+// グローバル状態
+// ============================================================
+var currentUser = null;
+var currentFacility = null;
+var isRegisterMode = false;
+var voiceRecognition = {};
+var consultCategory = '認知症対応';
+
+// ============================================================
+// 施設選択プルダウン初期化
+// ============================================================
+function populateFacilitySelects() {
+  var selects = [document.getElementById('authFacilitySelect'), document.getElementById('currentFacilitySelect')];
+  selects.forEach(function(sel) {
+    if (!sel) return;
+    sel.innerHTML = '';
+    FACILITY_MASTER.corporations.forEach(function(corp) {
+      var group = document.createElement('optgroup');
+      group.label = corp.name;
+      FACILITY_MASTER.facilities.filter(function(f){return f.corpId === corp.id;}).forEach(function(f) {
+        var opt = document.createElement('option');
+        opt.value = f.id;
+        opt.textContent = f.name;
+        group.appendChild(opt);
+      });
+      sel.appendChild(group);
+    });
+  });
+}
+
+function switchFacility(facilityId) {
+  currentFacility = FACILITY_MASTER.facilities.find(function(f){return f.id == facilityId;});
+  if (currentFacility) {
+    localStorage.setItem('tellur_current_facility', facilityId);
+    updateFormatSpecificFields();
+  }
+}
+
+function updateFormatSpecificFields() {
+  if (!currentFacility) return;
+  var fmt = currentFacility.reportFormat;
+  // フォーマットB/C用フィールド表示切替
+  var showBC = (fmt === 'B' || fmt === 'C');
+  var showC = (fmt === 'C');
+  ['treatmentGroup','medicalFacilityGroup','treatmentSummaryGroup'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = showBC ? '' : 'none';
+  });
+  ['locationChecks','causeChecksGroup'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = showC ? '' : 'none';
+  });
+}
+
+// ============================================================
+// 認証
+// ============================================================
+function toggleAuthMode() {
+  isRegisterMode = !isRegisterMode;
+  document.getElementById('authCardTitle').textContent = isRegisterMode ? '新規登録' : 'ログイン';
+  document.getElementById('authBtn').textContent = isRegisterMode ? 'アカウントを作成' : 'ログイン';
+  document.getElementById('authToggleText').textContent = isRegisterMode ? 'アカウントをお持ちの方は' : 'アカウントをお持ちでない方は';
+  document.getElementById('authToggleLink').textContent = isRegisterMode ? 'ログイン' : '新規登録';
+  document.getElementById('registerFields').classList.toggle('visible', isRegisterMode);
+}
+
+function handleAuth(e) {
+  e.preventDefault();
+  var email = document.getElementById('authEmail').value.trim();
+  var password = document.getElementById('authPassword').value;
+  if (!email || !password) { showAuthError('メールアドレスとパスワードを入力してください。'); return; }
+  if (isRegisterMode) {
+    var name = document.getElementById('authDisplayName').value.trim();
+    var facId = document.getElementById('authFacilitySelect').value;
+    if (!name) { showAuthError('表示名を入力してください。'); return; }
+    var users = getDemoUsers();
+    if (users.find(function(u){return u.email===email;})) { showAuthError('既に登録済みです。'); return; }
+    var fac = FACILITY_MASTER.facilities.find(function(f){return f.id==facId;});
+    var newUser = {email:email, password:password, displayName:name, facilityId:parseInt(facId), facilityName:fac?fac.name:'', role:document.getElementById('authRole').value};
+    users.push(newUser);
+    localStorage.setItem('tellur_demo_users', JSON.stringify(users));
+    loginAs(newUser);
+  } else {
+    var users = getDemoUsers();
+    var found = users.find(function(u){return u.email===email;});
+    if (!found) { showAuthError('アカウントが見つかりません。'); return; }
+    if (found.password !== password) { showAuthError('パスワードが正しくありません。'); return; }
+    loginAs(found);
+  }
+}
+
+function getDemoUsers() {
+  var stored = localStorage.getItem('tellur_demo_users');
+  if (stored) return JSON.parse(stored);
+  var defaults = [
+    {email:'admin@tellur.jp', password:'admin123', displayName:'管理者', facilityId:2, facilityName:'花・水・木 駒場', role:'honbu'},
+    {email:'komaba@tellur.jp', password:'test123', displayName:'石田リカ', facilityId:2, facilityName:'花・水・木 駒場', role:'staff'},
+    {email:'date@tellur.jp', password:'test123', displayName:'長内祥子', facilityId:4, facilityName:'さらさ伊達', role:'staff'},
+    {email:'iwamizawa@tellur.jp', password:'test123', displayName:'池田', facilityId:5, facilityName:'さらさ岩見沢', role:'facility'},
+    {email:'kurokawa@tellur.jp', password:'test123', displayName:'黒川', facilityId:1, facilityName:'花・水・木 二ツ岩', role:'facility'}
+  ];
+  localStorage.setItem('tellur_demo_users', JSON.stringify(defaults));
+  return defaults;
+}
+
+function loginAs(user) {
+  currentUser = user;
+  localStorage.setItem('tellur_demo_session', JSON.stringify(user));
+  document.getElementById('userMenuAvatar').textContent = user.displayName.charAt(0);
+  document.getElementById('userMenuName').textContent = user.displayName;
+  document.getElementById('userMenuFacility').textContent = user.facilityName;
+  // 施設設定
+  var facId = user.facilityId || 2;
+  currentFacility = FACILITY_MASTER.facilities.find(function(f){return f.id==facId;});
+  var facSelect = document.getElementById('currentFacilitySelect');
+  if (facSelect) facSelect.value = facId;
+  updateFormatSpecificFields();
+  showScreen(1);
+  renderRecentReports();
+  renderCareRecords();
+}
+
+function handleLogout() {
+  localStorage.removeItem('tellur_demo_session');
+  currentUser = null;
+  showScreen(0);
+}
+
+function showAuthError(msg) {
+  var el = document.getElementById('authError');
+  el.textContent = msg; el.classList.add('visible'); el.style.display = 'block';
+}
+
+// ============================================================
+// 画面遷移
+// ============================================================
+function showScreen(num) {
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('screen'+num).classList.add('active');
+  document.getElementById('bottomNav').style.display = (num === 0) ? 'none' : 'flex';
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+  var navMap = {1:'1',10:'10',11:'10',20:'20',30:'30',40:'40',50:'40'};
+  var navEl = document.getElementById('nav'+(navMap[num]||'1'));
+  if (navEl) navEl.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+var goTo = showScreen;
+
+// ============================================================
+// 音声入力（Web Speech API）
+// ============================================================
+function toggleVoiceInput(context) {
+  if (voiceRecognition[context]) {
+    voiceRecognition[context].stop();
+    voiceRecognition[context] = null;
+    updateVoiceUI(context, false);
+    return;
+  }
+  var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) { alert('お使いのブラウザは音声入力に対応していません。'); return; }
+  var recognition = new SpeechRecognition();
+  recognition.lang = 'ja-JP';
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  var finalText = '';
+  recognition.onresult = function(event) {
+    var interim = '';
+    for (var i = event.resultIndex; i < event.results.length; i++) {
+      if (event.results[i].isFinal) finalText += event.results[i][0].transcript;
+      else interim += event.results[i][0].transcript;
+    }
+    var preview = document.getElementById('voicePreview' + capitalize(context));
+    if (preview) {
+      preview.textContent = finalText + interim;
+      preview.classList.toggle('has-text', (finalText + interim).length > 0);
+    }
+  };
+  recognition.onerror = function(e) { console.error('音声認識エラー:', e.error); updateVoiceUI(context, false); voiceRecognition[context] = null; };
+  recognition.onend = function() { updateVoiceUI(context, false); voiceRecognition[context] = null; };
+  recognition.start();
+  voiceRecognition[context] = recognition;
+  updateVoiceUI(context, true);
+}
+
+function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+function updateVoiceUI(context, isRecording) {
+  var btn = document.getElementById('voiceBtn' + capitalize(context));
+  var label = document.getElementById('voiceLabel' + capitalize(context));
+  if (btn) btn.classList.toggle('recording', isRecording);
+  if (label) label.textContent = isRecording ? '録音中... タップで停止' : 'タップして録音開始';
+}
+
+// ============================================================
+// AI整形（デモモード：ローカルロジック）
+// ============================================================
+function processVoiceToReport(type) {
+  var previewId = type === 'hiyari' ? 'voicePreviewHiyari' : 'voicePreviewAccident';
+  var rawText = document.getElementById(previewId).textContent;
+  if (!rawText || rawText.indexOf('ここに') === 0 || rawText.indexOf('音声で') === 0) {
+    showToast('音声入力してください', 'error'); return;
+  }
+  // デモ：専門用語変換
+  var corrections = {'転んだ':'転倒した','こけた':'転倒した','むせた':'誤嚥が発生した','ぶつけた':'打撲した','すりむいた':'皮膚剥離が発生した','薬を間違えた':'誤薬が発生した'};
+  var processed = rawText;
+  Object.keys(corrections).forEach(function(k){ processed = processed.replace(new RegExp(k,'g'), corrections[k]); });
+
+  if (type === 'hiyari') {
+    document.getElementById('hiyariContent').value = processed;
+    document.getElementById('hiyariDate').value = new Date().toISOString().slice(0,10);
+    document.getElementById('hiyariForm').style.display = '';
+    document.getElementById('hiyariReporter').value = currentUser ? currentUser.displayName : '';
+  } else {
+    document.getElementById('rptSituation').value = processed;
+    document.getElementById('rptDate').value = new Date().toISOString().slice(0,10);
+    document.getElementById('rptReporterName').value = currentUser ? currentUser.displayName : '';
+    document.getElementById('reportStep1').style.display = 'none';
+    document.getElementById('reportStep2').style.display = '';
+  }
+  showToast('AIが報告書を整形しました', 'success');
+}
+
+// ============================================================
+// 報告書保存
+// ============================================================
+function saveAndPreviewReport(type) {
+  var report = gatherReportData(type);
+  var reports = JSON.parse(localStorage.getItem('tellur_reports') || '[]');
+  report.id = Date.now();
+  report.type = type;
+  report.facilityId = currentFacility ? currentFacility.id : 0;
+  report.facilityName = currentFacility ? currentFacility.name : '';
+  report.createdAt = new Date().toISOString();
+  reports.unshift(report);
+  localStorage.setItem('tellur_reports', JSON.stringify(reports));
+  renderRecentReports();
+  showToast('報告書を保存しました', 'success');
+}
+
+function gatherReportData(type) {
+  if (type === 'hiyari') {
+    return {
+      date: document.getElementById('hiyariDate').value,
+      time: document.getElementById('hiyariTime').value,
+      location: document.getElementById('hiyariLocation').value,
+      residentName: document.getElementById('hiyariResident').value,
+      content: document.getElementById('hiyariContent').value,
+      prevention: document.getElementById('hiyariPrevention').value,
+      reporter: document.getElementById('hiyariReporter').value
+    };
+  }
+  return {
+    reportType: document.querySelector('#reportStep2 .check-pill.active') ? document.querySelector('#reportStep2 .check-pill.active').textContent : '事故',
+    residentName: document.getElementById('rptResidentName').value,
+    age: document.getElementById('rptAge').value,
+    gender: document.getElementById('rptGender').value,
+    careLevel: document.getElementById('rptCareLevel').value,
+    date: document.getElementById('rptDate').value,
+    time: document.getElementById('rptTime').value,
+    location: document.getElementById('rptLocation').value,
+    situation: document.getElementById('rptSituation').value,
+    response: document.getElementById('rptResponse').value,
+    background: document.getElementById('rptBackground').value,
+    causeMeasure: document.getElementById('rptCauseMeasure').value,
+    reporter: document.getElementById('rptReporterName').value,
+    medicalFacility: document.getElementById('rptMedicalFacility') ? document.getElementById('rptMedicalFacility').value : '',
+    treatmentSummary: document.getElementById('rptTreatmentSummary') ? document.getElementById('rptTreatmentSummary').value : ''
+  };
+}
+
+function renderRecentReports() {
+  var container = document.getElementById('recentReports');
+  var reports = JSON.parse(localStorage.getItem('tellur_reports') || '[]');
+  if (reports.length === 0) { container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">まだ報告書がありません</div>'; return; }
+  container.innerHTML = reports.slice(0,5).map(function(r) {
+    var badge = r.type === 'hiyari' ? '<span class="report-type-badge hiyari">ヒヤリ</span>' : '<span class="report-type-badge accident">事故</span>';
+    return '<div class="report-list-item">' + badge + '<div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:600;">' + (r.residentName||'名称未設定') + '</div><div style="font-size:12px;color:var(--text-light);">' + (r.date||'') + ' ' + (r.facilityName||'') + '</div></div><div style="color:var(--text-muted);font-size:14px;">›</div></div>';
+  }).join('');
+}
+
+// ============================================================
+// Excel出力（SheetJS）- 施設フォーマット対応
+// ============================================================
+function downloadReportExcel(type) {
+  var report = gatherReportData(type);
+  if (!currentFacility) { showToast('施設を選択してください', 'error'); return; }
+  var fmt = currentFacility.reportFormat;
+  if (type === 'hiyari') {
+    if (fmt === 'C') generateHiyariFormatC(report);
+    else if (fmt === 'B') generateHiyariFormatB(report);
+    else generateHiyariFormatA(report);
+  } else {
+    if (fmt === 'C') generateAccidentFormatC(report);
+    else if (fmt === 'B') generateAccidentFormatB(report);
+    else generateAccidentFormatA(report);
+  }
+  showToast('Excelをダウンロードしました', 'success');
+}
+
+// --- フォーマットA: 花・水・木（7列シンプル） ---
+function generateAccidentFormatA(d) {
+  var unit = currentFacility.unit || '駒場';
+  var ws_data = [
+    ['　花・水・木　' + unit + '　事故報告書\n（　' + (d.reportType||'事故') + '　）', '', '', '記入年月日', d.date || '', '', ''],
+    ['', '', '', '報告者名', d.reporter || '', '', ''],
+    ['所　属', '花・水・木　' + unit, '', '事故レベル', '', '', ''],
+    ['事故発生年月日', d.date || '', d.time || '', '事故対象者名', d.residentName || '', '', ''],
+    ['担当ケアマネージャ', '', '外部報告の有無', '無　・　有', '', '', ''],
+    ['事故発生時の状況', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    [d.situation || '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['発生直後の対応と経過', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    [d.response || '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['発生に至る経緯と背景', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    [d.background || '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['考えられる要因と対策', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    [d.causeMeasure || '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['カンファレンス参加者', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['再発防止の為に実施した対応、実施する対策', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', ''],
+    ['施設長', '所管部門長・管理者', '合　議', '', '', '', '']
+  ];
+  var ws = XLSX.utils.aoa_to_sheet(ws_data);
+  ws['!merges'] = [
+    {s:{r:0,c:0},e:{r:0,c:2}}, {s:{r:0,c:4},e:{r:0,c:6}},
+    {s:{r:5,c:0},e:{r:5,c:6}}, {s:{r:7,c:0},e:{r:12,c:6}},
+    {s:{r:13,c:0},e:{r:13,c:6}}, {s:{r:15,c:0},e:{r:20,c:6}},
+    {s:{r:21,c:0},e:{r:21,c:6}}, {s:{r:23,c:0},e:{r:28,c:6}},
+    {s:{r:29,c:0},e:{r:29,c:6}}, {s:{r:31,c:0},e:{r:37,c:6}},
+    {s:{r:38,c:0},e:{r:38,c:6}}, {s:{r:39,c:0},e:{r:39,c:6}},
+    {s:{r:40,c:0},e:{r:40,c:6}}, {s:{r:41,c:0},e:{r:46,c:6}}
+  ];
+  ws['!cols'] = [{wch:18},{wch:16},{wch:14},{wch:14},{wch:16},{wch:4},{wch:4}];
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '原本');
+  XLSX.writeFile(wb, '事故報告書_' + (d.residentName||'名称未設定') + '.xlsx');
+}
+
+// --- フォーマットB: さらさ伊達/富良野（26列詳細） ---
+function generateAccidentFormatB(d) {
+  var dateparts = (d.date||'').split('-');
+  var y = dateparts[0]||'', m = dateparts[1]||'', day = dateparts[2]||'';
+  var ws_data = [
+    ['事故報告書','','','','','','','','','','','','','','','記載日','','','',y,'年',m,'月',day,'日',''],
+    ['','','','','','','','','','','','','','','','記載職員氏名','','','',d.reporter||'','','','','','',''],
+    ['＜事故発生後２４時間以内に下記「事故の概要」枠部分を記載しアクシデント報告担当にメール送付してください。＞','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['事故の概要','利用者氏名','','','',d.residentName||'','','','','','','','年齢','',(d.age||'')+'歳','','性別','',d.gender||'','','','介護度','',d.careLevel||'','',''],
+    ['','発生日時','','','',y,'',m,'',day,'','','','','',d.time||'','','','','','','','','','',''],
+    ['','発生場所','','','',d.location||'','','','','','','','','','','','','','','','','','','','',''],
+    ['','＜どんな事故が起こったのか、発生時の状況や経緯、その後の状況等を具体的に記載する＞','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['',d.situation||'','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','対処方法','','','','受診・往診・訪問看護・様子観察・その他','','','','','','','','','','','','','','','','','','','',''],
+    ['','受診した医療機関','','','',d.medicalFacility||'','','','','','','','','','','','','','','','','','','','',''],
+    ['','治療の概要','','','',d.treatmentSummary||'','','','','','','','','','','','','','','','','','','','',''],
+    ['','家族等への連絡の状況','','','','','','','','','','','','','','','','','損害賠償の有無','','','','','有 ・ 無','',''],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['検討会議録','実施日時','','','','','','年','','月','','','日','','','','','','','','時','','','','',''],
+    ['','参加者','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','再発防止に向けた取り組みの内容','','','',d.causeMeasure||'','','','','','','','','','','','','','','','','','','','','']
+  ];
+  var ws = XLSX.utils.aoa_to_sheet(ws_data);
+  ws['!cols'] = Array(26).fill({wch:5});
+  ws['!cols'][0] = {wch:10};
+  ws['!cols'][1] = {wch:12};
+  ws['!cols'][5] = {wch:14};
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '事故報告書');
+  XLSX.writeFile(wb, '事故報告書_' + (d.residentName||'名称未設定') + '_さらさ.xlsx');
+}
+
+// --- フォーマットC: さらさ岩見沢（37列チェックボックス付き） ---
+function generateAccidentFormatC(d) {
+  var dateparts = (d.date||'').split('-');
+  var y = dateparts[0]||'', m = dateparts[1]||'', day = dateparts[2]||'';
+  var ws_data = [
+    ['','','','','','','','','','さらさ岩見沢　事故報告書','','','','','','','','','','','','','','','','','','','','','','',y,'年',m,'月',day,'日'],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','（発生後３日以内に報告）','','','','',''],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','記載職員氏名','','','','','','','','','','','',d.reporter||''],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','２対象者','氏名・年齢・性別','','','','','','氏名：',d.residentName||'','','','','','','','','','','','','年齢：',(d.age||''),'','','','','','','性別：','','',d.gender||'','','','','',''],
+    ['','','要介護度','','','','','','',d.careLevel||'','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','','発生日時','','','','','','','','','',y,'年','',m,'月','',day,'日','','（','',d.time||'','','','','時','','','分','','頃','','','',''],
+    ['','','発生場所','','','','','','','',d.location||'','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','　３　事故の概要','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','',d.situation||'','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','４　事故発生時の対応','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','',d.response||'','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','５　経緯と背景','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','',d.background||'','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','６　要因と対策','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','',d.causeMeasure||'','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','']
+  ];
+  var ws = XLSX.utils.aoa_to_sheet(ws_data);
+  ws['!cols'] = Array(37).fill({wch:4});
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '事故報告書様式（１）');
+  XLSX.writeFile(wb, '事故報告書_' + (d.residentName||'名称未設定') + '_岩見沢.xlsx');
+}
+
+// --- ヒヤリハットExcel ---
+function generateHiyariFormatA(d) {
+  var unit = currentFacility.unit || '駒場';
+  var ws_data = [
+    ['　花・水・木　' + unit + '　ヒヤリハット報告書', '', '', '記入年月日', d.date || '', '', ''],
+    ['', '', '', '報告者名', d.reporter || '', '', ''],
+    ['発生日時', d.date || '', d.time || '', '対象利用者', d.residentName || '', '', ''],
+    ['発生場所', d.location || '', '', '', '', '', ''],
+    ['ヒヤリ・ハットの内容', '', '', '', '', '', ''],
+    [d.content || '', '', '', '', '', '', ''],
+    ['','','','','','',''],['','','','','','',''],['','','','','','',''],['','','','','','',''],
+    ['防止に向けた取り組み', '', '', '', '', '', ''],
+    [d.prevention || '', '', '', '', '', '', ''],
+    ['','','','','','',''],['','','','','','',''],['','','','','','',''],
+    ['施設長', '所管部門長・管理者', '合　議', '', '', '', '']
+  ];
+  var ws = XLSX.utils.aoa_to_sheet(ws_data);
+  ws['!cols'] = [{wch:18},{wch:16},{wch:14},{wch:14},{wch:16},{wch:4},{wch:4}];
+  ws['!merges'] = [{s:{r:0,c:0},e:{r:0,c:2}},{s:{r:4,c:0},e:{r:4,c:6}},{s:{r:5,c:0},e:{r:9,c:6}},{s:{r:10,c:0},e:{r:10,c:6}},{s:{r:11,c:0},e:{r:14,c:6}}];
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'ヒヤリハット');
+  XLSX.writeFile(wb, 'ヒヤリハット報告書_' + (d.residentName||'名称未設定') + '.xlsx');
+}
+function generateHiyariFormatB(d) { generateHiyariFormatA(d); } // 暫定：フォーマットAベース
+function generateHiyariFormatC(d) { generateHiyariFormatA(d); } // 暫定：フォーマットAベース
+
+// ============================================================
+// 報告書種別選択
+// ============================================================
+function selectReportType(el, type) {
+  el.parentElement.querySelectorAll('.check-pill').forEach(function(p){p.classList.remove('active');});
+  el.classList.add('active');
+}
+
+// ============================================================
+// AI施設長相談
+// ============================================================
+var consultCategory = '認知症対応';
+function selectConsultCategory(el, cat) {
+  el.parentElement.querySelectorAll('.check-pill').forEach(function(p){p.classList.remove('active');});
+  el.classList.add('active');
+  consultCategory = cat;
+}
+
+function sendConsultation() {
+  var input = document.getElementById('chatInput');
+  var question = input.value.trim();
+  if (!question) return;
+  input.value = '';
+  var container = document.getElementById('chatMessages');
+  container.innerHTML += '<div class="chat-bubble user">' + escapeHtml(question) + '</div>';
+
+  // デモ回答
+  var answers = {
+    '認知症対応': [
+      '認知症の方が不穏になった場合、以下の対応が有効です：\n\n1. まず安全を確保し、落ち着いた声で話しかける\n2. 否定せず、本人の世界観に寄り添う\n3. 好きな音楽や写真など、安心できるものを提示する\n4. 環境を変える（場所を移動、照明を調整）\n\n無理に止めようとすると逆効果になることが多いです。',
+      '帰宅願望がある方には：\n\n1. 「お家に帰りたい」気持ちを否定しない\n2. 「夕ご飯の準備をしましょう」など、役割を提示する\n3. 散歩に誘うなど気分転換を図る\n4. 時間帯のパターンを記録し、事前に対応を準備する'
+    ],
+    '拒否対応': [
+      '入浴拒否の場合の対応例：\n\n1. 時間をずらして再度声かけする\n2. 「足だけお湯につけましょう」と部分的に提案\n3. 信頼関係のある職員から声かけ\n4. 好きな入浴剤や音楽で雰囲気づくり\n\n無理強いは逆効果です。記録を残し、パターンを把握しましょう。'
+    ],
+    '急変時': [
+      '急変時の初期対応：\n\n1. バイタルサイン測定（血圧・脈拍・SpO2・体温）\n2. 意識レベルの確認\n3. 看護師・主治医への連絡\n4. 家族への連絡\n5. 必要に応じて救急搬送\n\n落ち着いて対応し、必ず記録を残してください。'
+    ],
+    'その他': ['ご質問の内容を確認しました。具体的な状況を教えていただければ、より適切なアドバイスが可能です。']
+  };
+  var pool = answers[consultCategory] || answers['その他'];
+  var answer = pool[Math.floor(Math.random() * pool.length)];
+  setTimeout(function() {
+    container.innerHTML += '<div class="chat-bubble ai">' + answer.replace(/\n/g, '<br>') + '</div>';
+    container.scrollTop = container.scrollHeight;
+  }, 800);
+}
+
+// ============================================================
+// 入居検討AI判定
+// ============================================================
+function runAdmissionAssessment() {
+  var name = document.getElementById('admName').value;
+  var age = document.getElementById('admAge').value;
+  var careLevel = document.getElementById('admCareLevel').value;
+  var diagnosis = document.getElementById('admDiagnosis').value;
+  var medical = document.getElementById('admMedical').value;
+  if (!name) { showToast('申込者氏名を入力してください', 'error'); return; }
+
+  var resultDiv = document.getElementById('admissionResult');
+  var content = document.getElementById('admissionResultContent');
+  var score = 65 + Math.floor(Math.random() * 25);
+  var scoreColor = score >= 80 ? 'var(--confirmed)' : score >= 60 ? 'var(--warning-soft)' : 'var(--unconfirmed-soft)';
+
+  content.innerHTML = '<div style="text-align:center;margin-bottom:16px;"><div style="font-size:48px;font-weight:800;color:'+scoreColor+';">'+score+'%</div><div style="font-size:13px;color:var(--text-light);">受入可能性スコア</div></div>' +
+    '<div style="font-size:14px;line-height:1.8;color:var(--text);">' +
+    '<strong>判定理由：</strong><br>' +
+    '・' + name + '様（' + age + '歳、' + careLevel + '）<br>' +
+    '・主病名：' + (diagnosis||'未入力') + '<br>' +
+    (medical ? '・医療処置：' + medical + ' → <span style="color:var(--thin-soft);font-weight:600;">要確認</span><br>' : '') +
+    '<br><strong>確認すべきポイント：</strong><br>' +
+    '・夜間対応の体制確認<br>' +
+    '・主治医との連携体制<br>' +
+    '・家族の期待値と施設の対応範囲のすり合わせ<br>' +
+    (medical ? '・医療処置の頻度と施設看護師の対応可否<br>' : '') +
+    '</div>';
+  resultDiv.style.display = '';
+  showToast('AI判定が完了しました', 'success');
+}
+
+// ============================================================
+// ケア記録
+// ============================================================
+function saveCareRecord() {
+  var resident = document.getElementById('careRecordResident').value;
+  var content = document.getElementById('careRecordContent').value;
+  var preview = document.getElementById('voicePreviewCare').textContent;
+  if (!content && preview && preview.indexOf('音声で') !== 0) content = preview;
+  if (!content) { showToast('記録内容を入力してください', 'error'); return; }
+  var records = JSON.parse(localStorage.getItem('tellur_care_records') || '[]');
+  records.unshift({
+    id: Date.now(),
+    resident: resident,
+    content: content,
+    recorder: currentUser ? currentUser.displayName : '',
+    facilityId: currentFacility ? currentFacility.id : 0,
+    createdAt: new Date().toISOString()
+  });
+  localStorage.setItem('tellur_care_records', JSON.stringify(records));
+  document.getElementById('careRecordContent').value = '';
+  document.getElementById('voicePreviewCare').textContent = '音声で記録内容を話してください...';
+  renderCareRecords();
+  showToast('記録を保存しました', 'success');
+}
+
+function renderCareRecords() {
+  var container = document.getElementById('careRecordList');
+  if (!container) return;
+  var records = JSON.parse(localStorage.getItem('tellur_care_records') || '[]');
+  if (records.length === 0) { container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">まだ記録がありません</div>'; return; }
+  container.innerHTML = records.slice(0,10).map(function(r) {
+    var date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('ja-JP') : '';
+    return '<div class="card" style="padding:14px 16px;margin-bottom:8px;"><div style="display:flex;justify-content:space-between;margin-bottom:6px;"><strong style="font-size:14px;">' + escapeHtml(r.resident||'') + '</strong><span style="font-size:12px;color:var(--text-light);">' + date + '</span></div><div style="font-size:13px;color:var(--text);line-height:1.6;">' + escapeHtml(r.content).replace(/\n/g,'<br>') + '</div></div>';
+  }).join('');
+}
+
+// ============================================================
+// ユーティリティ
+// ============================================================
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(message, type) {
+  var toast = document.createElement('div');
+  toast.className = 'toast ' + (type || '');
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(function() { toast.remove(); }, 3000);
+}
+
+// ============================================================
+// 初期化
+// ============================================================
+function init() {
+  populateFacilitySelects();
+  if (TELLUR_CONFIG.DEMO_MODE) {
+    document.getElementById('authDemoBadge').style.display = 'inline-flex';
+  }
+  var session = localStorage.getItem('tellur_demo_session');
+  if (session) {
+    var user = JSON.parse(session);
+    loginAs(user);
+  }
+}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+
+# 機密資料・業務ドキュメント（GitHubにpushしない）
+*.pdf
+*.xls
+*.xlsx
+*.CSV
+*.csv
+*.pptx
+加算算定状況/
+介護保険書類等/
+勤務表データ/
+事故報告書*/
+screenshots/
+docs/
+assets/
+
+# 環境設定
+.env
+.env.local
