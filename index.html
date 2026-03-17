@@ -168,6 +168,28 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sa
 .toast.success { background: var(--confirmed); }
 .toast.error { background: var(--danger); }
 
+/* 管理画面 */
+.admin-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.admin-stat { background: var(--surface-card); border-radius: var(--radius-sm); padding: 16px; text-align: center; box-shadow: var(--shadow); border: 1px solid var(--border); }
+.admin-stat .stat-value { font-size: 28px; font-weight: 800; color: var(--primary); }
+.admin-stat .stat-label { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+.admin-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.admin-table th { background: var(--primary); color: white; padding: 10px 8px; text-align: left; font-weight: 600; font-size: 11px; }
+.admin-table td { padding: 10px 8px; border-bottom: 1px solid var(--border); }
+.admin-table tr:hover { background: rgba(78,205,196,0.05); }
+.status-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.status-badge.active { background: #eafaec; color: #276749; }
+.status-badge.trial { background: #fef9e7; color: #975a16; }
+.status-badge.inactive { background: #fdf2f2; color: #c53030; }
+.admin-facility-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--surface-card); border-radius: var(--radius-sm); margin-bottom: 8px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+.admin-facility-row .fac-name { font-size: 14px; font-weight: 600; color: var(--primary); }
+.admin-facility-row .fac-meta { font-size: 11px; color: var(--text-light); }
+.admin-facility-row .fac-stats { text-align: right; }
+.admin-facility-row .fac-count { font-size: 18px; font-weight: 700; color: var(--accent-muted); }
+.admin-tab-bar { display: flex; gap: 4px; margin-bottom: 16px; overflow-x: auto; }
+.admin-tab { padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-card); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; font-family: inherit; color: var(--text-light); }
+.admin-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+
 @media print { .bottom-nav, .header .back-btn, .btn-primary, .btn-secondary { display: none !important; } }
 </style>
 </head>
@@ -280,6 +302,22 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sa
         <span class="tile-icon">📋</span>
         <div class="tile-label">ケア記録</div>
         <div class="tile-desc">音声入力で記録</div>
+      </div>
+    </div>
+
+    <div id="adminMenuSection" style="display:none;">
+      <div class="section-label">管理メニュー</div>
+      <div class="menu-grid">
+        <div class="menu-tile" onclick="goTo(60)" id="menuHonbu" style="display:none;">
+          <span class="tile-icon">📊</span>
+          <div class="tile-label">本部管理</div>
+          <div class="tile-desc">全施設ダッシュボード</div>
+        </div>
+        <div class="menu-tile" onclick="goTo(70)" id="menuNbs" style="display:none;background:linear-gradient(135deg,#1a1a2e,#16213e);color:white;">
+          <span class="tile-icon">🔧</span>
+          <div class="tile-label">NBS管理</div>
+          <div class="tile-desc" style="color:rgba(255,255,255,0.7);">代理店コンソール</div>
+        </div>
       </div>
     </div>
 
@@ -678,6 +716,131 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sa
   </div>
 </div>
 
+<!-- ========== Screen 60: 本部管理画面 ========== -->
+<div class="screen" id="screen60">
+  <div class="header">
+    <div class="header-top">
+      <button class="back-btn" onclick="goTo(1)">←</button>
+      <span class="logo">TELLUR</span>
+      <span class="spacer"></span>
+    </div>
+    <h1>本部管理ダッシュボード</h1>
+    <div class="subtitle">全施設の運営状況を一覧管理</div>
+  </div>
+  <div class="content">
+    <div class="admin-stats">
+      <div class="admin-stat"><div class="stat-value" id="adminTotalFac">7</div><div class="stat-label">管理施設数</div></div>
+      <div class="admin-stat"><div class="stat-value" id="adminTotalUsers">24</div><div class="stat-label">利用ユーザー数</div></div>
+      <div class="admin-stat"><div class="stat-value" id="adminTotalReports">156</div><div class="stat-label">今月の報告書</div></div>
+      <div class="admin-stat"><div class="stat-value" id="adminTotalHiyari">89</div><div class="stat-label">今月のヒヤリハット</div></div>
+    </div>
+
+    <div class="admin-tab-bar">
+      <button class="admin-tab active" onclick="showAdminTab('facilities',this)">施設一覧</button>
+      <button class="admin-tab" onclick="showAdminTab('reports',this)">報告書集計</button>
+      <button class="admin-tab" onclick="showAdminTab('users',this)">ユーザー管理</button>
+    </div>
+
+    <div id="adminTabFacilities">
+      <div class="section-label">施設別利用状況</div>
+      <div id="adminFacilityList"></div>
+    </div>
+
+    <div id="adminTabReports" style="display:none;">
+      <div class="section-label">施設別 報告書件数（今月）</div>
+      <div class="card" style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead><tr><th>施設名</th><th>事故報告</th><th>ヒヤリ</th><th>合計</th></tr></thead>
+          <tbody id="adminReportTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="adminTabUsers" style="display:none;">
+      <div class="section-label">登録ユーザー一覧</div>
+      <div class="card" style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead><tr><th>名前</th><th>施設</th><th>権限</th><th>状態</th></tr></thead>
+          <tbody id="adminUserTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== Screen 70: NBS管理画面（当社専用） ========== -->
+<div class="screen" id="screen70">
+  <div class="header" style="background:linear-gradient(135deg, #1a1a2e, #16213e);">
+    <div class="header-top">
+      <button class="back-btn" onclick="goTo(1)">←</button>
+      <span class="logo" style="letter-spacing:2px;">NBS ADMIN</span>
+      <span class="spacer"></span>
+    </div>
+    <h1>代理店管理コンソール</h1>
+    <div class="subtitle">NBS Connect 管理者専用</div>
+  </div>
+  <div class="content">
+    <div class="admin-stats">
+      <div class="admin-stat"><div class="stat-value">3</div><div class="stat-label">契約法人数</div></div>
+      <div class="admin-stat"><div class="stat-value">7</div><div class="stat-label">施設数</div></div>
+      <div class="admin-stat"><div class="stat-value">¥385K</div><div class="stat-label">月間売上</div></div>
+      <div class="admin-stat"><div class="stat-value">98%</div><div class="stat-label">継続率</div></div>
+    </div>
+
+    <div class="admin-tab-bar">
+      <button class="admin-tab active" onclick="showNbsTab('corps',this)">法人管理</button>
+      <button class="admin-tab" onclick="showNbsTab('billing',this)">請求管理</button>
+      <button class="admin-tab" onclick="showNbsTab('usage',this)">利用状況</button>
+    </div>
+
+    <div id="nbsTabCorps">
+      <div class="section-label">契約法人一覧</div>
+      <div class="card" style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead><tr><th>法人名</th><th>施設数</th><th>プラン</th><th>契約状態</th><th>担当</th></tr></thead>
+          <tbody>
+            <tr><td>タカハシライフサポート(株)</td><td>2</td><td>スタンダード</td><td><span class="status-badge active">契約中</span></td><td>黒川常務</td></tr>
+            <tr><td>(一社)日本地域福祉協会</td><td>3</td><td>プレミアム</td><td><span class="status-badge active">契約中</span></td><td>吉田様</td></tr>
+            <tr><td>(株)WESTON</td><td>2</td><td>スタンダード</td><td><span class="status-badge trial">トライアル</span></td><td>未定</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="nbsTabBilling" style="display:none;">
+      <div class="section-label">請求状況（今月）</div>
+      <div class="card" style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead><tr><th>法人名</th><th>プラン</th><th>月額</th><th>請求状態</th></tr></thead>
+          <tbody>
+            <tr><td>タカハシライフサポート(株)</td><td>スタンダード×2</td><td>¥110,000</td><td><span class="status-badge active">入金済</span></td></tr>
+            <tr><td>(一社)日本地域福祉協会</td><td>プレミアム×3</td><td>¥275,000</td><td><span class="status-badge active">入金済</span></td></tr>
+            <tr><td>(株)WESTON</td><td>トライアル</td><td>¥0</td><td><span class="status-badge trial">無料期間</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="nbsTabUsage" style="display:none;">
+      <div class="section-label">施設別利用状況（直近30日）</div>
+      <div class="card" style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead><tr><th>施設名</th><th>ログイン数</th><th>報告書</th><th>AI相談</th><th>最終利用</th></tr></thead>
+          <tbody>
+            <tr><td>花・水・木 二ツ岩</td><td>45</td><td>12</td><td>8</td><td>本日</td></tr>
+            <tr><td>花・水・木 駒場</td><td>38</td><td>15</td><td>11</td><td>本日</td></tr>
+            <tr><td>さらさ富良野</td><td>22</td><td>8</td><td>5</td><td>昨日</td></tr>
+            <tr><td>さらさ伊達</td><td>31</td><td>18</td><td>14</td><td>本日</td></tr>
+            <tr><td>さらさ岩見沢</td><td>28</td><td>11</td><td>7</td><td>本日</td></tr>
+            <tr><td>WESTON旭川</td><td>8</td><td>3</td><td>2</td><td>3日前</td></tr>
+            <tr><td>WESTON岩内</td><td>5</td><td>1</td><td>0</td><td>5日前</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ボトムナビ -->
 <div class="bottom-nav" id="bottomNav" style="display:none;">
   <button class="nav-item active" onclick="goTo(1)" id="nav1"><span class="nav-icon">🏠</span>ホーム</button>
@@ -793,7 +956,8 @@ function getDemoUsers() {
     {email:'kurokawa@tellur.jp', password:'test123', displayName:'黒川', facilityId:1, facilityName:'花・水・木 二ツ岩', role:'facility'},
     {email:'cm@tellur.jp', password:'test123', displayName:'ケアマネ', facilityId:2, facilityName:'花・水・木 駒場', role:'staff'},
     {email:'tanaka@tellur.jp', password:'test123', displayName:'田中', facilityId:2, facilityName:'花・水・木 駒場', role:'facility'},
-    {email:'corp@tellur.jp', password:'test123', displayName:'運営本部', facilityId:1, facilityName:'花・水・木 二ツ岩', role:'honbu'}
+    {email:'corp@tellur.jp', password:'test123', displayName:'運営本部', facilityId:1, facilityName:'花・水・木 二ツ岩', role:'honbu'},
+    {email:'nbs@tellur.jp', password:'nbs2024', displayName:'NBS Connect', facilityId:1, facilityName:'全施設', role:'superadmin'}
   ];
   localStorage.setItem('tellur_demo_users', JSON.stringify(defaults));
   return defaults;
@@ -811,9 +975,28 @@ function loginAs(user) {
   var facSelect = document.getElementById('currentFacilitySelect');
   if (facSelect) facSelect.value = facId;
   updateFormatSpecificFields();
+  showAdminMenus(user);
   showScreen(1);
   renderRecentReports();
   renderCareRecords();
+}
+
+function showAdminMenus(user) {
+  var section = document.getElementById('adminMenuSection');
+  var honbu = document.getElementById('menuHonbu');
+  var nbs = document.getElementById('menuNbs');
+  section.style.display = 'none';
+  honbu.style.display = 'none';
+  nbs.style.display = 'none';
+  if (user.role === 'honbu') {
+    section.style.display = 'block';
+    honbu.style.display = 'block';
+  }
+  if (user.role === 'superadmin') {
+    section.style.display = 'block';
+    honbu.style.display = 'block';
+    nbs.style.display = 'block';
+  }
 }
 
 function handleLogout() {
@@ -835,9 +1018,10 @@ function showScreen(num) {
   document.getElementById('screen'+num).classList.add('active');
   document.getElementById('bottomNav').style.display = (num === 0) ? 'none' : 'flex';
   document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
-  var navMap = {1:'1',10:'10',11:'10',20:'20',30:'30',40:'40',50:'40'};
+  var navMap = {1:'1',10:'10',11:'10',20:'20',30:'30',40:'40',50:'40',60:'1',70:'1'};
   var navEl = document.getElementById('nav'+(navMap[num]||'1'));
   if (navEl) navEl.classList.add('active');
+  if (num === 60) renderAdminFacilities();
   window.scrollTo({top:0, behavior:'smooth'});
 }
 var goTo = showScreen;
@@ -1268,6 +1452,67 @@ function renderCareRecords() {
     return '<div class="card" style="padding:14px 16px;margin-bottom:8px;"><div style="display:flex;justify-content:space-between;margin-bottom:6px;"><strong style="font-size:14px;">' + escapeHtml(r.resident||'') + '</strong><span style="font-size:12px;color:var(--text-light);">' + date + '</span></div><div style="font-size:13px;color:var(--text);line-height:1.6;">' + escapeHtml(r.content).replace(/\n/g,'<br>') + '</div></div>';
   }).join('');
 }
+
+// ============================================================
+// 管理画面
+// ============================================================
+function showAdminTab(tab, el) {
+  ['Facilities','Reports','Users'].forEach(function(t){document.getElementById('adminTab'+t).style.display='none';});
+  document.getElementById('adminTab'+tab.charAt(0).toUpperCase()+tab.slice(1)).style.display='block';
+  el.parentElement.querySelectorAll('.admin-tab').forEach(function(b){b.classList.remove('active');});
+  el.classList.add('active');
+  if (tab==='facilities') renderAdminFacilities();
+  if (tab==='reports') renderAdminReports();
+  if (tab==='users') renderAdminUsers();
+}
+
+function showNbsTab(tab, el) {
+  ['Corps','Billing','Usage'].forEach(function(t){document.getElementById('nbsTab'+t).style.display='none';});
+  document.getElementById('nbsTab'+tab.charAt(0).toUpperCase()+tab.slice(1)).style.display='block';
+  el.parentElement.querySelectorAll('.admin-tab').forEach(function(b){b.classList.remove('active');});
+  el.classList.add('active');
+}
+
+function renderAdminFacilities() {
+  var el = document.getElementById('adminFacilityList');
+  var html = '';
+  var demoData = [{reports:12,hiyari:8},{reports:15,hiyari:11},{reports:8,hiyari:5},{reports:18,hiyari:14},{reports:11,hiyari:7},{reports:3,hiyari:2},{reports:1,hiyari:0}];
+  FACILITY_MASTER.facilities.forEach(function(f,i){
+    var d = demoData[i] || {reports:0,hiyari:0};
+    var corp = FACILITY_MASTER.corporations.find(function(c){return c.id===f.corpId;});
+    html += '<div class="admin-facility-row"><div><div class="fac-name">'+escapeHtml(f.name)+'</div><div class="fac-meta">'+escapeHtml(corp?corp.name:'')+'・'+escapeHtml(f.city)+'</div></div><div class="fac-stats"><div class="fac-count">'+d.reports+'件</div><div class="fac-meta">報告書(今月)</div></div></div>';
+  });
+  el.innerHTML = html;
+}
+
+function renderAdminReports() {
+  var el = document.getElementById('adminReportTable');
+  var data = [
+    {name:'花・水・木 二ツ岩',acc:5,hiy:7},
+    {name:'花・水・木 駒場',acc:8,hiy:7},
+    {name:'さらさ富良野',acc:3,hiy:5},
+    {name:'さらさ伊達',acc:10,hiy:8},
+    {name:'さらさ岩見沢',acc:6,hiy:5},
+    {name:'WESTON旭川',acc:2,hiy:1},
+    {name:'WESTON岩内',acc:1,hiy:0}
+  ];
+  var html = '';
+  data.forEach(function(d){html+='<tr><td>'+escapeHtml(d.name)+'</td><td>'+d.acc+'</td><td>'+d.hiy+'</td><td><strong>'+(d.acc+d.hiy)+'</strong></td></tr>';});
+  el.innerHTML = html;
+}
+
+function renderAdminUsers() {
+  var el = document.getElementById('adminUserTable');
+  var users = getDemoUsers();
+  var roleMap = {staff:'スタッフ',facility:'施設管理者',honbu:'本部管理者',superadmin:'システム管理者'};
+  var html = '';
+  users.forEach(function(u){
+    html+='<tr><td>'+escapeHtml(u.displayName)+'</td><td>'+escapeHtml(u.facilityName)+'</td><td>'+escapeHtml(roleMap[u.role]||u.role)+'</td><td><span class="status-badge active">有効</span></td></tr>';
+  });
+  el.innerHTML = html;
+}
+
+function goToScreen60() { renderAdminFacilities(); goTo(60); }
 
 // ============================================================
 // ユーティリティ
