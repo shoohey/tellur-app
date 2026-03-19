@@ -28,7 +28,7 @@
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: var(--surface); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
-.app { max-width: 430px; margin: 0 auto; min-height: 100vh; background: var(--surface); position: relative; }
+.app { max-width: 100%; margin: 0 auto; min-height: 100vh; background: var(--surface); position: relative; }
 .screen { display: none; animation: fadeIn 0.35s ease; padding-bottom: 100px; }
 .screen.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
@@ -149,7 +149,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sa
 .auth-demo-badge { margin-top: 16px; font-size: 12px; color: rgba(255,255,255,0.5); display: none; }
 
 /* ボトムナビ */
-.bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; padding: 6px 8px; padding-bottom: max(6px, env(safe-area-inset-bottom)); z-index: 100; }
+.bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 100%; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; padding: 6px 8px; padding-bottom: max(6px, env(safe-area-inset-bottom)); z-index: 100; }
 .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 10px; font-weight: 600; transition: var(--transition); font-family: inherit; }
 .nav-item.active { color: var(--accent-muted); }
 .nav-item .nav-icon { font-size: 20px; }
@@ -189,6 +189,89 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sa
 .admin-tab-bar { display: flex; gap: 4px; margin-bottom: 16px; overflow-x: auto; }
 .admin-tab { padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-card); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; font-family: inherit; color: var(--text-light); }
 .admin-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+/* ========== レスポンシブ: タブレット (768px〜) ========== */
+@media (min-width: 768px) {
+  .content { padding: 28px 40px; max-width: 900px; margin: 0 auto; }
+  .header { padding: 24px 40px 28px; }
+  .header h1 { font-size: 24px; }
+  .menu-grid { grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .menu-tile { padding: 28px 20px; }
+  .menu-tile .tile-icon { font-size: 40px; }
+  .menu-tile .tile-label { font-size: 16px; }
+  .menu-tile .tile-desc { font-size: 12px; }
+  .hero-section { padding: 36px 32px; }
+  .hero-section .app-name { font-size: 36px; }
+  .card { padding: 24px; }
+  .admin-stats { grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+  .admin-stat .stat-value { font-size: 32px; }
+  .admin-table th, .admin-table td { padding: 12px 14px; }
+  .admin-table { font-size: 14px; }
+  .auth-card { max-width: 420px; padding: 36px 32px; }
+  .auth-app-name { font-size: 44px; }
+  .bottom-nav { max-width: 600px; border-radius: 16px 16px 0 0; }
+  .nav-item { font-size: 11px; padding: 8px 4px; }
+  .nav-item .nav-icon { font-size: 22px; }
+  .user-menu-bar { padding: 16px 40px; }
+  .form-input, .form-select, .form-textarea { font-size: 16px; padding: 14px 16px; }
+  .voice-btn { width: 90px; height: 90px; font-size: 36px; }
+  .chat-bubble { max-width: 70%; font-size: 15px; }
+  .chat-input-row { max-width: 700px; margin: 0 auto; }
+  .facility-bar { max-width: 400px; }
+}
+
+/* ========== レスポンシブ: PC (1024px〜) ========== */
+@media (min-width: 1024px) {
+  .content { padding: 36px 60px; max-width: 1100px; }
+  .header { padding: 28px 60px 32px; }
+  .header h1 { font-size: 28px; }
+  .header .logo { font-size: 14px; }
+  .menu-grid { grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .menu-tile { padding: 32px 24px; }
+  .menu-tile .tile-icon { font-size: 48px; margin-bottom: 12px; }
+  .menu-tile .tile-label { font-size: 18px; }
+  .menu-tile .tile-desc { font-size: 13px; }
+  .hero-section { padding: 48px 40px; margin-bottom: 32px; }
+  .hero-section .app-name { font-size: 44px; letter-spacing: 6px; }
+  .hero-section p { font-size: 15px; }
+  .section-label { font-size: 13px; margin-bottom: 16px; }
+  .card { padding: 28px; margin-bottom: 20px; }
+  .card-header h3 { font-size: 17px; }
+  .admin-stats { gap: 20px; }
+  .admin-stat { padding: 24px; }
+  .admin-stat .stat-value { font-size: 36px; }
+  .admin-stat .stat-label { font-size: 12px; }
+  .admin-facility-row { padding: 16px 24px; }
+  .admin-facility-row .fac-name { font-size: 16px; }
+  .admin-facility-row .fac-count { font-size: 22px; }
+  .admin-tab { padding: 10px 20px; font-size: 13px; }
+  .auth-card { max-width: 460px; padding: 40px 36px; }
+  .auth-app-name { font-size: 52px; }
+  .auth-tagline { font-size: 15px; }
+  .bottom-nav { max-width: 700px; }
+  .nav-item { font-size: 12px; padding: 10px 8px; }
+  .nav-item .nav-icon { font-size: 24px; }
+  .user-menu-bar { padding: 18px 60px; }
+  .user-menu-name { font-size: 16px; }
+  .user-menu-avatar { width: 42px; height: 42px; font-size: 16px; }
+  .form-group { margin-bottom: 20px; }
+  .form-label { font-size: 14px; }
+  .btn-primary { padding: 18px; font-size: 17px; }
+  .chat-bubble { max-width: 60%; }
+  .chat-input-row { max-width: 800px; }
+  .kasan-card { padding: 18px 20px; }
+  .kasan-card .kasan-name { font-size: 16px; }
+  .kasan-card .kasan-amount { font-size: 15px; }
+  .kasan-card .kasan-req { font-size: 13px; }
+  .report-list-item { padding: 16px 20px; }
+}
+
+/* ========== レスポンシブ: ワイドPC (1280px〜) ========== */
+@media (min-width: 1280px) {
+  .content { max-width: 1200px; padding: 40px 80px; }
+  .header { padding: 32px 80px 36px; }
+  .user-menu-bar { padding: 20px 80px; }
+}
 
 @media print { .bottom-nav, .header .back-btn, .btn-primary, .btn-secondary { display: none !important; } }
 </style>
