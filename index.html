@@ -273,6 +273,60 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sa
   .user-menu-bar { padding: 20px 80px; }
 }
 
+/* クリック可能な統計カード */
+.admin-stat.clickable { cursor: pointer; transition: var(--transition); position: relative; }
+.admin-stat.clickable:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.admin-stat.clickable::after { content: '▼'; position: absolute; bottom: 6px; right: 8px; font-size: 9px; color: var(--text-muted); }
+.stat-detail-panel { background: var(--surface-card); border-radius: var(--radius-sm); border: 1px solid var(--border); padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow); animation: slideUp 0.3s ease; }
+.stat-detail-panel h4 { font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.stat-detail-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.04); font-size: 13px; }
+.stat-detail-row:last-child { border-bottom: none; }
+.stat-detail-row .detail-label { color: var(--text); }
+.stat-detail-row .detail-value { font-weight: 700; color: var(--primary); }
+
+/* 報告書一覧画面 */
+.filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.filter-bar select, .filter-bar input { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-family: inherit; background: white; }
+.filter-bar input { flex: 1; min-width: 120px; }
+.report-detail-modal .detail-field { margin-bottom: 12px; }
+.report-detail-modal .detail-label { font-size: 11px; font-weight: 700; color: var(--text-light); letter-spacing: 0.5px; margin-bottom: 2px; }
+.report-detail-modal .detail-value { font-size: 14px; color: var(--text); line-height: 1.6; }
+.report-count-badge { display: inline-block; background: var(--accent); color: white; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-left: 6px; }
+
+/* 入居検討一覧 */
+.admission-list-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--surface-card); border-radius: var(--radius-sm); margin-bottom: 8px; box-shadow: var(--shadow); border: 1px solid var(--border); cursor: pointer; transition: var(--transition); }
+.admission-list-item:hover { border-color: var(--accent); }
+.admission-score { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: white; flex-shrink: 0; }
+.admission-status { padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+.admission-status.reviewing { background: #fff3e0; color: #e65100; }
+.admission-status.accepted { background: #eafaec; color: #276749; }
+.admission-status.declined { background: #fdf2f2; color: #c53030; }
+.admission-tab-bar { display: flex; gap: 4px; margin-bottom: 16px; }
+.admission-tab { padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-card); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; font-family: inherit; color: var(--text-light); }
+.admission-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+/* 加算アドバイザー改良 */
+.kasan-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.kasan-result-summary { text-align: center; padding: 20px; margin-bottom: 16px; }
+.kasan-result-summary .total-amount { font-size: 36px; font-weight: 800; color: var(--confirmed); }
+.kasan-result-summary .total-label { font-size: 13px; color: var(--text-light); margin-top: 4px; }
+.kasan-card.actionable { cursor: pointer; transition: var(--transition); }
+.kasan-card.actionable:hover { border-color: var(--accent); transform: translateX(4px); }
+.kasan-card .kasan-detail { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 12px; color: var(--text); line-height: 1.7; }
+.kasan-card.expanded .kasan-detail { display: block; }
+.kasan-progress { height: 6px; background: var(--border); border-radius: 3px; margin-top: 8px; overflow: hidden; }
+.kasan-progress-bar { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+
+/* 施設詳細モーダル */
+.facility-detail-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.facility-detail-icon { width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.facility-detail-name { font-size: 18px; font-weight: 700; color: var(--primary); }
+.facility-detail-meta { font-size: 12px; color: var(--text-light); }
+.facility-detail-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.facility-mini-stat { text-align: center; padding: 12px 8px; background: var(--surface); border-radius: 8px; }
+.facility-mini-stat .mini-value { font-size: 22px; font-weight: 800; color: var(--primary); }
+.facility-mini-stat .mini-label { font-size: 10px; color: var(--text-light); margin-top: 2px; }
+
 @media print { .bottom-nav, .header .back-btn, .btn-primary, .btn-secondary { display: none !important; } }
 </style>
 </head>
@@ -404,7 +458,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sa
       </div>
     </div>
 
-    <div class="section-label">最近の報告書</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div class="section-label">最近の報告書</div>
+      <button onclick="goTo(15);renderAllReports();" style="background:none;border:none;color:var(--accent-muted);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">すべて見る →</button>
+    </div>
     <div id="recentReports">
       <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">まだ報告書がありません</div>
     </div>
@@ -635,6 +692,48 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sa
   </div>
 </div>
 
+<!-- ========== Screen 15: 報告書一覧 ========== -->
+<div class="screen" id="screen15">
+  <div class="header">
+    <div class="header-top">
+      <button class="back-btn" onclick="goTo(1)">←</button>
+      <span class="logo">TELLUR</span>
+      <span class="spacer"></span>
+    </div>
+    <h1>報告書一覧</h1>
+    <div class="subtitle">過去の報告書を検索・閲覧</div>
+  </div>
+  <div class="content">
+    <div class="filter-bar">
+      <select id="reportFilterType" onchange="renderAllReports()">
+        <option value="all">全種別</option>
+        <option value="accident">事故報告</option>
+        <option value="hiyari">ヒヤリハット</option>
+      </select>
+      <select id="reportFilterMonth" onchange="renderAllReports()"></select>
+      <input type="text" id="reportSearchInput" placeholder="🔍 名前・内容で検索" oninput="renderAllReports()">
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <div class="section-label" style="margin-bottom:0;">検索結果 <span id="reportResultCount" class="report-count-badge">0</span></div>
+      <select id="reportSortOrder" onchange="renderAllReports()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;">
+        <option value="newest">新しい順</option>
+        <option value="oldest">古い順</option>
+      </select>
+    </div>
+    <div id="allReportsList"></div>
+  </div>
+</div>
+
+<!-- 報告書詳細モーダル -->
+<div class="modal-overlay" id="reportDetailModal">
+  <div class="modal-content report-detail-modal" style="max-width:500px;">
+    <div id="reportDetailContent"></div>
+    <div style="display:flex;gap:8px;margin-top:16px;">
+      <button class="btn-secondary" onclick="closeReportDetail()" style="flex:1;margin-top:0;">閉じる</button>
+    </div>
+  </div>
+</div>
+
 <!-- ========== Screen 20: 入居検討 ========== -->
 <div class="screen" id="screen20">
   <div class="header">
@@ -647,54 +746,88 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sa
     <div class="subtitle">AI受入判定支援</div>
   </div>
   <div class="content">
-    <div class="card">
-      <div class="card-header">
-        <div class="card-icon" style="background:#e3f2fd;color:#1565c0;">🏥</div>
-        <h3>入居検討情報入力</h3>
-      </div>
-      <p style="font-size:13px;color:var(--text-light);margin-bottom:16px;">申込者の情報を入力すると、AIが受け入れ可否の判定を支援します。</p>
-      <div class="form-group">
-        <label class="form-label">申込者氏名</label>
-        <input class="form-input" type="text" id="admName" placeholder="例: 鈴木 一郎 様">
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
-        <div class="form-group">
-          <label class="form-label">年齢</label>
-          <input class="form-input" type="number" id="admAge" placeholder="85">
-        </div>
-        <div class="form-group">
-          <label class="form-label">性別</label>
-          <select class="form-select" id="admGender"><option>男性</option><option>女性</option></select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">介護度</label>
-          <select class="form-select" id="admCareLevel"><option>要介護1</option><option>要介護2</option><option>要介護3</option><option>要介護4</option><option>要介護5</option></select>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">主病名</label>
-        <input class="form-input" type="text" id="admDiagnosis" placeholder="例: アルツハイマー型認知症">
-      </div>
-      <div class="form-group">
-        <label class="form-label">医療処置</label>
-        <input class="form-input" type="text" id="admMedical" placeholder="例: インスリン注射、吸引">
-      </div>
-      <div class="form-group">
-        <label class="form-label">ADL状況</label>
-        <textarea class="form-textarea" id="admADL" placeholder="移動・食事・排泄・入浴の状況" style="min-height:80px;"></textarea>
-      </div>
-      <div class="form-group">
-        <label class="form-label">生活背景・リスク</label>
-        <textarea class="form-textarea" id="admBackground" placeholder="現在の生活状況、注意点" style="min-height:80px;"></textarea>
-      </div>
-      <button class="btn-primary" onclick="runAdmissionAssessment()">🤖 AI判定を実行</button>
+    <div class="admission-tab-bar">
+      <button class="admission-tab active" onclick="showAdmissionTab('input',this)">新規入力</button>
+      <button class="admission-tab" onclick="showAdmissionTab('list',this)">検討一覧 <span id="admissionCountBadge" class="report-count-badge" style="margin-left:4px;">0</span></button>
     </div>
-    <div class="card" id="admissionResult" style="display:none;">
-      <div class="card-header">
-        <div class="card-icon" style="background:#e8f5e9;color:#2e7d32;">📊</div>
-        <h3>AI判定結果</h3>
+
+    <div id="admissionTabInput">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:#e3f2fd;color:#1565c0;">🏥</div>
+          <h3>入居検討情報入力</h3>
+        </div>
+        <p style="font-size:13px;color:var(--text-light);margin-bottom:16px;">申込者の情報を入力すると、AIが受け入れ可否の判定を支援します。</p>
+        <div class="form-group">
+          <label class="form-label">申込者氏名</label>
+          <input class="form-input" type="text" id="admName" placeholder="例: 鈴木 一郎 様">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+          <div class="form-group">
+            <label class="form-label">年齢</label>
+            <input class="form-input" type="number" id="admAge" placeholder="85">
+          </div>
+          <div class="form-group">
+            <label class="form-label">性別</label>
+            <select class="form-select" id="admGender"><option>男性</option><option>女性</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">介護度</label>
+            <select class="form-select" id="admCareLevel"><option>要介護1</option><option>要介護2</option><option>要介護3</option><option>要介護4</option><option>要介護5</option></select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">主病名</label>
+          <input class="form-input" type="text" id="admDiagnosis" placeholder="例: アルツハイマー型認知症">
+        </div>
+        <div class="form-group">
+          <label class="form-label">医療処置</label>
+          <input class="form-input" type="text" id="admMedical" placeholder="例: インスリン注射、吸引">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ADL状況</label>
+          <textarea class="form-textarea" id="admADL" placeholder="移動・食事・排泄・入浴の状況" style="min-height:80px;"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">生活背景・リスク</label>
+          <textarea class="form-textarea" id="admBackground" placeholder="現在の生活状況、注意点" style="min-height:80px;"></textarea>
+        </div>
+        <button class="btn-primary" onclick="runAdmissionAssessment()">🤖 AI判定を実行</button>
       </div>
-      <div id="admissionResultContent"></div>
+      <div class="card" id="admissionResult" style="display:none;">
+        <div class="card-header">
+          <div class="card-icon" style="background:#e8f5e9;color:#2e7d32;">📊</div>
+          <h3>AI判定結果</h3>
+        </div>
+        <div id="admissionResultContent"></div>
+        <div style="display:flex;gap:8px;margin-top:16px;">
+          <button class="btn-primary" style="flex:1;" onclick="updateAdmissionStatus(lastAdmissionId,'accepted')">✅ 受入決定</button>
+          <button class="btn-secondary" style="flex:1;margin-top:0;border-color:var(--danger);color:var(--danger);" onclick="updateAdmissionStatus(lastAdmissionId,'declined')">見送り</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="admissionTabList" style="display:none;">
+      <div class="filter-bar">
+        <select id="admissionFilterStatus" onchange="renderAdmissionList()">
+          <option value="all">全ステータス</option>
+          <option value="reviewing">検討中</option>
+          <option value="accepted">受入決定</option>
+          <option value="declined">見送り</option>
+        </select>
+        <input type="text" id="admissionSearchInput" placeholder="🔍 氏名で検索" oninput="renderAdmissionList()">
+      </div>
+      <div id="admissionListContainer"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 入居検討詳細モーダル -->
+<div class="modal-overlay" id="admissionDetailModal">
+  <div class="modal-content" style="max-width:500px;">
+    <div id="admissionDetailContent"></div>
+    <div style="display:flex;gap:8px;margin-top:16px;">
+      <button class="btn-secondary" onclick="closeAdmissionDetail()" style="flex:1;margin-top:0;">閉じる</button>
     </div>
   </div>
 </div>
@@ -745,21 +878,87 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sa
   <div class="content">
     <div class="card">
       <div class="card-header">
-        <div class="card-icon" style="background:#e8f5e9;color:#2e7d32;">💰</div>
-        <h3>現在取得中の加算</h3>
+        <div class="card-icon" style="background:#e3f2fd;color:#1565c0;">⚙️</div>
+        <h3>施設体制を入力</h3>
       </div>
-      <div class="kasan-card"><div class="kasan-name">認知症専門ケア加算(I)</div><div class="kasan-amount">+3単位/日</div><div class="kasan-req">認知症介護実践リーダー研修修了者を配置</div></div>
-      <div class="kasan-card"><div class="kasan-name">夜間支援体制加算(I)</div><div class="kasan-amount">+25単位/日</div><div class="kasan-req">夜勤職員を基準+1名配置</div></div>
-      <div class="kasan-card"><div class="kasan-name">医療連携体制加算</div><div class="kasan-amount">+39単位/日</div><div class="kasan-req">看護師を確保、24時間連絡体制</div></div>
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:16px;">現在の体制を入力すると、AIが取得可能な加算を分析・提案します。</p>
+      <div class="kasan-input-grid">
+        <div class="form-group">
+          <label class="form-label">ユニット数</label>
+          <select class="form-select" id="kasanUnits"><option value="1">1ユニット</option><option value="2" selected>2ユニット</option><option value="3">3ユニット</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">入居者数</label>
+          <input class="form-input" type="number" id="kasanResidents" value="18" placeholder="18">
+        </div>
+        <div class="form-group">
+          <label class="form-label">介護職員数</label>
+          <input class="form-input" type="number" id="kasanStaff" value="12" placeholder="12">
+        </div>
+        <div class="form-group">
+          <label class="form-label">夜勤職員数</label>
+          <input class="form-input" type="number" id="kasanNightStaff" value="2" placeholder="2">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">配置している専門職（複数選択可）</label>
+        <div class="check-group" id="kasanProfessionals">
+          <span class="check-pill active" onclick="toggleKasanPill(this)">看護師</span>
+          <span class="check-pill" onclick="toggleKasanPill(this)">PT/OT</span>
+          <span class="check-pill" onclick="toggleKasanPill(this)">管理栄養士</span>
+          <span class="check-pill" onclick="toggleKasanPill(this)">歯科衛生士</span>
+          <span class="check-pill active" onclick="toggleKasanPill(this)">認知症ケア研修修了者</span>
+          <span class="check-pill" onclick="toggleKasanPill(this)">介護福祉士(50%以上)</span>
+          <span class="check-pill" onclick="toggleKasanPill(this)">看取り指針あり</span>
+          <span class="check-pill" onclick="toggleKasanPill(this)">サテライト型</span>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="runKasanAnalysis()">🤖 AI加算分析を実行</button>
     </div>
-    <div class="card">
-      <div class="card-header">
-        <div class="card-icon" style="background:#fff3e0;color:#e65100;">💡</div>
-        <h3>取得可能な加算（提案）</h3>
+
+    <div id="kasanResultArea" style="display:none;">
+      <div class="card">
+        <div class="kasan-result-summary">
+          <div id="kasanCurrentTotal" class="total-amount">+67単位/日</div>
+          <div class="total-label">現在の取得加算合計</div>
+        </div>
+        <div class="card-header">
+          <div class="card-icon" style="background:#e8f5e9;color:#2e7d32;">✅</div>
+          <h3>現在取得中の加算</h3>
+        </div>
+        <div id="kasanCurrentList"></div>
       </div>
-      <div class="kasan-card potential"><div class="kasan-name">看取り介護加算</div><div class="kasan-amount">+72〜780単位</div><div class="kasan-req">💡 看取りに関する指針の策定、職員研修の実施で取得可能</div></div>
-      <div class="kasan-card potential"><div class="kasan-name">口腔衛生管理体制加算</div><div class="kasan-amount">+30単位/月</div><div class="kasan-req">💡 歯科衛生士による助言を受ける体制を整備で取得可能</div></div>
-      <div class="kasan-card potential"><div class="kasan-name">生活機能向上連携加算</div><div class="kasan-amount">+200単位/月</div><div class="kasan-req">💡 あと1名PT/OTと連携すれば取得可能</div></div>
+
+      <div class="card">
+        <div class="kasan-result-summary">
+          <div id="kasanPotentialTotal" class="total-amount" style="color:var(--warning-soft);">+302単位</div>
+          <div class="total-label">追加取得可能な加算（推定）</div>
+        </div>
+        <div class="card-header">
+          <div class="card-icon" style="background:#fff3e0;color:#e65100;">💡</div>
+          <h3>取得したい加算を選択</h3>
+        </div>
+        <p style="font-size:12px;color:var(--text-light);margin-bottom:12px;">チェックを入れた加算の必要書類を確認・作成できます</p>
+        <div id="kasanPotentialList"></div>
+        <button class="btn-primary" id="kasanShowDocsBtn" style="margin-top:16px;display:none;" onclick="showKasanDocuments()">📋 選択した加算の必要書類を表示</button>
+      </div>
+
+      <div class="card" id="kasanDocArea" style="display:none;">
+        <div class="card-header">
+          <div class="card-icon" style="background:#e8f5e9;color:#2e7d32;">📄</div>
+          <h3>必要書類一覧と作成</h3>
+        </div>
+        <p style="font-size:12px;color:var(--text-light);margin-bottom:12px;">各書類の「作成・ダウンロード」ボタンで、ひな形Excelが生成されます</p>
+        <div id="kasanDocList"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:#e3f2fd;color:#1565c0;">📊</div>
+          <h3>収益シミュレーション</h3>
+        </div>
+        <div id="kasanSimulation"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -812,16 +1011,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sa
   </div>
   <div class="content">
     <div class="admin-stats">
-      <div class="admin-stat"><div class="stat-value" id="adminTotalFac">7</div><div class="stat-label">管理施設数</div></div>
-      <div class="admin-stat"><div class="stat-value" id="adminTotalUsers">24</div><div class="stat-label">利用ユーザー数</div></div>
-      <div class="admin-stat"><div class="stat-value" id="adminTotalReports">156</div><div class="stat-label">今月の報告書</div></div>
-      <div class="admin-stat"><div class="stat-value" id="adminTotalHiyari">89</div><div class="stat-label">今月のヒヤリハット</div></div>
+      <div class="admin-stat clickable" onclick="toggleStatDetail('facilities')"><div class="stat-value" id="adminTotalFac">7</div><div class="stat-label">管理施設数</div></div>
+      <div class="admin-stat clickable" onclick="toggleStatDetail('users')"><div class="stat-value" id="adminTotalUsers">24</div><div class="stat-label">利用ユーザー数</div></div>
+      <div class="admin-stat clickable" onclick="toggleStatDetail('reports')"><div class="stat-value" id="adminTotalReports">156</div><div class="stat-label">今月の報告書</div></div>
+      <div class="admin-stat clickable" onclick="toggleStatDetail('hiyari')"><div class="stat-value" id="adminTotalHiyari">89</div><div class="stat-label">今月のヒヤリハット</div></div>
     </div>
+    <div id="statDetailPanel"></div>
 
     <div class="admin-tab-bar">
       <button class="admin-tab active" onclick="showAdminTab('facilities',this)">施設一覧</button>
       <button class="admin-tab" onclick="showAdminTab('reports',this)">報告書集計</button>
       <button class="admin-tab" onclick="showAdminTab('users',this)">ユーザー管理</button>
+      <button class="admin-tab" onclick="showAdminTab('activity',this)">活動ログ</button>
     </div>
 
     <div id="adminTabFacilities">
@@ -833,7 +1034,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sa
       <div class="section-label">施設別 報告書件数（今月）</div>
       <div class="card" style="overflow-x:auto;">
         <table class="admin-table">
-          <thead><tr><th>施設名</th><th>事故報告</th><th>ヒヤリ</th><th>合計</th></tr></thead>
+          <thead><tr><th>施設名</th><th>事故報告</th><th>ヒヤリ</th><th>合計</th><th>前月比</th></tr></thead>
           <tbody id="adminReportTable"></tbody>
         </table>
       </div>
@@ -843,11 +1044,24 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sa
       <div class="section-label">登録ユーザー一覧</div>
       <div class="card" style="overflow-x:auto;">
         <table class="admin-table">
-          <thead><tr><th>名前</th><th>施設</th><th>権限</th><th>状態</th></tr></thead>
+          <thead><tr><th>名前</th><th>施設</th><th>権限</th><th>最終ログイン</th><th>状態</th></tr></thead>
           <tbody id="adminUserTable"></tbody>
         </table>
       </div>
     </div>
+
+    <div id="adminTabActivity" style="display:none;">
+      <div class="section-label">直近の活動ログ</div>
+      <div id="adminActivityLog"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 施設詳細モーダル -->
+<div class="modal-overlay" id="facilityDetailModal">
+  <div class="modal-content" style="max-width:500px;">
+    <div id="facilityDetailContent"></div>
+    <button class="btn-secondary" onclick="closeFacilityDetail()" style="margin-top:12px;">閉じる</button>
   </div>
 </div>
 
@@ -1101,7 +1315,7 @@ function showScreen(num) {
   document.getElementById('screen'+num).classList.add('active');
   document.getElementById('bottomNav').style.display = (num === 0) ? 'none' : 'flex';
   document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
-  var navMap = {1:'1',10:'10',11:'10',20:'20',30:'30',40:'40',50:'40',60:'1',70:'1'};
+  var navMap = {1:'1',10:'10',11:'10',15:'10',20:'20',30:'30',40:'40',50:'40',60:'1',70:'1'};
   var navEl = document.getElementById('nav'+(navMap[num]||'1'));
   if (navEl) navEl.classList.add('active');
   if (num === 60) renderAdminFacilities();
@@ -1417,8 +1631,70 @@ function generateHiyariFormatA(d) {
   XLSX.utils.book_append_sheet(wb, ws, 'ヒヤリハット');
   XLSX.writeFile(wb, 'ヒヤリハット報告書_' + (d.residentName||'名称未設定') + '.xlsx');
 }
-function generateHiyariFormatB(d) { generateHiyariFormatA(d); } // 暫定：フォーマットAベース
-function generateHiyariFormatC(d) { generateHiyariFormatA(d); } // 暫定：フォーマットAベース
+// --- ヒヤリハット フォーマットB: さらさ伊達/富良野（26列） ---
+function generateHiyariFormatB(d) {
+  var dateparts = (d.date||'').split('-');
+  var y = dateparts[0]||'', m = dateparts[1]||'', day = dateparts[2]||'';
+  var facName = currentFacility ? currentFacility.name : 'さらさ';
+  var ws_data = [
+    ['ヒヤリハット報告書','','','','','','','','','','','','','','','記載日','','','',y,'年',m,'月',day,'日',''],
+    ['','','','','','','','','','','','','','','','記載職員氏名','','','',d.reporter||'','','','','','',''],
+    ['＜ヒヤリハット発生後、速やかに記載しアクシデント報告担当にメール送付してください。＞','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['事案の概要','利用者氏名','','','',d.residentName||'','','','','','','','年齢','','','','性別','','','','','介護度','','','',''],
+    ['','発生日時','','','',y,'',m,'',day,'','','','','',d.time||'','','','','','','','','','',''],
+    ['','発生場所','','','',d.location||'','','','','','','','','','','','','','','','','','','','',''],
+    ['','＜どのようなヒヤリハットが発生したか、状況を具体的に記載する＞','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['',d.content||'','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','当面の対応策','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['',d.prevention||'','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['検討会議録','実施日時','','','','','','年','','月','','','日','','','','','','','','時','','','','',''],
+    ['','参加者','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','再発防止に向けた取り組みの内容','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','','']
+  ];
+  var ws = XLSX.utils.aoa_to_sheet(ws_data);
+  ws['!cols'] = Array(26).fill({wch:5});
+  ws['!cols'][0] = {wch:10}; ws['!cols'][1] = {wch:12}; ws['!cols'][5] = {wch:14};
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'ヒヤリハット');
+  XLSX.writeFile(wb, 'ヒヤリハット報告書_' + (d.residentName||'名称未設定') + '_' + facName + '.xlsx');
+}
+
+// --- ヒヤリハット フォーマットC: さらさ岩見沢（37列チェックボックス付き） ---
+function generateHiyariFormatC(d) {
+  var dateparts = (d.date||'').split('-');
+  var y = dateparts[0]||'', m = dateparts[1]||'', day = dateparts[2]||'';
+  var ws_data = [
+    ['','','','','','','','','','さらさ岩見沢　ヒヤリハット報告書','','','','','','','','','','','','','','','','','','','','','','',y,'年',m,'月',day,'日'],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','（発見後速やかに報告）','','','','',''],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','記載職員氏名','','','','','','','','','','','',d.reporter||''],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','対象者','氏名・年齢・性別','','','','','','氏名：',d.residentName||'','','','','','','','','','','','','年齢：','','','','','','','','性別：','','','','','','',''],
+    ['','','要介護度','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','','発見日時','','','','','','','','','',y,'年','',m,'月','',day,'日','','（','',d.time||'','','','','時','','','分','','頃','','','',''],
+    ['','','発見場所','','','','','','','',d.location||'','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','ヒヤリハットの内容','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','',d.content||'','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','考えられる要因','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','防止に向けた取り組み','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','',d.prevention||'','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','検討会議録','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+    ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','']
+  ];
+  var ws = XLSX.utils.aoa_to_sheet(ws_data);
+  ws['!cols'] = Array(37).fill({wch:4});
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'ヒヤリハット報告書');
+  XLSX.writeFile(wb, 'ヒヤリハット報告書_' + (d.residentName||'名称未設定') + '_岩見沢.xlsx');
+}
 
 // ============================================================
 // 報告書種別選択
@@ -1474,30 +1750,63 @@ function sendConsultation() {
 function runAdmissionAssessment() {
   var name = document.getElementById('admName').value;
   var age = document.getElementById('admAge').value;
+  var gender = document.getElementById('admGender').value;
   var careLevel = document.getElementById('admCareLevel').value;
   var diagnosis = document.getElementById('admDiagnosis').value;
   var medical = document.getElementById('admMedical').value;
+  var adl = document.getElementById('admADL').value;
+  var background = document.getElementById('admBackground').value;
   if (!name) { showToast('申込者氏名を入力してください', 'error'); return; }
+
+  // スコア計算（介護度・医療処置で変動）
+  var baseScore = 85;
+  var careLevelNum = parseInt(careLevel.replace(/[^0-9]/g,'')) || 1;
+  baseScore -= (careLevelNum - 1) * 5;
+  if (medical) {
+    var medItems = medical.split(/[、,]/);
+    baseScore -= medItems.length * 8;
+    if (medical.indexOf('吸引') >= 0) baseScore -= 5;
+    if (medical.indexOf('胃ろう') >= 0) baseScore -= 10;
+    if (medical.indexOf('インスリン') >= 0) baseScore -= 3;
+  }
+  if (parseInt(age) >= 90) baseScore -= 5;
+  var score = Math.max(20, Math.min(95, baseScore + Math.floor(Math.random()*10) - 5));
+  var scoreColor = score >= 80 ? 'var(--confirmed)' : score >= 60 ? '#e6a23c' : 'var(--danger)';
+  var scoreText = score >= 80 ? '受入可能性：高い' : score >= 60 ? '受入可能性：条件付き' : '受入可能性：要慎重検討';
+
+  // 保存
+  var admissions = getAdmissions();
+  var newAdm = {
+    id: Date.now(), name: name, age: parseInt(age)||0, gender: gender, careLevel: careLevel,
+    diagnosis: diagnosis, medical: medical, adl: adl, background: background,
+    score: score, status: 'reviewing',
+    facilityName: currentFacility ? currentFacility.name : '',
+    facilityId: currentFacility ? currentFacility.id : 0,
+    createdAt: new Date().toISOString()
+  };
+  admissions.unshift(newAdm);
+  localStorage.setItem('tellur_admissions', JSON.stringify(admissions));
+  lastAdmissionId = newAdm.id;
+  document.getElementById('admissionCountBadge').textContent = admissions.length;
 
   var resultDiv = document.getElementById('admissionResult');
   var content = document.getElementById('admissionResultContent');
-  var score = 65 + Math.floor(Math.random() * 25);
-  var scoreColor = score >= 80 ? 'var(--confirmed)' : score >= 60 ? 'var(--warning-soft)' : 'var(--unconfirmed-soft)';
-
-  content.innerHTML = '<div style="text-align:center;margin-bottom:16px;"><div style="font-size:48px;font-weight:800;color:'+scoreColor+';">'+score+'%</div><div style="font-size:13px;color:var(--text-light);">受入可能性スコア</div></div>' +
+  content.innerHTML = '<div style="text-align:center;margin-bottom:16px;"><div style="font-size:48px;font-weight:800;color:'+scoreColor+';">'+score+'%</div><div style="font-size:13px;color:var(--text-light);">'+scoreText+'</div></div>' +
     '<div style="font-size:14px;line-height:1.8;color:var(--text);">' +
-    '<strong>判定理由：</strong><br>' +
-    '・' + name + '様（' + age + '歳、' + careLevel + '）<br>' +
-    '・主病名：' + (diagnosis||'未入力') + '<br>' +
-    (medical ? '・医療処置：' + medical + ' → <span style="color:var(--thin-soft);font-weight:600;">要確認</span><br>' : '') +
+    '<strong>判定概要：</strong><br>' +
+    '・' + escapeHtml(name) + '様（' + age + '歳 ' + gender + '、' + careLevel + '）<br>' +
+    '・主病名：' + escapeHtml(diagnosis||'未入力') + '<br>' +
+    (medical ? '・医療処置：' + escapeHtml(medical) + ' → <span style="color:var(--thin-soft);font-weight:600;">要確認</span><br>' : '') +
+    (adl ? '・ADL：' + escapeHtml(adl.substring(0,50)) + (adl.length>50?'...':'') + '<br>' : '') +
     '<br><strong>確認すべきポイント：</strong><br>' +
     '・夜間対応の体制確認<br>' +
     '・主治医との連携体制<br>' +
     '・家族の期待値と施設の対応範囲のすり合わせ<br>' +
     (medical ? '・医療処置の頻度と施設看護師の対応可否<br>' : '') +
+    (careLevelNum >= 4 ? '・重度者対応の人員体制の確認<br>' : '') +
     '</div>';
   resultDiv.style.display = '';
-  showToast('AI判定が完了しました', 'success');
+  showToast('AI判定完了・検討一覧に保存しました', 'success');
 }
 
 // ============================================================
@@ -1537,18 +1846,8 @@ function renderCareRecords() {
 }
 
 // ============================================================
-// 管理画面
+// 管理画面（旧関数は新しいバージョンで上書き済み）
 // ============================================================
-function showAdminTab(tab, el) {
-  ['Facilities','Reports','Users'].forEach(function(t){document.getElementById('adminTab'+t).style.display='none';});
-  document.getElementById('adminTab'+tab.charAt(0).toUpperCase()+tab.slice(1)).style.display='block';
-  el.parentElement.querySelectorAll('.admin-tab').forEach(function(b){b.classList.remove('active');});
-  el.classList.add('active');
-  if (tab==='facilities') renderAdminFacilities();
-  if (tab==='reports') renderAdminReports();
-  if (tab==='users') renderAdminUsers();
-}
-
 function showNbsTab(tab, el) {
   ['Corps','Billing','Usage'].forEach(function(t){document.getElementById('nbsTab'+t).style.display='none';});
   document.getElementById('nbsTab'+tab.charAt(0).toUpperCase()+tab.slice(1)).style.display='block';
@@ -1556,31 +1855,114 @@ function showNbsTab(tab, el) {
   el.classList.add('active');
 }
 
+// ============================================================
+// 本部ダッシュボード - 統計詳細展開
+// ============================================================
+var currentStatDetail = null;
+var adminDemoFacilityData = [
+  {name:'花・水・木 二ツ岩',corpName:'タカハシライフサポート(株)',city:'網走市',users:4,reports:12,hiyari:8,aiUse:5,lastLogin:'本日'},
+  {name:'��・水・木 駒場',corpName:'タカハシライフサポート(株)',city:'網走市',users:5,reports:15,hiyari:11,aiUse:8,lastLogin:'本日'},
+  {name:'さらさ富良野',corpName:'(一社)日本地域福祉協会',city:'富良野市',users:3,reports:8,hiyari:5,aiUse:3,lastLogin:'昨日'},
+  {name:'さらさ伊達',corpName:'(一社)日本地域福祉協会',city:'��達市',users:4,reports:18,hiyari:14,aiUse:9,lastLogin:'本日'},
+  {name:'さらさ岩見沢',corpName:'(一社)日本地域福祉協会',city:'岩見沢市',users:4,reports:11,hiyari:7,aiUse:6,lastLogin:'本日'},
+  {name:'WESTON旭川',corpName:'(株)WESTON',city:'旭川市',users:2,reports:3,hiyari:2,aiUse:1,lastLogin:'3日前'},
+  {name:'WESTON岩内',corpName:'(株)WESTON',city:'���内町',users:2,reports:1,hiyari:0,aiUse:0,lastLogin:'5日前'}
+];
+
+function toggleStatDetail(type) {
+  var panel = document.getElementById('statDetailPanel');
+  if (currentStatDetail === type) { panel.innerHTML = ''; currentStatDetail = null; return; }
+  currentStatDetail = type;
+  var html = '';
+  if (type === 'facilities') {
+    html = '<div class="stat-detail-panel"><h4>📊 管理施設 内訳</h4>';
+    var corps = {};
+    adminDemoFacilityData.forEach(function(f){ if(!corps[f.corpName]) corps[f.corpName]=0; corps[f.corpName]++; });
+    Object.keys(corps).forEach(function(c){ html += '<div class="stat-detail-row"><span class="detail-label">'+escapeHtml(c)+'</span><span class="detail-value">'+corps[c]+'施設</span></div>'; });
+    html += '</div>';
+  } else if (type === 'users') {
+    html = '<div class="stat-detail-panel"><h4>👥 ユーザー 施設別内訳</h4>';
+    adminDemoFacilityData.forEach(function(f){ html += '<div class="stat-detail-row"><span class="detail-label">'+escapeHtml(f.name)+'</span><span class="detail-value">'+f.users+'名</span></div>'; });
+    var total = adminDemoFacilityData.reduce(function(s,f){return s+f.users;},0);
+    html += '<div class="stat-detail-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:8px;"><span class="detail-label" style="font-weight:700;">合計</span><span class="detail-value" style="font-size:16px;">'+total+'名</span></div></div>';
+  } else if (type === 'reports') {
+    html = '<div class="stat-detail-panel"><h4>📝 今月の報告書 施設別内��</h4>';
+    var totalR = 0;
+    adminDemoFacilityData.forEach(function(f){ totalR+=f.reports; html += '<div class="stat-detail-row"><span class="detail-label">'+escapeHtml(f.name)+'</span><span class="detail-value">'+f.reports+'件</span></div>'; });
+    html += '<div class="stat-detail-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:8px;"><span class="detail-label" style="font-weight:700;">合計</span><span class="detail-value" style="font-size:16px;">'+totalR+'件</span></div></div>';
+  } else if (type === 'hiyari') {
+    html = '<div class="stat-detail-panel"><h4>⚠️ 今月のヒヤリハット 施設別内訳</h4>';
+    var totalH = 0;
+    adminDemoFacilityData.forEach(function(f){ totalH+=f.hiyari; html += '<div class="stat-detail-row"><span class="detail-label">'+escapeHtml(f.name)+'</span><span class="detail-value">'+f.hiyari+'件</span></div>'; });
+    html += '<div class="stat-detail-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:8px;"><span class="detail-label" style="font-weight:700;">合計</span><span class="detail-value" style="font-size:16px;">'+totalH+'件</span></div></div>';
+  }
+  panel.innerHTML = html;
+}
+
 function renderAdminFacilities() {
   var el = document.getElementById('adminFacilityList');
   var html = '';
-  var demoData = [{reports:12,hiyari:8},{reports:15,hiyari:11},{reports:8,hiyari:5},{reports:18,hiyari:14},{reports:11,hiyari:7},{reports:3,hiyari:2},{reports:1,hiyari:0}];
-  FACILITY_MASTER.facilities.forEach(function(f,i){
-    var d = demoData[i] || {reports:0,hiyari:0};
-    var corp = FACILITY_MASTER.corporations.find(function(c){return c.id===f.corpId;});
-    html += '<div class="admin-facility-row"><div><div class="fac-name">'+escapeHtml(f.name)+'</div><div class="fac-meta">'+escapeHtml(corp?corp.name:'')+'・'+escapeHtml(f.city)+'</div></div><div class="fac-stats"><div class="fac-count">'+d.reports+'件</div><div class="fac-meta">報告書(今月)</div></div></div>';
+  adminDemoFacilityData.forEach(function(f,i){
+    html += '<div class="admin-facility-row" style="cursor:pointer;" onclick="showFacilityDetail('+i+')"><div><div class="fac-name">'+escapeHtml(f.name)+'</div><div class="fac-meta">'+escapeHtml(f.corpName)+'・'+escapeHtml(f.city)+'</div></div><div class="fac-stats"><div class="fac-count">'+f.reports+'件</div><div class="fac-meta">報告書(今月)</div></div></div>';
   });
   el.innerHTML = html;
 }
 
+function showFacilityDetail(idx) {
+  var f = adminDemoFacilityData[idx];
+  var content = document.getElementById('facilityDetailContent');
+  content.innerHTML = '<div class="facility-detail-header"><div class="facility-detail-icon">🏠</div><div><div class="facility-detail-name">'+escapeHtml(f.name)+'</div><div class="facility-detail-meta">'+escapeHtml(f.corpName)+' / '+escapeHtml(f.city)+'</div></div></div>'+
+    '<div class="facility-detail-stats">'+
+    '<div class="facility-mini-stat"><div class="mini-value">'+f.users+'</div><div class="mini-label">ユーザー数</div></div>'+
+    '<div class="facility-mini-stat"><div class="mini-value">'+f.reports+'</div><div class="mini-label">報告書(今月)</div></div>'+
+    '<div class="facility-mini-stat"><div class="mini-value">'+f.hiyari+'</div><div class="mini-label">ヒヤリ(今月)</div></div>'+
+    '</div>'+
+    '<div class="facility-detail-stats">'+
+    '<div class="facility-mini-stat"><div class="mini-value">'+f.aiUse+'</div><div class="mini-label">AI相談回数</div></div>'+
+    '<div class="facility-mini-stat"><div class="mini-value">'+(f.reports+f.hiyari)+'</div><div class="mini-label">報告書合計</div></div>'+
+    '<div class="facility-mini-stat"><div class="mini-value" style="font-size:14px;">'+f.lastLogin+'</div><div class="mini-label">最終利用</div></div>'+
+    '</div>'+
+    '<div class="section-label" style="margin-top:12px;">月別推移（報告書件数）</div>'+
+    '<div style="display:flex;align-items:flex-end;gap:6px;height:80px;margin-bottom:8px;">'+
+    generateBarChart(f)+
+    '</div>'+
+    '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);">'+
+    '<span>10月</span><span>11月</span><span>12月</span><span>1月</span><span>2月</span><span>3月</span></div>';
+  document.getElementById('facilityDetailModal').classList.add('open');
+}
+
+function generateBarChart(f) {
+  var base = f.reports;
+  var months = [
+    Math.max(1,base-Math.floor(Math.random()*5)),
+    Math.max(1,base-Math.floor(Math.random()*3)),
+    Math.max(1,base+Math.floor(Math.random()*4)-2),
+    Math.max(1,base+Math.floor(Math.random()*3)-1),
+    Math.max(1,base+Math.floor(Math.random()*4)-2),
+    base
+  ];
+  var max = Math.max.apply(null, months);
+  return months.map(function(v){
+    var h = Math.max(8, (v/max)*70);
+    return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;"><div style="font-size:10px;color:var(--text-light);margin-bottom:2px;">'+v+'</div><div style="width:100%;height:'+h+'px;background:linear-gradient(180deg,var(--accent),var(--accent-muted));border-radius:4px 4px 0 0;"></div></div>';
+  }).join('');
+}
+
+function closeFacilityDetail() { document.getElementById('facilityDetailModal').classList.remove('open'); }
+
 function renderAdminReports() {
   var el = document.getElementById('adminReportTable');
-  var data = [
-    {name:'花・水・木 二ツ岩',acc:5,hiy:7},
-    {name:'花・水・木 駒場',acc:8,hiy:7},
-    {name:'さらさ富良野',acc:3,hiy:5},
-    {name:'さらさ伊達',acc:10,hiy:8},
-    {name:'さらさ岩見沢',acc:6,hiy:5},
-    {name:'WESTON旭川',acc:2,hiy:1},
-    {name:'WESTON岩内',acc:1,hiy:0}
-  ];
+  var data = adminDemoFacilityData;
   var html = '';
-  data.forEach(function(d){html+='<tr><td>'+escapeHtml(d.name)+'</td><td>'+d.acc+'</td><td>'+d.hiy+'</td><td><strong>'+(d.acc+d.hiy)+'</strong></td></tr>';});
+  var totalAcc=0, totalHiy=0;
+  data.forEach(function(d){
+    var prevTotal = d.reports + d.hiyari + Math.floor(Math.random()*6)-3;
+    var diff = (d.reports+d.hiyari) - prevTotal;
+    var diffStr = diff > 0 ? '<span style="color:var(--danger);">↑+'+diff+'</span>' : diff < 0 ? '<span style="color:var(--confirmed);">↓'+diff+'</span>' : '→ 0';
+    totalAcc+=d.reports; totalHiy+=d.hiyari;
+    html+='<tr><td>'+escapeHtml(d.name)+'</td><td>'+d.reports+'</td><td>'+d.hiyari+'</td><td><strong>'+(d.reports+d.hiyari)+'</strong></td><td>'+diffStr+'</td></tr>';
+  });
+  html+='<tr style="background:var(--surface);font-weight:700;"><td>合計</td><td>'+totalAcc+'</td><td>'+totalHiy+'</td><td><strong>'+(totalAcc+totalHiy)+'</strong></td><td></td></tr>';
   el.innerHTML = html;
 }
 
@@ -1588,17 +1970,860 @@ function renderAdminUsers() {
   var el = document.getElementById('adminUserTable');
   var users = getDemoUsers();
   var roleMap = {staff:'スタッフ',facility:'施設管理者',honbu:'本部管理者',superadmin:'システム管理者'};
+  var loginDates = ['本日 09:15','本日 08:42','昨日 17:30','本日 10:05','3日前','本日 07:55','2日前','本日 11:20','5日前'];
   var html = '';
-  users.forEach(function(u){
-    html+='<tr><td>'+escapeHtml(u.displayName)+'</td><td>'+escapeHtml(u.facilityName)+'</td><td>'+escapeHtml(roleMap[u.role]||u.role)+'</td><td><span class="status-badge active">有効</span></td></tr>';
+  users.forEach(function(u,i){
+    html+='<tr><td>'+escapeHtml(u.displayName)+'</td><td>'+escapeHtml(u.facilityName)+'</td><td>'+escapeHtml(roleMap[u.role]||u.role)+'</td><td style="font-size:12px;color:var(--text-light);">'+(loginDates[i]||'未ログイン')+'</td><td><span class="status-badge active">有効</span></td></tr>';
   });
   el.innerHTML = html;
 }
 
-function goToScreen60() { renderAdminFacilities(); goTo(60); }
+function showAdminTab(tab, el) {
+  ['Facilities','Reports','Users','Activity'].forEach(function(t){
+    var panel = document.getElementById('adminTab'+t);
+    if(panel) panel.style.display='none';
+  });
+  document.getElementById('adminTab'+tab.charAt(0).toUpperCase()+tab.slice(1)).style.display='block';
+  el.parentElement.querySelectorAll('.admin-tab').forEach(function(b){b.classList.remove('active');});
+  el.classList.add('active');
+  if (tab==='facilities') renderAdminFacilities();
+  if (tab==='reports') renderAdminReports();
+  if (tab==='users') renderAdminUsers();
+  if (tab==='activity') renderAdminActivity();
+}
+
+function renderAdminActivity() {
+  var el = document.getElementById('adminActivityLog');
+  var activities = [
+    {time:'10:15',user:'石田リカ',facility:'花・水・木 駒場',action:'事故報告書を作成',icon:'📝'},
+    {time:'09:42',user:'長内祥子',facility:'さらさ伊達',action:'ヒヤリハットを作成',icon:'⚠️'},
+    {time:'09:30',user:'池田',facility:'さらさ岩見沢',action:'AI施設長に相談',icon:'👨‍⚕️'},
+    {time:'09:15',user:'黒川',facility:'花・水・木 二ツ岩',action:'ログイン',icon:'🔐'},
+    {time:'08:55',user:'石田リカ',facility:'花・水・木 駒場',action:'ケア記録を保存',icon:'📋'},
+    {time:'昨日 17:45',user:'長内祥子',facility:'さらさ伊達',action:'入居検討AI判定を実行',icon:'🏥'},
+    {time:'昨日 16:30',user:'池田',facility:'さら���岩見沢',action:'事故報告書をExcel出力',icon:'📊'},
+    {time:'��日 15:20',user:'管理者',facility:'花・水・木 駒場',action:'加算アドバイザーを利用',icon:'💰'},
+    {time:'昨�� 14:00',user:'ケア���ネ',facility:'花・水・木 駒場',action:'ケア記録を保存',icon:'����'},
+    {time:'昨日 11:30',user:'黒川',facility:'花・水・木 二ツ岩',action:'ヒヤリハットを作成',icon:'⚠️'}
+  ];
+  el.innerHTML = activities.map(function(a){
+    return '<div class="card" style="padding:12px 16px;margin-bottom:6px;display:flex;align-items:center;gap:12px;"><div style="font-size:20px;">'+a.icon+'</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;">'+escapeHtml(a.user)+' <span style="font-weight:400;color:var(--text-light);">が</span> '+escapeHtml(a.action)+'</div><div style="font-size:11px;color:var(--text-light);">'+escapeHtml(a.facility)+' ・ '+escapeHtml(a.time)+'</div></div></div>';
+  }).join('');
+}
 
 // ============================================================
-// ユーティリティ
+// 報告書一覧（Screen 15）
+// ============================================================
+function initReportFilters() {
+  var sel = document.getElementById('reportFilterMonth');
+  if (!sel) return;
+  var now = new Date();
+  sel.innerHTML = '<option value="all">全期間</option>';
+  for (var i = 0; i < 12; i++) {
+    var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    var val = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+    var label = d.getFullYear() + '年' + (d.getMonth()+1) + '���';
+    sel.innerHTML += '<option value="'+val+'">'+label+'</option>';
+  }
+}
+
+function getDemoReportsForList() {
+  var stored = JSON.parse(localStorage.getItem('tellur_reports') || '[]');
+  // デモデータ（ストレージに無い場合にサンプルを追加）
+  if (stored.length < 3) {
+    var demoReports = [
+      {id:1001,type:'accident',residentName:'山田太郎',date:'2026-03-28',facilityName:'花・水・木 駒場',facilityId:2,situation:'昼食後、居室に戻る際に廊下でバランスを崩し転倒した。右膝に擦過傷あり。',response:'すぐに看護師に報告。バイタル測定異常なし。患部を消毒・絆創膏で処置。',reporter:'石田リカ',createdAt:'2026-03-28T10:30:00'},
+      {id:1002,type:'hiyari',residentName:'佐藤花子',date:'2026-03-27',facilityName:'花・水・木 駒場',facilityId:2,content:'入浴介助中、浴室の床が滑りやすくなっており危険を感じた。すぐに清掃を実施。',prevention:'入浴前の床の確認を徹底する。滑り止めマットの追加を検討。',reporter:'石田リカ',createdAt:'2026-03-27T14:20:00'},
+      {id:1003,type:'accident',residentName:'鈴木一��',date:'2026-03-25',facilityName:'さらさ伊達',facilityId:4,situation:'車椅子からベッドへの移乗時に、足がフットレストに引っかかり転倒しかけた。職員が支え、怪我はなし。',response:'移乗手順を再確認。フットレストの位置を調整。',reporter:'長内祥子',createdAt:'2026-03-25T16:45:00'},
+      {id:1004,type:'hiyari',residentName:'田中美子',date:'2026-03-22',facilityName:'さらさ岩��沢',facilityId:5,content:'夕食時、他の入居者の薬を誤って配薬しそうになった。配薬前にダブルチェックで気づき防止。',prevention:'配薬時の写真付き確認シートを導入する。',reporter:'池田',createdAt:'2026-03-22T18:00:00'},
+      {id:1005,type:'accident',residentName:'高橋正雄',date:'2026-03-18',facilityName:'花���水・木 二ツ岩',facilityId:1,situation:'夜間トイレに向かう途中、暗がりで躓き転倒。左肘に打撲あり。',response:'看護師対応。アイシング処置。翌朝医師診察予定。夜間センサーの感度を上げた。',reporter:'黒川',createdAt:'2026-03-18T02:30:00'},
+      {id:1006,type:'hiyari',residentName:'渡辺幸子',date:'2026-02-28',facilityName:'花��水・木 駒場',facilityId:2,content:'食事中にむせこみがあった。吸引の必要はなかったが、食事形態の見直しが必要。',prevention:'管理栄養士と相談し、食事形態をきざみ食に変更。トロミ剤の使用を検討。',reporter:'ケアマネ',createdAt:'2026-02-28T12:15:00'},
+      {id:1007,type:'accident',residentName:'伊藤道夫',date:'2026-02-15',facilityName:'さら��伊達',facilityId:4,situation:'レクリエーション中に椅子から立ち上がろうとして転倒。頭部打撲あり。',response:'看護師対応。バイタル測定。意識清明。経過観察。家族に連絡済み。',reporter:'長内祥子',createdAt:'2026-02-15T15:00:00'},
+      {id:1008,type:'hiyari',residentName:'小林春子',date:'2026-01-20',facilityName:'さらさ岩見��',facilityId:5,content:'入浴後、脱衣所で足を滑らせそうになった。手すりを掴んで防止。',prevention:'脱衣所に滑り止めシートを追加設置した。',reporter:'池田',createdAt:'2026-01-20T11:00:00'},
+      {id:1009,type:'accident',residentName:'中村要',date:'2025-12-10',facilityName:'花・水・木 駒���',facilityId:2,situation:'食堂で食事中に隣の入居者とのトラブルで興奮し、テーブルを叩いた際に手を打撲。',response:'クーリング処置。落ち着くまで居室で休息。主治医に報告。',reporter:'石田リカ',createdAt:'2025-12-10T12:30:00'},
+      {id:1010,type:'hiyari',residentName:'加藤照代',date:'2025-11-05',facilityName:'花・水・木 二ツ岩',facilityId:1,content:'深夜の巡回時、ベッド柵が下がった状態で眠っていた。転落リスクあり。',prevention:'就寝前のベッド柵確認をチェックリストに追加。',reporter:'黒川',createdAt:'2025-11-05T03:00:00'}
+    ];
+    stored = demoReports.concat(stored);
+  }
+  return stored;
+}
+
+function renderAllReports() {
+  var reports = getDemoReportsForList();
+  var typeFilter = document.getElementById('reportFilterType').value;
+  var monthFilter = document.getElementById('reportFilterMonth').value;
+  var search = document.getElementById('reportSearchInput').value.trim().toLowerCase();
+  var sort = document.getElementById('reportSortOrder').value;
+
+  var filtered = reports.filter(function(r) {
+    if (typeFilter !== 'all' && r.type !== typeFilter) return false;
+    if (monthFilter !== 'all') {
+      var rDate = (r.date || r.createdAt || '').substring(0,7);
+      if (rDate !== monthFilter) return false;
+    }
+    if (search) {
+      var text = ((r.residentName||'')+(r.situation||'')+(r.content||'')+(r.facilityName||'')+(r.reporter||'')).toLowerCase();
+      if (text.indexOf(search) === -1) return false;
+    }
+    return true;
+  });
+
+  if (sort === 'oldest') filtered.reverse();
+
+  document.getElementById('reportResultCount').textContent = filtered.length;
+  var container = document.getElementById('allReportsList');
+  if (filtered.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px;">該当する報告書がありません</div>';
+    return;
+  }
+  container.innerHTML = filtered.map(function(r) {
+    var badge = r.type === 'hiyari' ? '<span class="report-type-badge hiyari">ヒヤリ</span>' : '<span class="report-type-badge accident">事故</span>';
+    var dateStr = r.date || (r.createdAt ? r.createdAt.substring(0,10) : '');
+    return '<div class="report-list-item" onclick="showReportDetail('+r.id+')">' + badge + '<div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:600;">' + escapeHtml(r.residentName||'名称未設定') + '</div><div style="font-size:12px;color:var(--text-light);">' + dateStr + ' ・ ' + escapeHtml(r.facilityName||'') + ' ・ ' + escapeHtml(r.reporter||'') + '</div></div><div style="color:var(--text-muted);font-size:14px;">›</div></div>';
+  }).join('');
+}
+
+function showReportDetail(id) {
+  var reports = getDemoReportsForList();
+  var r = reports.find(function(rep){return rep.id===id;});
+  if (!r) return;
+  var content = document.getElementById('reportDetailContent');
+  var badge = r.type === 'hiyari' ? '<span class="report-type-badge hiyari">ヒヤリハット</span>' : '<span class="report-type-badge accident">事故報告書</span>';
+  var html = '<div style="margin-bottom:16px;">'+badge+'</div>';
+
+  if (r.type === 'hiyari') {
+    html += buildDetailField('対象者', r.residentName);
+    html += buildDetailField('発生日', r.date);
+    html += buildDetailField('施設', r.facilityName);
+    html += buildDetailField('内容', r.content);
+    html += buildDetailField('再発防止策', r.prevention);
+    html += buildDetailField('報告者', r.reporter);
+  } else {
+    html += buildDetailField('対象者', r.residentName);
+    html += buildDetailField('発生日時', (r.date||'')+' '+(r.time||''));
+    html += buildDetailField('施設', r.facilityName);
+    html += buildDetailField('発生場所', r.location);
+    html += buildDetailField('発生時の状況', r.situation);
+    html += buildDetailField('対応・経過', r.response);
+    html += buildDetailField('背景・経緯', r.background);
+    html += buildDetailField('要因と対策', r.causeMeasure);
+    html += buildDetailField('報告者', r.reporter);
+  }
+  content.innerHTML = html;
+  document.getElementById('reportDetailModal').classList.add('open');
+}
+
+function buildDetailField(label, value) {
+  if (!value) return '';
+  return '<div class="detail-field"><div class="detail-label">'+escapeHtml(label)+'</div><div class="detail-value">'+escapeHtml(value).replace(/\n/g,'<br>')+'</div></div>';
+}
+
+function closeReportDetail() { document.getElementById('reportDetailModal').classList.remove('open'); }
+
+// ============================================================
+// 入居検討 - 保存・一覧・ステータス管理
+// ============================================================
+var lastAdmissionId = null;
+
+function showAdmissionTab(tab, el) {
+  document.getElementById('admissionTabInput').style.display = tab==='input' ? '' : 'none';
+  document.getElementById('admissionTabList').style.display = tab==='list' ? '' : 'none';
+  el.parentElement.querySelectorAll('.admission-tab').forEach(function(b){b.classList.remove('active');});
+  el.classList.add('active');
+  if (tab==='list') renderAdmissionList();
+}
+
+function getAdmissions() {
+  var stored = JSON.parse(localStorage.getItem('tellur_admissions') || '[]');
+  if (stored.length === 0) {
+    var demo = [
+      {id:2001,name:'鈴木一郎',age:85,gender:'男性',careLevel:'要介護3',diagnosis:'アルツハイマー型認知症',medical:'',adl:'歩行器使用。食事自立。排泄一部介助。',background:'独居。長男が遠方在住。',score:82,status:'accepted',facilityName:'花・���・木 駒場',createdAt:'2026-03-15T10:00:00'},
+      {id:2002,name:'田中美智子',age:78,gender:'女���',careLevel:'要介護2',diagnosis:'脳梗塞後遺症',medical:'',adl:'車椅子使用。食事自立。排泄自立。',background:'夫と二人暮らし。デイサービス利用中。',score:91,status:'accepted',facilityName:'さらさ伊達',createdAt:'2026-03-10T14:30:00'},
+      {id:2003,name:'佐藤正男',age:92,gender:'男性',careLevel:'要介護5',diagnosis:'パーキンソン病',medical:'インスリン注射、吸引',adl:'全介助。経管栄養。',background:'妻が高齢で介護困難。',score:45,status:'declined',facilityName:'花・水・木 二ツ岩',createdAt:'2026-02-20T09:00:00'},
+      {id:2004,name:'高橋花子',age:80,gender:'女性',careLevel:'要介護2',diagnosis:'レビー小体型認知症',medical:'',adl:'歩行自立。幻視あり。',background:'娘と同居。夜間の徘徊あり。',score:73,status:'reviewing',facilityName:'花・水・木 駒場',createdAt:'2026-03-28T11:00:00'},
+      {id:2005,name:'渡辺健太',age:88,gender:'男性',careLevel:'要介護4',diagnosis:'脳血管性認知症',medical:'胃ろう',adl:'車椅子。食事は胃ろう。排泄おむつ。',background:'独居。成年後見人あり。',score:58,status:'reviewing',facilityName:'さらさ岩見沢',createdAt:'2026-03-25T15:00:00'}
+    ];
+    localStorage.setItem('tellur_admissions', JSON.stringify(demo));
+    return demo;
+  }
+  return stored;
+}
+
+function renderAdmissionList() {
+  var admissions = getAdmissions();
+  var statusFilter = document.getElementById('admissionFilterStatus').value;
+  var search = document.getElementById('admissionSearchInput').value.trim().toLowerCase();
+
+  var filtered = admissions.filter(function(a){
+    if (statusFilter !== 'all' && a.status !== statusFilter) return false;
+    if (search && a.name.toLowerCase().indexOf(search) === -1) return false;
+    return true;
+  });
+
+  var container = document.getElementById('admissionListContainer');
+  document.getElementById('admissionCountBadge').textContent = admissions.length;
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px;">該当する検討記録がありません</div>';
+    return;
+  }
+
+  container.innerHTML = filtered.map(function(a){
+    var scoreColor = a.score >= 80 ? 'var(--confirmed)' : a.score >= 60 ? '#e6a23c' : 'var(--danger)';
+    var statusLabel = {reviewing:'検討中',accepted:'受入決定',declined:'見送り'}[a.status] || a.status;
+    var dateStr = a.createdAt ? new Date(a.createdAt).toLocaleDateString('ja-JP') : '';
+    return '<div class="admission-list-item" onclick="showAdmissionDetail('+a.id+')">'+
+      '<div class="admission-score" style="background:'+scoreColor+';">'+a.score+'</div>'+
+      '<div style="flex:1;min-width:0;">'+
+      '<div style="font-size:14px;font-weight:600;">'+escapeHtml(a.name)+' <span style="font-weight:400;font-size:12px;color:var(--text-light);">'+escapeHtml(a.age+'歳 '+a.gender)+'</span></div>'+
+      '<div style="font-size:12px;color:var(--text-light);">'+escapeHtml(a.careLevel)+' ・ '+escapeHtml(a.facilityName)+' ・ '+dateStr+'</div>'+
+      '</div>'+
+      '<span class="admission-status '+a.status+'">'+statusLabel+'</span>'+
+      '</div>';
+  }).join('');
+}
+
+function showAdmissionDetail(id) {
+  var admissions = getAdmissions();
+  var a = admissions.find(function(x){return x.id===id;});
+  if (!a) return;
+  var scoreColor = a.score >= 80 ? 'var(--confirmed)' : a.score >= 60 ? '#e6a23c' : 'var(--danger)';
+  var statusLabel = {reviewing:'検討中',accepted:'受入���定',declined:'見送り'}[a.status] || a.status;
+  var content = document.getElementById('admissionDetailContent');
+  content.innerHTML = '<div style="text-align:center;margin-bottom:16px;">'+
+    '<div style="width:64px;height:64px;border-radius:50%;background:'+scoreColor+';color:white;font-size:24px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;">'+a.score+'</div>'+
+    '<div style="font-size:12px;color:var(--text-light);margin-top:4px;">受入可能性スコア</div>'+
+    '<div style="margin-top:6px;"><span class="admission-status '+a.status+'">'+statusLabel+'</span></div>'+
+    '</div>'+
+    buildDetailField('氏名', a.name)+
+    buildDetailField('年齢・性別', a.age+'歳 '+a.gender)+
+    buildDetailField('介護度', a.careLevel)+
+    buildDetailField('主病名', a.diagnosis)+
+    buildDetailField('医療処���', a.medical)+
+    buildDetailField('ADL', a.adl)+
+    buildDetailField('生活背景', a.background)+
+    buildDetailField('施設', a.facilityName)+
+    (a.status === 'reviewing' ? '<div style="display:flex;gap:8px;margin-top:12px;"><button class="btn-primary" style="flex:1;" onclick="updateAdmissionStatus('+a.id+',\'accepted\');closeAdmissionDetail();">✅ 受入決定</button><button class="btn-secondary" style="flex:1;margin-top:0;border-color:var(--danger);color:var(--danger);" onclick="updateAdmissionStatus('+a.id+',\'declined\');closeAdmissionDetail();">見送り</button></div>' : '');
+  document.getElementById('admissionDetailModal').classList.add('open');
+}
+
+function closeAdmissionDetail() { document.getElementById('admissionDetailModal').classList.remove('open'); }
+
+function updateAdmissionStatus(id, status) {
+  var admissions = getAdmissions();
+  var found = admissions.find(function(a){return a.id===id;});
+  if (found) {
+    found.status = status;
+    localStorage.setItem('tellur_admissions', JSON.stringify(admissions));
+    var label = {accepted:'受入決定',declined:'見送り',reviewing:'検討中'}[status];
+    showToast(found.name + 'さんを「'+label+'」に変更しました', 'success');
+    renderAdmissionList();
+  }
+}
+
+// ============================================================
+// 加算��ドバイザー - AI分析
+// ============================================================
+function toggleKasanPill(el) { el.classList.toggle('active'); }
+
+function runKasanAnalysis() {
+  var units = parseInt(document.getElementById('kasanUnits').value) || 2;
+  var residents = parseInt(document.getElementById('kasanResidents').value) || 18;
+  var staff = parseInt(document.getElementById('kasanStaff').value) || 12;
+  var nightStaff = parseInt(document.getElementById('kasanNightStaff').value) || 2;
+  var pills = document.querySelectorAll('#kasanProfessionals .check-pill.active');
+  var professionals = [];
+  pills.forEach(function(p){ professionals.push(p.textContent); });
+
+  var hasNurse = professionals.indexOf('看護師') >= 0;
+  var hasPT = professionals.indexOf('PT/OT') >= 0;
+  var hasDietitian = professionals.indexOf('管理��養士') >= 0;
+  var hasDentalHygienist = professionals.indexOf('歯科衛��士') >= 0;
+  var hasDementiaTraining = professionals.indexOf('認知症ケア研修修了者') >= 0;
+  var hasCareWorker50 = professionals.indexOf('介護福祉士(50%以上)') >= 0;
+  var hasLookingAfter = professionals.indexOf('看取り指針あり') >= 0;
+
+  // 現在取得中の加算を判定
+  var currentKasan = [];
+  var potentialKasan = [];
+
+  if (hasDementiaTraining) {
+    currentKasan.push({name:'認知症専門ケア加算(I)',amount:3,unit:'日',req:'認知症介護実践リーダー研修修了者配置済み',progress:100});
+  } else {
+    potentialKasan.push({name:'認知症専門ケア加算(I)',amount:3,unit:'日',req:'認知症介護実践リーダー���修修了者を配置すると取得可能',action:'研修の受講を検討してください（年2回開催）',progress:0});
+  }
+
+  if (nightStaff >= units + 1) {
+    currentKasan.push({name:'夜間支援体制加算(I)',amount:25,unit:'日',req:'夜勤'+nightStaff+'名配置（基準+1名）',progress:100});
+  } else if (nightStaff >= units) {
+    potentialKasan.push({name:'夜間支援体制加算(I)',amount:25,unit:'日',req:'あと'+(units+1-nightStaff)+'名の夜勤職員追加で取得可能',action:'夜勤シフトの見直しまたは人員採用を検討',progress:Math.floor((nightStaff/(units+1))*100)});
+  }
+
+  if (hasNurse) {
+    currentKasan.push({name:'���療連携体制加算',amount:39,unit:'���',req:'看護師配置済み・24時間連絡体制',progress:100});
+  } else {
+    potentialKasan.push({name:'医療連携��制加算',amount:39,unit:'日',req:'看護師を配置し24���間連絡体制を整備すると取得可能',action:'訪問看護ステーションとの連携契約も選択肢',progress:0});
+  }
+
+  if (hasLookingAfter && hasNurse) {
+    currentKasan.push({name:'看取り介護加算',amount:72,unit:'日（死亡日以前31〜45日）',req:'看取り指針策定済み・看護師配置済み',progress:100});
+  } else if (hasNurse) {
+    potentialKasan.push({name:'看取り介護加算',amount:72,unit:'日〜780単位',req:'看取りに関する指針を策定すれば取得可能（看護師は配置済み）',action:'看取り指針の策定と職員研修の実施が必要',progress:60});
+  } else {
+    potentialKasan.push({name:'看取り介護加算',amount:72,unit:'日〜780��位',req:'看護師の配置と看取り指針の策定が必要',action:'まず医療連携体制の整備から着手',progress:0});
+  }
+
+  if (hasDentalHygienist) {
+    currentKasan.push({name:'口腔衛生管理体制加算',amount:30,unit:'月',req:'歯科衛生士配置済���',progress:100});
+  } else {
+    potentialKasan.push({name:'口腔衛生管理体制加算',amount:30,unit:'月',req:'歯科衛生士による助言体制を整備すると取得可能',action:'地域の歯科医院と連携協定を締結',progress:0});
+  }
+
+  if (hasPT) {
+    currentKasan.push({name:'生活機能向上連携加算',amount:200,unit:'月',req:'PT/OT連携済み',progress:100});
+  } else {
+    potentialKasan.push({name:'生活機能向上連携加算',amount:200,unit:'月',req:'PT/OTと連携すれば取得可能',action:'訪問リハビリ事業所との連携を検討',progress:0});
+  }
+
+  if (hasCareWorker50) {
+    currentKasan.push({name:'サービス提供体制強化加算(I)',amount:22,unit:'日',req:'介護福祉士50%以上配置',progress:100});
+  } else {
+    var ratio = Math.min(100, Math.floor((staff*0.4/staff)*100));
+    potentialKasan.push({name:'サービス提��体制強化加算(I)',amount:22,unit:'日',req:'介護福祉士の割合を50%以上にすると取得可能',action:'介護福祉士の資格取得支援制度の導入を検討',progress:ratio});
+  }
+
+  if (hasDietitian) {
+    currentKasan.push({name:'栄養管理体��加算',amount:30,unit:'月',req:'管理栄養士配置済み',progress:100});
+  } else {
+    potentialKasan.push({name:'栄養管理体制加��',amount:30,unit:'月',req:'管理栄養士を配置すると取得可能',action:'外部の管理栄養士との契約も可能',progress:0});
+  }
+
+  // 表示
+  var currentTotal = currentKasan.reduce(function(s,k){return s+k.amount;},0);
+  var potentialTotal = potentialKasan.reduce(function(s,k){return s+k.amount;},0);
+
+  document.getElementById('kasanCurrentTotal').textContent = '+' + currentTotal + '単位/日相当';
+  document.getElementById('kasanPotentialTotal').textContent = '+' + potentialTotal + '単位（追加可能）';
+
+  document.getElementById('kasanCurrentList').innerHTML = currentKasan.length === 0 ?
+    '<div style="text-align:center;padding:16px;color:var(--text-muted);font-size:13px;">現在取得中の加算はありません</div>' :
+    currentKasan.map(function(k){
+      return '<div class="kasan-card"><div class="kasan-name">'+escapeHtml(k.name)+'</div><div class="kasan-amount">+'+k.amount+'単位/'+k.unit+'</div><div class="kasan-req">✅ '+escapeHtml(k.req)+'</div></div>';
+    }).join('');
+
+  kasanPotentialData = potentialKasan;
+  document.getElementById('kasanPotentialList').innerHTML = potentialKasan.length === 0 ?
+    '<div style="text-align:center;padding:16px;color:var(--confirmed);font-size:13px;">🎉 取得可能な加算を全て取得済みです！</div>' :
+    potentialKasan.map(function(k, i){
+      var progressColor = k.progress >= 60 ? 'var(--confirmed)' : k.progress >= 30 ? '#e6a23c' : 'var(--danger)';
+      return '<div class="kasan-card potential actionable" style="position:relative;" onclick="this.classList.toggle(\'expanded\')">'+
+        '<label style="position:absolute;top:12px;right:12px;z-index:2;" onclick="event.stopPropagation();"><input type="checkbox" class="kasan-check" data-kasan="'+escapeHtml(k.name)+'" onchange="onKasanCheckChange()" style="width:18px;height:18px;cursor:pointer;accent-color:var(--accent);"></label>'+
+        '<div class="kasan-name" style="padding-right:32px;">'+escapeHtml(k.name)+' <span style="font-size:11px;color:var(--text-muted);">▼</span></div><div class="kasan-amount">+'+k.amount+'単位/'+k.unit+'</div><div class="kasan-req">💡 '+escapeHtml(k.req)+'</div><div class="kasan-progress"><div class="kasan-progress-bar" style="width:'+k.progress+'%;background:'+progressColor+';"></div></div><div class="kasan-detail"><strong>取得に向けたアクション：</strong><br>'+escapeHtml(k.action)+'<br><br><strong>達成度：</strong> '+k.progress+'%</div></div>';
+    }).join('');
+  document.getElementById('kasanShowDocsBtn').style.display = 'none';
+
+  // 収益シミ���レーション
+  var unitPrice = 10.21; // 1単位あたりの金額（地域区分等による概算）
+  var currentMonthly = Math.floor(currentTotal * residents * 30 * unitPrice);
+  var potentialMonthly = Math.floor(potentialTotal * residents * 30 * unitPrice);
+  document.getElementById('kasanSimulation').innerHTML =
+    '<div style="margin-bottom:12px;"><div class="stat-detail-row"><span class="detail-label">現在の加算収入（月額概算）</span><span class="detail-value" style="color:var(--confirmed);">¥'+currentMonthly.toLocaleString()+'</span></div>'+
+    '<div class="stat-detail-row"><span class="detail-label">追加取得時の増収（月額概算）</span><span class="detail-value" style="color:#e6a23c;">+¥'+potentialMonthly.toLocaleString()+'</span></div>'+
+    '<div class="stat-detail-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:8px;"><span class="detail-label" style="font-weight:700;">全加算取得時の月額</span><span class="detail-value" style="font-size:18px;">¥'+(currentMonthly+potentialMonthly).toLocaleString()+'</span></div></div>'+
+    '<div style="font-size:11px;color:var(--text-muted);line-height:1.6;">※ 1単位=約'+unitPrice+'円（地域区分6級地想定）で概算。入居者'+residents+'名×30日で計算。実際の金額は地域区分・入居者の介護度により変動します。</div>';
+
+  document.getElementById('kasanResultArea').style.display = '';
+  document.getElementById('kasanDocArea').style.display = 'none';
+  showToast('AI加算分析が完了しました', 'success');
+}
+
+var kasanPotentialData = []; // グローバルに保持
+
+function onKasanCheckChange() {
+  var checked = document.querySelectorAll('.kasan-check:checked');
+  document.getElementById('kasanShowDocsBtn').style.display = checked.length > 0 ? '' : 'none';
+}
+
+function showKasanDocuments() {
+  var checked = document.querySelectorAll('.kasan-check:checked');
+  if (checked.length === 0) return;
+  var docArea = document.getElementById('kasanDocArea');
+  var docList = document.getElementById('kasanDocList');
+  var allDocs = [];
+  var facName = currentFacility ? currentFacility.name : '施設';
+
+  checked.forEach(function(cb) {
+    var kasanName = cb.getAttribute('data-kasan');
+    var docs = getKasanRequiredDocuments(kasanName);
+    docs.forEach(function(doc) {
+      doc.kasanName = kasanName;
+      allDocs.push(doc);
+    });
+  });
+
+  docList.innerHTML = allDocs.map(function(doc, i) {
+    return '<div class="card" style="padding:14px 16px;margin-bottom:8px;border-left:4px solid ' + (doc.priority === 'high' ? 'var(--danger)' : doc.priority === 'medium' ? '#e6a23c' : 'var(--confirmed)') + ';">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">' +
+      '<div style="flex:1;min-width:0;">' +
+      '<div style="font-size:11px;color:var(--text-light);margin-bottom:2px;">' + escapeHtml(doc.kasanName) + '</div>' +
+      '<div style="font-size:14px;font-weight:600;color:var(--primary);">' + escapeHtml(doc.name) + '</div>' +
+      '<div style="font-size:12px;color:var(--text-light);margin-top:4px;line-height:1.6;">' + escapeHtml(doc.description) + '</div>' +
+      '</div>' +
+      '<button class="btn-primary" style="width:auto;padding:8px 14px;font-size:12px;white-space:nowrap;flex-shrink:0;" onclick="generateKasanDocument(\''+escapeHtml(doc.templateId)+'\')">📥 作成</button>' +
+      '</div></div>';
+  }).join('');
+
+  docArea.style.display = '';
+  docArea.scrollIntoView({behavior:'smooth',block:'start'});
+  showToast(allDocs.length + '件の必要書類を表示しました', 'success');
+}
+
+function getKasanRequiredDocuments(kasanName) {
+  var docMap = {
+    '看取り介護加算': [
+      {name:'看取りに関する指針', templateId:'mitori_shishin', priority:'high', description:'施設としての看取りケアの基本方針、医師との連携方法、職員の対応手順を記載。利用者・家族への説明用にも使用。'},
+      {name:'看取り介護に関する職員研修記録', templateId:'mitori_kenshu', priority:'high', description:'年1回以上の研修実施が必要。研修日時・内容・参加者を記録。'},
+      {name:'看取り介護同意書（利用者・家族用）', templateId:'mitori_doui', priority:'medium', description:'入居者・家族に看取り介護の内容を説明し同意を得るための書類。'},
+      {name:'看取り介護計画書', templateId:'mitori_keikaku', priority:'medium', description:'利用者ごとの看取り介護の具体的な計画。医師の指示、ケア内容、家族連絡の頻度等。'}
+    ],
+    '口腔衛生管理体制加算': [
+      {name:'口腔衛生管理体制に関する計画書', templateId:'koku_keikaku', priority:'high', description:'歯科衛生士による助言内容、口腔ケアの方法、実施頻度を記載。'},
+      {name:'歯科医療機関との連携協定書', templateId:'koku_renkei', priority:'high', description:'連携する歯科医院との契約内容（訪問頻度、助言方法、緊急対応等）。'},
+      {name:'口腔ケアマニュアル', templateId:'koku_manual', priority:'medium', description:'日常の口腔ケアの手順、注意点、使用物品一覧。'}
+    ],
+    '生活機能向上連携加算': [
+      {name:'外部リハビリ専門職との連携協定書', templateId:'reha_renkei', priority:'high', description:'PT/OTとの連携内容（訪問頻度、評価方法、情報共有の仕組み）を定めた契約書。'},
+      {name:'生活機能向上連携計画書', templateId:'reha_keikaku', priority:'high', description:'利用者ごとのリハビリ目標と具体的な取り組み内容。PT/OTの助言に基づき作成。'},
+      {name:'リハビリ実施記録', templateId:'reha_kiroku', priority:'medium', description:'月次のリハビリ評価記録。ADL変化、目標達成度を記録。'}
+    ],
+    '認知症専門ケア加算(I)': [
+      {name:'認知症ケア研修修了証写し台帳', templateId:'ninchi_daicho', priority:'high', description:'認知症介護実践リーダー研修修了者の一覧。修了証の写しを添付。'},
+      {name:'認知症ケア計画書', templateId:'ninchi_keikaku', priority:'medium', description:'認知症利用者ごとのケア方針・対応方法を記載した個別計画。'}
+    ],
+    '夜間支援体制加算(I)': [
+      {name:'夜間勤務体制表', templateId:'yakan_taisei', priority:'high', description:'夜勤職員の配置人数・シフト表。基準+1名の配置を証明。'},
+      {name:'夜間対応マニュアル', templateId:'yakan_manual', priority:'medium', description:'夜間の緊急対応手順、連絡体制、巡回方法を記載。'}
+    ],
+    '医療連携体制加算': [
+      {name:'医療連携体制確保に関する届出書', templateId:'iryo_todoke', priority:'high', description:'看護師の配置状況、24時間連絡体制の内容を記載した届出。'},
+      {name:'協力医療機関との連携協定書', templateId:'iryo_renkei', priority:'high', description:'協力医療機関との契約内容（緊急往診、搬送対応、情報共有等）。'}
+    ],
+    'サービス提供体制強化加算(I)': [
+      {name:'介護福祉士配置状況一覧表', templateId:'service_haichi', priority:'high', description:'介護職員の資格一覧。介護福祉士が全体の50%以上であることを証明。'},
+      {name:'職員研修計画・実績', templateId:'service_kenshu', priority:'medium', description:'年間の研修計画と実施実績。資格取得支援の取り組みも記載。'}
+    ],
+    '栄養管理体制加算': [
+      {name:'栄養管理体制に関する届出書', templateId:'eiyo_todoke', priority:'high', description:'管理栄養士の配置状況、栄養ケアの実施体制を記載。'},
+      {name:'栄養ケア計画書', templateId:'eiyo_keikaku', priority:'medium', description:'利用者ごとの栄養状態評価と食事提供計画。'}
+    ]
+  };
+  return docMap[kasanName] || [{name:'体制届出書', templateId:'general_todoke', priority:'high', description:'加算算定に必要な体制に関する届出書。'}];
+}
+
+function generateKasanDocument(templateId) {
+  var facName = currentFacility ? currentFacility.name : '施設名';
+  var corpName = '';
+  if (currentFacility) {
+    var corp = FACILITY_MASTER.corporations.find(function(c){return c.id===currentFacility.corpId;});
+    if (corp) corpName = corp.name;
+  }
+  var today = new Date();
+  var dateStr = today.getFullYear() + '年' + (today.getMonth()+1) + '月' + today.getDate() + '日';
+  var wb = XLSX.utils.book_new();
+  var ws, ws_data;
+
+  switch(templateId) {
+    case 'mitori_shishin':
+      ws_data = [
+        ['看取りに関する指針','','','','',''],
+        ['','','','','作成日：',dateStr],
+        ['','','','','施設名：',facName],
+        [''],
+        ['１．基本方針','','','','',''],
+        ['','本施設は、入居者が人生の最期を穏やかに迎えられるよう、医師・看護師・介護職員が連携し、','','','',''],
+        ['','入居者及び家族の意思を尊重した看取り介護を提供する。','','','',''],
+        [''],
+        ['２．看取り介護の対象','','','','',''],
+        ['','医師が一般に認められている医学的知見に基づき、回復の見込みがないと診断した入居者。','','','',''],
+        ['','入居者本人及び家族等が看取り介護を希望し、同意書を提出した方。','','','',''],
+        [''],
+        ['３．看取り介護の内容','','','','',''],
+        ['','（１）身体的ケア','','','',''],
+        ['','','・痛みや不快症状の緩和','','',''],
+        ['','','・清潔の保持、体位変換','','',''],
+        ['','','・口腔ケア、皮膚ケア','','',''],
+        ['','（２）精神的ケア','','','',''],
+        ['','','・声かけ、寄り添い','','',''],
+        ['','','・家族との面会環境の整備','','',''],
+        ['','','・本人の嗜好品の提供（可能な範囲で）','','',''],
+        [''],
+        ['４．医師との連携体制','','','','',''],
+        ['','・協力医療機関：','（　　　　　　　　　）','','',''],
+        ['','・主治医連絡先：','（　　　　　　　　　）','','',''],
+        ['','・緊急時連絡方法：','24時間対応（オンコール体制）','','',''],
+        [''],
+        ['５．家族への説明と同意','','','','',''],
+        ['','・看取り介護開始にあたり、医師から病状説明を行い、本人・家族から同意を得る。','','','',''],
+        ['','・状態変化時は速やかに家族へ連絡する。','','','',''],
+        ['','・看取り介護同意書（別紙）を取得する。','','','',''],
+        [''],
+        ['６．職員の教育・研修','','','','',''],
+        ['','・年1回以上の看取り介護に関する研修を実施する。','','','',''],
+        ['','・看取り経験後のデスカンファレンスを実施する。','','','',''],
+        [''],
+        ['７．その他','','','','',''],
+        ['','・本指針は年1回見直しを行う。','','','',''],
+        ['','・入居者・家族からの相談窓口を設置する。','','','',''],
+        [''],
+        ['','','','','施設長署名：','_______________'],
+        ['','','','','管理者署名：','_______________']
+      ];
+      ws = XLSX.utils.aoa_to_sheet(ws_data);
+      ws['!cols'] = [{wch:4},{wch:16},{wch:30},{wch:10},{wch:12},{wch:20}];
+      ws['!merges'] = [{s:{r:0,c:0},e:{r:0,c:5}}];
+      XLSX.utils.book_append_sheet(wb, ws, '看取り指針');
+      XLSX.writeFile(wb, '看取りに関する指針_' + facName + '.xlsx');
+      break;
+
+    case 'mitori_kenshu':
+      ws_data = [
+        ['看取り介護に関する職員研修記録','','','','','',''],
+        ['施設名：',facName,'','','作成日：',dateStr,''],
+        [''],
+        ['【研修概要】','','','','','',''],
+        ['研修名','','看取り介護に関する研修','','','',''],
+        ['実施日時','','　　年　　月　　日　　時　　分 ～ 　　時　　分','','','',''],
+        ['実施場所','','','','','',''],
+        ['講師','','','','','',''],
+        [''],
+        ['【研修内容】','','','','','',''],
+        ['','1. 看取り介護の基本的な考え方','','','','',''],
+        ['','2. 看取り期のケアの実際（身体的・精神的ケア）','','','','',''],
+        ['','3. 家族支援の方法','','','','',''],
+        ['','4. 職員のメンタルヘルス','','','','',''],
+        ['','5. 事例検討','','','','',''],
+        [''],
+        ['【参加者名簿】','','','','','',''],
+        ['No.','氏名','職種','所属','出欠','署名','備考'],
+        ['1','','','','','',''],
+        ['2','','','','','',''],
+        ['3','','','','','',''],
+        ['4','','','','','',''],
+        ['5','','','','','',''],
+        ['6','','','','','',''],
+        ['7','','','','','',''],
+        ['8','','','','','',''],
+        ['9','','','','','',''],
+        ['10','','','','','',''],
+        [''],
+        ['【研修の振り返り・感想】','','','','','',''],
+        ['','','','','','',''],
+        ['','','','','','',''],
+        ['','','','','','',''],
+        [''],
+        ['研修責任者：','','_______________','','施設長確認：','_______________','']
+      ];
+      ws = XLSX.utils.aoa_to_sheet(ws_data);
+      ws['!cols'] = [{wch:6},{wch:14},{wch:16},{wch:10},{wch:6},{wch:14},{wch:10}];
+      XLSX.utils.book_append_sheet(wb, ws, '研修記録');
+      XLSX.writeFile(wb, '看取り介護研修記録_' + facName + '.xlsx');
+      break;
+
+    case 'mitori_doui':
+      ws_data = [
+        ['看取り介護同意書','','','','',''],
+        ['','','','','',dateStr],
+        [''],
+        [corpName + '　' + facName + '　施設長　殿','','','','',''],
+        [''],
+        ['　私は、下記の入居者について、貴施設における看取り介護の内容について説明を受け、','','','','',''],
+        ['下記の事項を理解した上で、看取り介護を希望し、同意いたします。','','','','',''],
+        [''],
+        ['【入居者情報】','','','','',''],
+        ['','入居者氏名：','','','',''],
+        ['','生年月日：','','','',''],
+        ['','入居日：','','','',''],
+        [''],
+        ['【同意事項】','','','','',''],
+        ['','1. 看取り介護の基本方針について理解しました。','','','',''],
+        ['','2. 回復が見込めない状態であるとの医師の説明を受けました。','','','',''],
+        ['','3. 延命を目的とした措置は行わず、苦痛の緩和を中心としたケアを行うことに同意します。','','','',''],
+        ['','4. 容態の変化に応じて、適宜説明を受けることを希望します。','','','',''],
+        ['','5. いつでも看取り介護の同意を撤回できることを理解しています。','','','',''],
+        [''],
+        ['【同意者】','','','','',''],
+        ['','入居者との続柄：','','','',''],
+        ['','住所：','','','',''],
+        ['','氏名：','','','（自署）',''],
+        ['','電話番号：','','','',''],
+        [''],
+        ['【説明者】','','','','',''],
+        ['','医師名：','','','（署名）',''],
+        ['','施設管理者：','','','（署名）','']
+      ];
+      ws = XLSX.utils.aoa_to_sheet(ws_data);
+      ws['!cols'] = [{wch:4},{wch:18},{wch:20},{wch:10},{wch:10},{wch:10}];
+      ws['!merges'] = [{s:{r:0,c:0},e:{r:0,c:5}}];
+      XLSX.utils.book_append_sheet(wb, ws, '同意書');
+      XLSX.writeFile(wb, '看取り介護同意書_' + facName + '.xlsx');
+      break;
+
+    case 'mitori_keikaku':
+      ws_data = [
+        ['看取り介護計画書','','','','','',''],
+        ['施設名：',facName,'','作成日：',dateStr,'',''],
+        [''],
+        ['入居者氏名','','年齢','','性別','',''],
+        ['要介護度','','主病名','','','',''],
+        ['主治医','','','協力医療機関','','',''],
+        [''],
+        ['【看取り介護開始日】','　　　年　　月　　日','','','','',''],
+        ['【医師の判断】','','','','','',''],
+        ['','','','','','',''],
+        [''],
+        ['【ケア計画】','','','','','',''],
+        ['項目','具体的内容','頻度','担当','備考','',''],
+        ['疼痛管理','','','','','',''],
+        ['体位変換','','','','','',''],
+        ['口腔ケア','','','','','',''],
+        ['清拭・清潔','','','','','',''],
+        ['栄養・水分','','','','','',''],
+        ['精神的ケア','','','','','',''],
+        ['環境整備','','','','','',''],
+        [''],
+        ['【家族への連絡計画】','','','','','',''],
+        ['連絡先1','','','続柄：','','電話：',''],
+        ['連絡先2','','','続柄：','','電話：',''],
+        ['連絡頻度','','','','','',''],
+        [''],
+        ['【職員体制】','','','','','',''],
+        ['日勤帯','','','夜勤帯','','',''],
+        [''],
+        ['施設長：','_______________','','主治医：','_______________','','']
+      ];
+      ws = XLSX.utils.aoa_to_sheet(ws_data);
+      ws['!cols'] = [{wch:12},{wch:18},{wch:10},{wch:12},{wch:14},{wch:10},{wch:10}];
+      XLSX.utils.book_append_sheet(wb, ws, '看取り計画書');
+      XLSX.writeFile(wb, '看取り介護計画書_' + facName + '.xlsx');
+      break;
+
+    case 'koku_keikaku':
+      ws_data = [
+        ['口腔衛生管理体制に関する計画書','','','','',''],
+        ['施設名：',facName,'','作成日：',dateStr,''],
+        [''],
+        ['１．口腔衛生管理の目的','','','','',''],
+        ['','入居者の口腔内の清潔を保持し、誤嚥性肺炎の予防及びQOLの向上を図る。','','','',''],
+        [''],
+        ['２．歯科衛生士による助言・指導の計画','','','','',''],
+        ['連携歯科医院名','','','','',''],
+        ['歯科衛生士名','','','','',''],
+        ['訪問頻度','月　　回（　曜日）','','','',''],
+        ['助言内容','・入居者の口腔内状態の評価','','','',''],
+        ['','・介護職員への口腔ケア技術指導','','','',''],
+        ['','・口腔ケアに関する助言','','','',''],
+        [''],
+        ['３．日常の口腔ケア体制','','','','',''],
+        ['実施タイミング','毎食後　・　起床時　・　就寝前','','','',''],
+        ['担当者','介護職員（全員）','','','',''],
+        ['使用物品','歯ブラシ・スポンジブラシ・保湿剤・吸引器（必要時）','','','',''],
+        [''],
+        ['施設長：','_______________','','歯科医師：','_______________','']
+      ];
+      ws = XLSX.utils.aoa_to_sheet(ws_data);
+      ws['!cols'] = [{wch:16},{wch:30},{wch:10},{wch:12},{wch:16},{wch:10}];
+      XLSX.utils.book_append_sheet(wb, ws, '口腔衛生管理計画');
+      XLSX.writeFile(wb, '口腔衛生管理体制計画書_' + facName + '.xlsx');
+      break;
+
+    case 'koku_renkei':
+      ws_data = [
+        ['歯科医療機関との連携協定書','','','',''],
+        [''],
+        ['　' + corpName + '（以下「甲」）と','','','',''],
+        ['　　　　　　　　歯科医院（以下「乙」）は、以下のとおり連携協定を締結する。','','','',''],
+        [''],
+        ['第1条（目的）','','','',''],
+        ['','甲の運営する'+facName+'の入居者に対する口腔衛生管理について、','','',''],
+        ['','乙の歯科衛生士が専門的な助言・指導を行うことを目的とする。','','',''],
+        [''],
+        ['第2条（連携内容）','','','',''],
+        ['','（１）歯科衛生士による月　回の訪問指導','','',''],
+        ['','（２）介護職員への口腔ケア技術指導','','',''],
+        ['','（３）入居者の口腔内状態の定期評価','','',''],
+        ['','（４）緊急時の相談対応','','',''],
+        [''],
+        ['第3条（有効期間）','','','',''],
+        ['','本協定の有効期間は、締結日から1年間とし、双方から異議がない場合は自動更新とする。','','',''],
+        [''],
+        ['締結日：　　年　　月　　日','','','',''],
+        [''],
+        ['甲：',corpName,'','',''],
+        ['','代表者：','_______________','',''],
+        ['乙：','　　　　歯科医院','','',''],
+        ['','院長：','_______________','','']
+      ];
+      ws = XLSX.utils.aoa_to_sheet(ws_data);
+      ws['!cols'] = [{wch:8},{wch:30},{wch:20},{wch:10},{wch:10}];
+      XLSX.utils.book_append_sheet(wb, ws, '連携協定書');
+      XLSX.writeFile(wb, '歯科医療機関連携協定書_' + facName + '.xlsx');
+      break;
+
+    case 'reha_renkei':
+      ws_data = [
+        ['外部リハビリ専門職との連携協定書','','','',''],
+        [''],
+        ['　'+corpName+'（以下「甲」）と','','','',''],
+        ['　　　　　　　　　（以下「乙」）は、以下のとおり連携協定を締結する。','','','',''],
+        [''],
+        ['第1条（目的）','','','',''],
+        ['','甲の運営する'+facName+'の入居者の生活機能向上のため、','','',''],
+        ['','乙のPT/OTが専門的な助言・評価を行うことを目的とする。','','',''],
+        [''],
+        ['第2条（連携内容）','','','',''],
+        ['','（１）PT/OTによる月　回の訪問評価・助言','','',''],
+        ['','（２）利用者ごとの生活機能評価','','',''],
+        ['','（３）生活機能向上連携計画の共同作成','','',''],
+        ['','（４）介護職員へのリハビリ技術指導','','',''],
+        [''],
+        ['第3条（費用）','','','',''],
+        ['','乙の訪問に係る費用は、月額　　　　円とする。','','',''],
+        [''],
+        ['第4条（有効期間）','','','',''],
+        ['','本協定の有効期間は、締結日から1年間とし、自動更新とする。','','',''],
+        [''],
+        ['締結日：　　年　　月　　日','','','',''],
+        ['','甲：',corpName,'',''],
+        ['','乙：','','','']
+      ];
+      ws = XLSX.utils.aoa_to_sheet(ws_data);
+      ws['!cols'] = [{wch:8},{wch:30},{wch:20},{wch:10},{wch:10}];
+      XLSX.utils.book_append_sheet(wb, ws, '連携協定書');
+      XLSX.writeFile(wb, 'リハビリ連携協定書_' + facName + '.xlsx');
+      break;
+
+    case 'reha_keikaku':
+      ws_data = [
+        ['生活機能向上連携計画書','','','','','',''],
+        ['施設名：',facName,'','作成日：',dateStr,'',''],
+        [''],
+        ['入居者氏名','','年齢','','要介護度','',''],
+        [''],
+        ['【評価日】','　　年　　月　　日','','評価者（PT/OT）：','','',''],
+        [''],
+        ['【現在のADL評価】','','','','','',''],
+        ['項目','現在の状態','目標','具体的取り組み','頻度','担当','備考'],
+        ['移動','','','','','',''],
+        ['食事','','','','','',''],
+        ['排泄','','','','','',''],
+        ['入浴','','','','','',''],
+        ['更衣','','','','','',''],
+        ['コミュニケーション','','','','','',''],
+        [''],
+        ['【PT/OTの助言内容】','','','','','',''],
+        ['','','','','','',''],
+        [''],
+        ['【次回評価予定日】','　　年　　月　　日','','','','',''],
+        [''],
+        ['作成者：','_______________','','PT/OT：','_______________','','']
+      ];
+      ws = XLSX.utils.aoa_to_sheet(ws_data);
+      ws['!cols'] = [{wch:16},{wch:16},{wch:12},{wch:18},{wch:8},{wch:8},{wch:8}];
+      XLSX.utils.book_append_sheet(wb, ws, '連携計画書');
+      XLSX.writeFile(wb, '生活機能向上連携計画書_' + facName + '.xlsx');
+      break;
+
+    case 'yakan_taisei':
+      ws_data = [
+        ['夜間勤務体制表','','','','','','','',''],
+        ['施設名：',facName,'','','作成月：','　　年　　月','','',''],
+        [''],
+        ['','日','月','火','水','木','金','土','備考'],
+        ['夜勤者1','','','','','','','',''],
+        ['夜勤者2','','','','','','','',''],
+        ['夜勤者3','','','','','','','',''],
+        [''],
+        ['基準人数：','名','','配置人数：','名（基準+1名）','','','',''],
+        [''],
+        ['【夜勤時間帯】','　　時 ～ 　　時','','','','','','',''],
+        ['【巡回方法】','','','','','','','',''],
+        ['','','','','','','','',''],
+        [''],
+        ['施設長確認：','_______________','','管理者確認：','_______________','','','','']
+      ];
+      ws = XLSX.utils.aoa_to_sheet(ws_data);
+      ws['!cols'] = [{wch:12},{wch:8},{wch:8},{wch:8},{wch:8},{wch:8},{wch:8},{wch:8},{wch:10}];
+      XLSX.utils.book_append_sheet(wb, ws, '夜間勤務体制');
+      XLSX.writeFile(wb, '夜間勤務体制表_' + facName + '.xlsx');
+      break;
+
+    case 'service_haichi':
+      ws_data = [
+        ['介護福祉士配置状況一覧表','','','','',''],
+        ['施設名：',facName,'','作成日：',dateStr,''],
+        [''],
+        ['No.','氏名','職種','資格','取得年月日','常勤/非常勤'],
+        ['1','','介護職員','介護福祉士 / その他','',''],
+        ['2','','介護職員','介護福祉士 / その他','',''],
+        ['3','','介護職員','介護福祉士 / その他','',''],
+        ['4','','介護職員','介護福祉士 / その他','',''],
+        ['5','','介護職員','介護福祉士 / その他','',''],
+        ['6','','介護職員','介護福祉士 / その他','',''],
+        ['7','','介護職員','介護福祉士 / その他','',''],
+        ['8','','介護職員','介護福祉士 / その他','',''],
+        ['9','','介護職員','介護福祉士 / その他','',''],
+        ['10','','介護職員','介護福祉士 / その他','',''],
+        ['11','','介護職員','介護福祉士 / その他','',''],
+        ['12','','介護職員','介護福祉士 / その他','',''],
+        [''],
+        ['【集計】','','','','',''],
+        ['介護職員総数','　　名','','','',''],
+        ['うち介護福祉士','　　名','','','',''],
+        ['介護福祉士割合','　　%（50%以上必要）','','','',''],
+        [''],
+        ['管理者確認：','_______________','','施設長確認：','_______________','']
+      ];
+      ws = XLSX.utils.aoa_to_sheet(ws_data);
+      ws['!cols'] = [{wch:6},{wch:14},{wch:12},{wch:20},{wch:14},{wch:12}];
+      XLSX.utils.book_append_sheet(wb, ws, '配置状況');
+      XLSX.writeFile(wb, '介護福祉士配置状況一覧表_' + facName + '.xlsx');
+      break;
+
+    default:
+      // 汎用届出書
+      ws_data = [
+        ['加算算定に係る体制届出書','','','',''],
+        ['施設名：',facName,'','作成日：',dateStr],
+        ['法人名：',corpName,'','',''],
+        [''],
+        ['【届出内容】','','','',''],
+        ['加算名称','','','',''],
+        ['算定開始予定日','　　年　　月　　日','','',''],
+        [''],
+        ['【体制の概要】','','','',''],
+        ['','','','',''],
+        ['','','','',''],
+        [''],
+        ['【添付書類】','','','',''],
+        ['','□ 職員配置表','','',''],
+        ['','□ 資格証明書の写し','','',''],
+        ['','□ 研修修了証の写し','','',''],
+        ['','□ 連携協定書','','',''],
+        ['','□ その他（　　　　）','','',''],
+        [''],
+        ['届出者：','_______________','','施設長：','_______________']
+      ];
+      ws = XLSX.utils.aoa_to_sheet(ws_data);
+      ws['!cols'] = [{wch:16},{wch:24},{wch:10},{wch:12},{wch:16}];
+      XLSX.utils.book_append_sheet(wb, ws, '届出書');
+      XLSX.writeFile(wb, '加算体制届出書_' + facName + '.xlsx');
+      break;
+  }
+  showToast('書類をダウンロードしました', 'success');
+}
+
+// ============================================================
+// 入居検討AI判定（改修：保存機能追加）
 // ============================================================
 function escapeHtml(str) {
   if (!str) return '';
@@ -1618,6 +2843,7 @@ function showToast(message, type) {
 // ============================================================
 function init() {
   populateFacilitySelects();
+  initReportFilters();
   if (TELLUR_CONFIG.DEMO_MODE) {
     document.getElementById('authDemoBadge').style.display = 'inline-flex';
   }
@@ -1626,6 +2852,10 @@ function init() {
     var user = JSON.parse(session);
     loginAs(user);
   }
+  // 入居検討件数バッジ初期化
+  var admCount = getAdmissions().length;
+  var badge = document.getElementById('admissionCountBadge');
+  if (badge) badge.textContent = admCount;
 }
 init();
 </script>
