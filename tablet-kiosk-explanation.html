@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TELLUR 専用タブレットプラン | キオスク運用説明資料</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff;
+    --bg-sub:#f5f7fa;
+    --text:#1a1a2e;
+    --text-sub:#4a5568;
+    --accent:#1e3a5f;
+    --accent-soft:#e8eef5;
+    --tellur:#4ecdc4;
+    --tellur-soft:#e6f7f5;
+    --success:#276749;
+    --warn:#975a16;
+    --error:#c53030;
+    --border:#e2e8f0;
+    --shadow:0 4px 16px rgba(0,0,0,0.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{
+    background:var(--bg-sub);
+    color:var(--text);
+    font-family:'Noto Sans JP',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.7;
+  }
+  .deck{
+    width:100%;
+  }
+  .slide{
+    width:100vw;
+    height:100vh;
+    background:var(--bg);
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    padding:40px 64px 80px;
+    overflow:hidden;
+    page-break-after:always;
+    border-bottom:1px solid var(--border);
+  }
+  /* Header */
+  .slide-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding-bottom:16px;
+    border-bottom:1px solid var(--border);
+    margin-bottom:28px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .brand-mark{
+    width:32px;height:32px;
+    border-radius:8px;
+    background:linear-gradient(135deg,var(--accent),var(--tellur));
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-family:'Inter',sans-serif;font-weight:800;font-size:14px;
+    letter-spacing:0.5px;
+  }
+  .brand-text{
+    font-family:'Inter',sans-serif;
+    font-weight:800;
+    color:var(--accent);
+    font-size:15px;
+    letter-spacing:0.6px;
+  }
+  .brand-sub{
+    font-size:11px;
+    color:var(--text-sub);
+    letter-spacing:0.4px;
+    margin-top:2px;
+  }
+  .header-right{
+    text-align:right;
+    font-size:11px;
+    color:var(--text-sub);
+    letter-spacing:0.5px;
+  }
+  .header-right strong{
+    display:block;
+    font-family:'Inter',sans-serif;
+    color:var(--accent);
+    font-weight:800;
+    font-size:13px;
+    letter-spacing:0.6px;
+  }
+
+  /* Section labels */
+  .label{
+    font-size:11px;
+    letter-spacing:2.5px;
+    color:var(--accent);
+    font-weight:700;
+    text-transform:uppercase;
+    margin-bottom:14px;
+  }
+  h1.title{
+    font-size:44px;
+    line-height:1.3;
+    color:var(--text);
+    font-weight:700;
+    margin-bottom:12px;
+    letter-spacing:-0.5px;
+  }
+  h2.section-title{
+    font-size:32px;
+    line-height:1.35;
+    color:var(--text);
+    font-weight:700;
+    margin-bottom:8px;
+    letter-spacing:-0.3px;
+  }
+  .lead{
+    font-size:16px;
+    color:var(--text-sub);
+    max-width:900px;
+    margin-bottom:24px;
+  }
+
+  .body{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+  }
+
+  /* Footer */
+  .slide-footer{
+    position:absolute;
+    left:64px;right:64px;bottom:24px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:11px;
+    color:var(--text-sub);
+    letter-spacing:0.5px;
+  }
+  .page-num{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    color:var(--accent);
+    font-size:12px;
+  }
+
+  /* Cover slide */
+  .cover{
+    background:linear-gradient(135deg,#ffffff 0%,#f5f7fa 100%);
+  }
+  .cover .body{
+    justify-content:center;
+    align-items:flex-start;
+  }
+  .cover h1{
+    font-size:64px;
+    line-height:1.2;
+    color:var(--accent);
+    font-weight:800;
+    letter-spacing:-1px;
+    margin-bottom:16px;
+  }
+  .cover .subtitle{
+    font-size:24px;
+    color:var(--text);
+    font-weight:500;
+    margin-bottom:32px;
+  }
+  .cover .meta{
+    display:flex;
+    gap:48px;
+    margin-top:48px;
+    padding-top:24px;
+    border-top:2px solid var(--accent);
+    width:fit-content;
+  }
+  .cover .meta div{
+    font-size:12px;
+    color:var(--text-sub);
+    letter-spacing:1px;
+  }
+  .cover .meta strong{
+    display:block;
+    font-family:'Inter',sans-serif;
+    font-size:18px;
+    color:var(--accent);
+    font-weight:700;
+    margin-top:4px;
+  }
+  .cover-tag{
+    display:inline-block;
+    padding:6px 14px;
+    background:var(--tellur-soft);
+    color:var(--accent);
+    border-radius:999px;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:1px;
+    margin-bottom:24px;
+  }
+
+  /* Cards */
+  .grid-3{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+  }
+  .grid-2{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:24px;
+  }
+  .grid-4{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+  }
+  .card{
+    background:var(--bg-sub);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:24px;
+    box-shadow:var(--shadow);
+  }
+  .card .num{
+    font-family:'Inter',sans-serif;
+    font-weight:800;
+    font-size:14px;
+    color:var(--tellur);
+    letter-spacing:1px;
+    margin-bottom:8px;
+  }
+  .card h3{
+    font-size:17px;
+    color:var(--accent);
+    font-weight:700;
+    margin-bottom:10px;
+    letter-spacing:-0.2px;
+  }
+  .card p{
+    font-size:13px;
+    color:var(--text-sub);
+    line-height:1.8;
+  }
+
+  /* Stats */
+  .stat-num{
+    font-family:'Inter',sans-serif;
+    font-size:48px;
+    font-weight:800;
+    color:var(--accent);
+    line-height:1;
+    letter-spacing:-1px;
+  }
+  .stat-unit{
+    font-family:'Inter',sans-serif;
+    font-size:18px;
+    color:var(--text-sub);
+    margin-left:4px;
+  }
+  .stat-label{
+    font-size:12px;
+    color:var(--text-sub);
+    margin-top:8px;
+    letter-spacing:0.5px;
+  }
+
+  /* Steps */
+  .steps{
+    display:flex;
+    align-items:stretch;
+    gap:16px;
+  }
+  .step{
+    flex:1;
+    background:var(--bg-sub);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:24px 20px;
+    position:relative;
+    box-shadow:var(--shadow);
+  }
+  .step-num{
+    width:36px;height:36px;
+    border-radius:50%;
+    background:var(--accent);
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Inter',sans-serif;font-weight:800;font-size:15px;
+    margin-bottom:14px;
+  }
+  .step h4{
+    font-size:16px;
+    color:var(--accent);
+    font-weight:700;
+    margin-bottom:8px;
+  }
+  .step p{
+    font-size:12px;
+    color:var(--text-sub);
+    line-height:1.7;
+  }
+  .arrow{
+    align-self:center;
+    color:var(--tellur);
+    font-family:'Inter',sans-serif;
+    font-size:20px;
+    font-weight:700;
+  }
+
+  /* Table */
+  table.spec{
+    width:100%;
+    border-collapse:collapse;
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:8px;
+    overflow:hidden;
+    box-shadow:var(--shadow);
+    font-size:13px;
+  }
+  table.spec th,table.spec td{
+    padding:14px 18px;
+    text-align:left;
+    border-bottom:1px solid var(--border);
+  }
+  table.spec thead th{
+    background:var(--accent);
+    color:#fff;
+    font-weight:700;
+    letter-spacing:0.5px;
+    font-size:12px;
+  }
+  table.spec tbody th{
+    background:var(--bg-sub);
+    color:var(--accent);
+    font-weight:700;
+    width:200px;
+    font-size:12px;
+    letter-spacing:0.5px;
+  }
+  table.spec tbody tr:last-child th,
+  table.spec tbody tr:last-child td{border-bottom:none;}
+
+  /* Pricing */
+  .pricing{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+  }
+  .plan{
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:24px;
+    box-shadow:var(--shadow);
+    position:relative;
+  }
+  .plan.recommend{
+    border:2px solid var(--accent);
+    background:linear-gradient(180deg,#ffffff 0%,var(--accent-soft) 100%);
+  }
+  .plan-tag{
+    display:inline-block;
+    padding:4px 12px;
+    background:var(--accent);
+    color:#fff;
+    border-radius:999px;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:1px;
+    margin-bottom:10px;
+  }
+  .plan h3{
+    font-size:18px;
+    color:var(--accent);
+    margin-bottom:6px;
+    font-weight:700;
+  }
+  .plan .scale{
+    font-size:11px;
+    color:var(--text-sub);
+    margin-bottom:14px;
+    letter-spacing:0.5px;
+  }
+  .plan .price{
+    font-family:'Inter',sans-serif;
+    font-size:36px;
+    font-weight:800;
+    color:var(--accent);
+    line-height:1;
+    margin-bottom:4px;
+  }
+  .plan .price-unit{
+    font-size:13px;
+    color:var(--text-sub);
+    margin-bottom:16px;
+  }
+  .plan ul{
+    list-style:none;
+    padding-top:14px;
+    border-top:1px solid var(--border);
+  }
+  .plan li{
+    font-size:12px;
+    color:var(--text-sub);
+    padding:5px 0;
+    padding-left:18px;
+    position:relative;
+  }
+  .plan li::before{
+    content:"";
+    position:absolute;
+    left:0;top:13px;
+    width:8px;height:8px;
+    border-right:2px solid var(--tellur);
+    border-bottom:2px solid var(--tellur);
+    transform:rotate(45deg);
+  }
+
+  /* Tablet illustration */
+  .tablet-frame{
+    width:220px;
+    height:300px;
+    border:8px solid var(--accent);
+    border-radius:18px;
+    background:#fff;
+    margin:0 auto;
+    padding:14px;
+    display:flex;
+    flex-direction:column;
+    box-shadow:var(--shadow);
+    position:relative;
+  }
+  .tablet-frame::after{
+    content:"";
+    position:absolute;
+    bottom:-22px;left:50%;
+    transform:translateX(-50%);
+    width:40px;height:4px;
+    background:var(--accent);
+    border-radius:2px;
+  }
+  .tablet-screen{
+    flex:1;
+    background:linear-gradient(135deg,var(--accent),var(--tellur));
+    border-radius:6px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    text-align:center;
+    padding:12px;
+  }
+  .tablet-screen .logo{
+    font-family:'Inter',sans-serif;
+    font-weight:800;
+    font-size:22px;
+    letter-spacing:1px;
+  }
+  .tablet-screen .ttl{
+    font-size:10px;
+    margin-top:4px;
+    opacity:0.85;
+    letter-spacing:1px;
+  }
+
+  /* Compare problem/solution */
+  .ps{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:32px;
+    align-items:stretch;
+  }
+  .ps-block{
+    padding:28px;
+    border-radius:8px;
+    box-shadow:var(--shadow);
+    border:1px solid var(--border);
+  }
+  .ps-problem{background:#fff5f5;border-color:#fed7d7;}
+  .ps-solution{background:var(--tellur-soft);border-color:#b2f0eb;}
+  .ps-block h3{
+    font-size:18px;
+    margin-bottom:16px;
+    font-weight:700;
+  }
+  .ps-problem h3{color:var(--error);}
+  .ps-solution h3{color:var(--success);}
+  .ps-block ul{list-style:none;}
+  .ps-block li{
+    font-size:13px;
+    color:var(--text);
+    padding:8px 0 8px 22px;
+    position:relative;
+    line-height:1.7;
+  }
+  .ps-problem li::before{
+    content:"×";
+    position:absolute;left:0;top:6px;
+    color:var(--error);font-weight:800;font-size:16px;
+    font-family:'Inter',sans-serif;
+  }
+  .ps-solution li::before{
+    content:"";
+    position:absolute;left:2px;top:13px;
+    width:10px;height:6px;
+    border-left:2px solid var(--success);
+    border-bottom:2px solid var(--success);
+    transform:rotate(-45deg);
+  }
+
+  /* Diagram for tech stack */
+  .stack{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+  }
+  .stack-item{
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:20px 18px;
+    text-align:center;
+    box-shadow:var(--shadow);
+    position:relative;
+  }
+  .stack-icon{
+    width:48px;height:48px;
+    margin:0 auto 12px;
+    border-radius:8px;
+    background:var(--accent-soft);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .stack-icon svg{width:24px;height:24px;stroke:var(--accent);fill:none;stroke-width:2;}
+  .stack-item h4{
+    font-size:14px;
+    color:var(--accent);
+    font-weight:700;
+    margin-bottom:6px;
+  }
+  .stack-item p{
+    font-size:11px;
+    color:var(--text-sub);
+    line-height:1.6;
+  }
+
+  /* Effect cards */
+  .effects{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+  }
+  .effect{
+    background:var(--bg-sub);
+    border-radius:8px;
+    padding:24px 20px;
+    text-align:center;
+    border:1px solid var(--border);
+    box-shadow:var(--shadow);
+  }
+  .effect .stat-num{font-size:42px;}
+  .effect h4{
+    font-size:13px;
+    color:var(--accent);
+    font-weight:700;
+    margin-top:8px;
+    margin-bottom:6px;
+  }
+  .effect p{font-size:11px;color:var(--text-sub);}
+
+  /* Navigation */
+  .nav{
+    position:fixed;
+    bottom:24px;left:50%;
+    transform:translateX(-50%);
+    background:rgba(255,255,255,0.96);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:8px 16px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.12);
+    z-index:100;
+  }
+  .nav button{
+    width:32px;height:32px;
+    border:none;
+    background:var(--accent);
+    color:#fff;
+    border-radius:50%;
+    cursor:pointer;
+    font-family:'Inter',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    display:flex;align-items:center;justify-content:center;
+    transition:opacity 0.2s;
+  }
+  .nav button:hover{opacity:0.85;}
+  .dots{
+    display:flex;
+    gap:6px;
+    padding:0 8px;
+  }
+  .dot{
+    width:8px;height:8px;
+    border-radius:50%;
+    background:var(--border);
+    cursor:pointer;
+    transition:background 0.2s;
+  }
+  .dot.active{background:var(--accent);}
+  .nav-counter{
+    font-family:'Inter',sans-serif;
+    font-size:12px;
+    color:var(--text-sub);
+    font-weight:600;
+    padding:0 8px;
+  }
+
+  /* SVG icons inline */
+  .ico{width:18px;height:18px;display:inline-block;vertical-align:middle;}
+
+  /* Print */
+  @media print{
+    @page{size:A4 landscape;margin:0;}
+    html,body{background:#fff;}
+    .nav{display:none;}
+    .slide{
+      width:297mm;
+      height:210mm;
+      page-break-after:always;
+      border:none;
+      padding:14mm 18mm 18mm;
+    }
+    .slide:last-child{page-break-after:auto;}
+    .slide-footer{left:18mm;right:18mm;bottom:8mm;}
+  }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+  <!-- Slide 1: Cover -->
+  <section class="slide cover" id="s1">
+    <div class="slide-header">
+      <div class="brand">
+        <div class="brand-mark">T</div>
+        <div>
+          <div class="brand-text">TELLUR</div>
+          <div class="brand-sub">介護施設向けAI業務支援</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <strong>NBS Connect Inc.</strong>
+        2026 / Sales Material
+      </div>
+    </div>
+    <div class="body">
+      <span class="cover-tag">TABLET KIOSK PLAN</span>
+      <h1>TELLUR<br>専用タブレットプラン</h1>
+      <p class="subtitle">キオスク運用で、誰でも、迷わず、すぐ使える。</p>
+      <div class="meta">
+        <div>FOR<strong>介護施設運営法人</strong></div>
+        <div>PROVIDER<strong>株式会社NBS Connect</strong></div>
+        <div>VERSION<strong>2026.04</strong></div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>TELLUR Tablet Kiosk Plan Explanation</span>
+      <span class="page-num">01 / 10</span>
+    </div>
+  </section>
+
+  <!-- Slide 2: Problem -->
+  <section class="slide" id="s2">
+    <div class="slide-header">
+      <div class="brand">
+        <div class="brand-mark">T</div>
+        <div><div class="brand-text">TELLUR 専用タブレットプラン</div><div class="brand-sub">株式会社NBS Connect</div></div>
+      </div>
+      <div class="header-right"><strong>01. ISSUE</strong>現場の課題</div>
+    </div>
+    <div class="body">
+      <div class="label">CURRENT ISSUE</div>
+      <h2 class="section-title">現場のタブレット運用、こんな課題はありませんか</h2>
+      <p class="lead">介護現場ではIT機器の標準化が難しく、「使える人」と「使えない人」の差が業務品質に直結します。汎用タブレットの導入だけでは、運用負荷がむしろ増えるケースも少なくありません。</p>
+      <div class="grid-3" style="margin-top:16px;">
+        <div class="card">
+          <div class="num">CHALLENGE 01</div>
+          <h3>ITリテラシーのばらつき</h3>
+          <p>スタッフの年齢層が幅広く、ホーム画面・アプリ切替・通知の概念がわからない方も多い。新人教育に毎回時間を要する。</p>
+        </div>
+        <div class="card">
+          <div class="num">CHALLENGE 02</div>
+          <h3>業務外アプリの起動・誤操作</h3>
+          <p>SNS・カメラ・ブラウザなどを開いてしまう、設定を変更してしまう。元に戻す対応で本部・施設長の工数が消費される。</p>
+        </div>
+        <div class="card">
+          <div class="num">CHALLENGE 03</div>
+          <h3>紛失・私物化・情報漏えい</h3>
+          <p>端末の所在管理が曖昧で、紛失時の入居者情報漏えいリスクが残る。アップデートやアプリ配信も属人化しがち。</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>TELLUR Tablet Kiosk Plan Explanation</span>
+      <span class="page-num">02 / 10</span>
+    </div>
+  </section>
+
+  <!-- Slide 3: Solution overview -->
+  <section class="slide" id="s3">
+    <div class="slide-header">
+      <div class="brand">
+        <div class="brand-mark">T</div>
+        <div><div class="brand-text">TELLUR 専用タブレットプラン</div><div class="brand-sub">株式会社NBS Connect</div></div>
+      </div>
+      <div class="header-right"><strong>02. SOLUTION</strong>解決策の全体像</div>
+    </div>
+    <div class="body">
+      <div class="label">SOLUTION</div>
+      <h2 class="section-title">電源を入れたら、TELLURしか起動しない専用端末</h2>
+      <p class="lead">MDM（モバイルデバイス管理）とキオスクモードを組み合わせ、TELLUR専用に固定された業務タブレットを月額リースで提供します。スタッフは「ボタンを押すだけ」、運用は本部で一元管理。</p>
+      <div class="ps" style="margin-top:8px;">
+        <div class="ps-block ps-problem">
+          <h3>従来の汎用タブレット運用</h3>
+          <ul>
+            <li>初期設定・アプリインストールを各施設で実施</li>
+            <li>誤操作・他アプリ起動による業務中断</li>
+            <li>紛失時の対応が後手、情報漏えいリスク</li>
+            <li>OSアップデートの管理が属人的</li>
+            <li>導入直後から教育コストが発生</li>
+          </ul>
+        </div>
+        <div class="ps-block ps-solution">
+          <h3>TELLUR 専用タブレットプラン</h3>
+          <ul>
+            <li>キッティング済みで開梱即稼働、初期設定ゼロ</li>
+            <li>TELLUR以外は起動不可（キオスクロック）</li>
+            <li>紛失時は本部からリモートロック・初期化</li>
+            <li>OS・アプリは本部から一括配信・更新</li>
+            <li>スタッフ教育は「電源ON→タップ」のみ</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>TELLUR Tablet Kiosk Plan Explanation</span>
+      <span class="page-num">03 / 10</span>
+    </div>
+  </section>
+
+  <!-- Slide 4: How it works -->
+  <section class="slide" id="s4">
+    <div class="slide-header">
+      <div class="brand">
+        <div class="brand-mark">T</div>
+        <div><div class="brand-text">TELLUR 専用タブレットプラン</div><div class="brand-sub">株式会社NBS Connect</div></div>
+      </div>
+      <div class="header-right"><strong>03. HOW IT WORKS</strong>動作イメージ</div>
+    </div>
+    <div class="body">
+      <div class="label">USER FLOW</div>
+      <h2 class="section-title">スタッフの動きは、たった3ステップ</h2>
+      <p class="lead">通常のタブレットのように「アプリを探す」「ログインする」必要はありません。電源を入れた瞬間からTELLURが立ち上がり、業務画面に直行します。</p>
+      <div class="steps" style="margin-top:24px;">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h4>電源を入れる</h4>
+          <p>側面の電源ボタンを押すだけ。ホーム画面・パスワード解除・アプリ選択といった介在は一切なし。</p>
+        </div>
+        <div class="arrow">▶</div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h4>TELLURが自動起動</h4>
+          <p>キオスクモードによりTELLUR業務画面が全画面表示。施設・スタッフ情報は事前設定済み。</p>
+        </div>
+        <div class="arrow">▶</div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h4>業務操作のみ可能</h4>
+          <p>記録入力、申し送り、AI相談など業務機能だけが利用可能。ホームボタン・設定アプリへの離脱は不可。</p>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:center;margin-top:32px;">
+        <div class="tablet-frame">
+          <div class="tablet-screen">
+            <div class="logo">TELLUR</div>
+            <div class="ttl">業務開始 — タップしてください</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>TELLUR Tablet Kiosk Plan Explanation</span>
+      <span class="page-num">04 / 10</span>
+    </div>
+  </section>
+
+  <!-- Slide 5: Tech architecture -->
+  <section class="slide" id="s5">
+    <div class="slide-header">
+      <div class="brand">
+        <div class="brand-mark">T</div>
+        <div><div class="brand-text">TELLUR 専用タブレットプラン</div><div class="brand-sub">株式会社NBS Connect</div></div>
+      </div>
+      <div class="header-right"><strong>04. ARCHITECTURE</strong>技術構成</div>
+    </div>
+    <div class="body">
+      <div class="label">TECHNOLOGY</div>
+      <h2 class="section-title">4つの技術で「使い手を選ばない端末」を実現</h2>
+      <p class="lead">標準化された端末管理技術を組み合わせ、業務に必要な機能だけを安全に提供します。</p>
+      <div class="stack" style="margin-top:18px;">
+        <div class="stack-item">
+          <div class="stack-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="12" y1="18" x2="12" y2="20"/></svg>
+          </div>
+          <h4>MDM管理</h4>
+          <p>本部から全端末を一括管理。アプリ配信・OS更新・ポリシー変更を遠隔で実施。</p>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">
+            <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 1 1 8 0v4"/></svg>
+          </div>
+          <h4>ガイドアクセス / Kiosk Lock</h4>
+          <p>iOSガイドアクセスまたはAndroid Enterpriseで他アプリへの離脱を物理的に遮断。</p>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+          </div>
+          <h4>PWA配信</h4>
+          <p>TELLURはPWA（Webアプリ）。バージョン更新は配信のみで完結し、再配布不要。</p>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4z"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <h4>遠隔ロック・消去</h4>
+          <p>紛失時は本部から即時ロック・データ初期化。位置情報の追跡も可能。</p>
+        </div>
+      </div>
+      <div style="margin-top:24px;background:var(--bg-sub);border:1px solid var(--border);border-radius:8px;padding:18px 24px;">
+        <strong style="color:var(--accent);font-size:13px;">通信構成:</strong>
+        <span style="font-size:12px;color:var(--text-sub);margin-left:8px;">
+          専用タブレット ⟷ MDMサーバー（ポリシー・遠隔操作） ⟷ TELLURクラウド（業務データ・AI推論） ／ HTTPS / TLS1.3 / E2E暗号化
+        </span>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>TELLUR Tablet Kiosk Plan Explanation</span>
+      <span class="page-num">05 / 10</span>
+    </div>
+  </section>
+
+  <!-- Slide 6: Hardware spec -->
+  <section class="slide" id="s6">
+    <div class="slide-header">
+      <div class="brand">
+        <div class="brand-mark">T</div>
+        <div><div class="brand-text">TELLUR 専用タブレットプラン</div><div class="brand-sub">株式会社NBS Connect</div></div>
+      </div>
+      <div class="header-right"><strong>05. HARDWARE</strong>ハードウェア仕様</div>
+    </div>
+    <div class="body">
+      <div class="label">DEVICE SPEC</div>
+      <h2 class="section-title">2機種から選べる、現場最適のスペック</h2>
+      <p class="lead">施設環境・スタッフ層・既存運用に合わせて、iPadまたはAndroidタブレットからお選びいただけます。どちらもキオスク運用に最適化済みです。</p>
+      <table class="spec" style="margin-top:8px;">
+        <thead>
+          <tr>
+            <th style="width:200px;">項目</th>
+            <th>STANDARD｜iPad（10.9インチ）</th>
+            <th>VALUE｜Android タブレット（10.4インチ）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th>OS</th><td>iPadOS 17 以降</td><td>Android 13 / Enterprise 対応</td></tr>
+          <tr><th>ディスプレイ</th><td>10.9インチ Liquid Retina</td><td>10.4インチ TFT FHD</td></tr>
+          <tr><th>ストレージ</th><td>64GB</td><td>64GB（microSD 拡張可）</td></tr>
+          <tr><th>通信</th><td>Wi-Fi 6 / 4G LTE オプション</td><td>Wi-Fi 5 / 4G LTE オプション</td></tr>
+          <tr><th>耐久・防滴</th><td>専用シリコンケース付属</td><td>耐衝撃ケース・抗菌コーティング標準</td></tr>
+          <tr><th>バッテリー</th><td>連続稼働 約10時間</td><td>連続稼働 約12時間</td></tr>
+          <tr><th>キオスク方式</th><td>iOS ガイドアクセス + MDM</td><td>Android Enterprise Kiosk Mode</td></tr>
+          <tr><th>推奨利用シーン</th><td>記録UI重視・タッチ操作の滑らかさ重視</td><td>コスト重視・大量導入・現場耐久性重視</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="slide-footer">
+      <span>TELLUR Tablet Kiosk Plan Explanation</span>
+      <span class="page-num">06 / 10</span>
+    </div>
+  </section>
+
+  <!-- Slide 7: Pricing -->
+  <section class="slide" id="s7">
+    <div class="slide-header">
+      <div class="brand">
+        <div class="brand-mark">T</div>
+        <div><div class="brand-text">TELLUR 専用タブレットプラン</div><div class="brand-sub">株式会社NBS Connect</div></div>
+      </div>
+      <div class="header-right"><strong>06. PRICING</strong>料金モデル</div>
+    </div>
+    <div class="body">
+      <div class="label">PRICING</div>
+      <h2 class="section-title">初期投資ゼロ、月額一本でまるごと提供</h2>
+      <p class="lead">端末リース・MDM管理・TELLURサブスクリプションをセット化。導入時の高額支出をなくし、月額で予算化しやすい設計です。</p>
+      <div class="pricing" style="margin-top:18px;">
+        <div class="plan">
+          <span class="plan-tag" style="background:var(--text-sub);">SMALL</span>
+          <h3>スタータープラン</h3>
+          <div class="scale">小規模施設・1拠点｜端末 5台まで</div>
+          <div class="price">¥38,000<span style="font-size:14px;font-weight:600;">/月</span></div>
+          <div class="price-unit">税別 ／ リース・MDM・TELLUR含む</div>
+          <ul>
+            <li>専用タブレット 5台（Android）</li>
+            <li>MDM 管理ライセンス 5台分</li>
+            <li>TELLUR 基本機能 利用ID 10名</li>
+            <li>初期キッティング・配送料無料</li>
+            <li>電話・メールサポート 平日対応</li>
+          </ul>
+        </div>
+        <div class="plan recommend">
+          <span class="plan-tag">RECOMMEND</span>
+          <h3>スタンダードプラン</h3>
+          <div class="scale">中規模法人・複数拠点｜端末 6〜20台</div>
+          <div class="price">¥9,800<span style="font-size:14px;font-weight:600;">/台・月</span></div>
+          <div class="price-unit">税別 ／ 台数に応じてスケール</div>
+          <ul>
+            <li>iPad / Android 選択可</li>
+            <li>MDM＋遠隔ロック＋ログ管理</li>
+            <li>TELLUR 全機能＋AIアシスタント</li>
+            <li>本部一括ダッシュボード提供</li>
+            <li>導入トレーニング 2回 込み</li>
+          </ul>
+        </div>
+        <div class="plan">
+          <span class="plan-tag" style="background:var(--success);">ENTERPRISE</span>
+          <h3>エンタープライズ</h3>
+          <div class="scale">大規模法人｜端末 21台以上</div>
+          <div class="price">個別見積<span style="font-size:14px;font-weight:600;"></span></div>
+          <div class="price-unit">専任担当・SLA対応</div>
+          <ul>
+            <li>大量キッティング・段階展開対応</li>
+            <li>専任CS・SLA保証</li>
+            <li>監査ログ・SSO・IP制限</li>
+            <li>カスタム業務フォーム連携</li>
+            <li>オンサイト導入支援可</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>TELLUR Tablet Kiosk Plan Explanation</span>
+      <span class="page-num">07 / 10</span>
+    </div>
+  </section>
+
+  <!-- Slide 8: Onboarding flow -->
+  <section class="slide" id="s8">
+    <div class="slide-header">
+      <div class="brand">
+        <div class="brand-mark">T</div>
+        <div><div class="brand-text">TELLUR 専用タブレットプラン</div><div class="brand-sub">株式会社NBS Connect</div></div>
+      </div>
+      <div class="header-right"><strong>07. ONBOARDING</strong>導入までの流れ</div>
+    </div>
+    <div class="body">
+      <div class="label">ONBOARDING</div>
+      <h2 class="section-title">契約から稼働まで、現場の作業はゼロ</h2>
+      <p class="lead">施設スタッフは何もする必要がありません。NBS Connect側でキッティングを完了させた状態でお届けし、開梱→電源ONですぐ業務に使えます。</p>
+      <div class="steps" style="margin-top:24px;">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h4>契約・要件確認</h4>
+          <p>導入台数・施設情報・利用者リストを共有。専任担当が初期設計を実施。所要 約3営業日。</p>
+        </div>
+        <div class="arrow">▶</div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h4>キッティング</h4>
+          <p>NBS Connect 側で端末セットアップ・MDM登録・TELLUR設定・動作確認を完了。所要 約5営業日。</p>
+        </div>
+        <div class="arrow">▶</div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h4>発送・到着</h4>
+          <p>梱包箱に「電源ONですぐ使えます」の案内同梱。施設には宅配便で到着。所要 1〜2営業日。</p>
+        </div>
+        <div class="arrow">▶</div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <h4>開梱・即稼働</h4>
+          <p>開梱→電源ON→TELLUR起動。スタッフ作業ゼロ。同日からの業務利用が可能です。</p>
+        </div>
+      </div>
+      <div class="grid-3" style="margin-top:28px;">
+        <div class="card" style="text-align:center;">
+          <div class="stat-num">10<span class="stat-unit">営業日</span></div>
+          <div class="stat-label">契約から稼働開始まで</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="stat-num">0<span class="stat-unit">時間</span></div>
+          <div class="stat-label">現場スタッフのセットアップ作業</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="stat-num">15<span class="stat-unit">分</span></div>
+          <div class="stat-label">スタッフ向け基本操作レクチャー</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>TELLUR Tablet Kiosk Plan Explanation</span>
+      <span class="page-num">08 / 10</span>
+    </div>
+  </section>
+
+  <!-- Slide 9: Security & Operations -->
+  <section class="slide" id="s9">
+    <div class="slide-header">
+      <div class="brand">
+        <div class="brand-mark">T</div>
+        <div><div class="brand-text">TELLUR 専用タブレットプラン</div><div class="brand-sub">株式会社NBS Connect</div></div>
+      </div>
+      <div class="header-right"><strong>08. SECURITY</strong>セキュリティと運用</div>
+    </div>
+    <div class="body">
+      <div class="label">SECURITY & OPERATIONS</div>
+      <h2 class="section-title">本部からの一元管理で、運用負荷を最小化</h2>
+      <p class="lead">情報漏えい・端末紛失・アップデート対応といった「IT管理者がいない現場」の不安を、すべて本部で巻き取る設計です。</p>
+      <div class="grid-2" style="margin-top:18px;">
+        <div class="card">
+          <div class="num">SECURITY 01</div>
+          <h3>紛失時のリモートロック・初期化</h3>
+          <p>端末を紛失した場合、本部ダッシュボードから即座にロック・データ消去・位置追跡が可能。入居者情報の漏えいを防止します。</p>
+        </div>
+        <div class="card">
+          <div class="num">SECURITY 02</div>
+          <h3>アップデートの一元配信</h3>
+          <p>OS・TELLURアプリの更新は本部が一括管理。施設側で「更新作業を促す」必要は一切ありません。バージョン揃えも自動。</p>
+        </div>
+        <div class="card">
+          <div class="num">SECURITY 03</div>
+          <h3>監査ログ・アクセス記録</h3>
+          <p>誰がいつどの端末でどの記録を入力・閲覧したかを自動記録。事故・トラブル時の事実確認が可能。介護記録の信頼性を担保。</p>
+        </div>
+        <div class="card">
+          <div class="num">SECURITY 04</div>
+          <h3>通信の暗号化・閉域接続オプション</h3>
+          <p>すべての通信はTLS1.3で暗号化。エンタープライズプランでは閉域SIM・VPN接続による完全閉域運用にも対応します。</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>TELLUR Tablet Kiosk Plan Explanation</span>
+      <span class="page-num">09 / 10</span>
+    </div>
+  </section>
+
+  <!-- Slide 10: Effects -->
+  <section class="slide" id="s10">
+    <div class="slide-header">
+      <div class="brand">
+        <div class="brand-mark">T</div>
+        <div><div class="brand-text">TELLUR 専用タブレットプラン</div><div class="brand-sub">株式会社NBS Connect</div></div>
+      </div>
+      <div class="header-right"><strong>09. EFFECT</strong>導入効果</div>
+    </div>
+    <div class="body">
+      <div class="label">EXPECTED EFFECT</div>
+      <h2 class="section-title">現場・本部・経営の3層で効果が出る</h2>
+      <p class="lead">「ITが苦手な人がいる」前提で設計された専用端末プランは、教育・運用・経営の各レイヤーで効果を発揮します。</p>
+      <div class="effects" style="margin-top:24px;">
+        <div class="effect">
+          <div class="stat-num">−80<span class="stat-unit">%</span></div>
+          <h4>教育工数の削減</h4>
+          <p>「アプリ起動方法」「設定の戻し方」を教える必要がなくなります。</p>
+        </div>
+        <div class="effect">
+          <div class="stat-num">−65<span class="stat-unit">%</span></div>
+          <h4>機器トラブル対応の削減</h4>
+          <p>本部一元管理で、施設長への問い合わせ件数が大幅に減少。</p>
+        </div>
+        <div class="effect">
+          <div class="stat-num">+40<span class="stat-unit">%</span></div>
+          <h4>業務集中度の向上</h4>
+          <p>業務外アプリへの離脱がなくなり、本来業務への集中時間が増加。</p>
+        </div>
+        <div class="effect">
+          <div class="stat-num">100<span class="stat-unit">%</span></div>
+          <h4>セキュリティ標準化</h4>
+          <p>全端末で同一ポリシー。属人化・抜け漏れによる情報漏えいリスクをゼロ化。</p>
+        </div>
+      </div>
+      <div style="margin-top:32px;background:var(--accent);color:#fff;border-radius:8px;padding:24px 32px;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--shadow);">
+        <div>
+          <div style="font-size:11px;letter-spacing:2px;opacity:0.8;margin-bottom:6px;">NEXT STEP</div>
+          <div style="font-size:20px;font-weight:700;">まずは1施設・5台からのトライアル導入が可能です</div>
+          <div style="font-size:13px;opacity:0.9;margin-top:4px;">専任担当が貴法人の運用環境に合わせた最適プランをご提案します。</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:11px;opacity:0.8;letter-spacing:1px;">CONTACT</div>
+          <div style="font-family:'Inter',sans-serif;font-size:18px;font-weight:700;margin-top:4px;">NBS Connect Inc.</div>
+          <div style="font-size:12px;opacity:0.9;">tellur-sales@nbs-connect.co.jp</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>TELLUR Tablet Kiosk Plan Explanation</span>
+      <span class="page-num">10 / 10</span>
+    </div>
+  </section>
+
+</div>
+
+<!-- Navigation -->
+<nav class="nav" id="nav">
+  <button id="prev" aria-label="前へ">‹</button>
+  <div class="dots" id="dots"></div>
+  <span class="nav-counter"><span id="cur">1</span> / <span id="total">10</span></span>
+  <button id="next" aria-label="次へ">›</button>
+</nav>
+
+<script>
+(function(){
+  const slides=document.querySelectorAll('.slide');
+  const total=slides.length;
+  const dotsEl=document.getElementById('dots');
+  const curEl=document.getElementById('cur');
+  document.getElementById('total').textContent=total;
+  let idx=0;
+
+  // Build dots
+  slides.forEach((_,i)=>{
+    const d=document.createElement('span');
+    d.className='dot'+(i===0?' active':'');
+    d.addEventListener('click',()=>go(i));
+    dotsEl.appendChild(d);
+  });
+
+  function go(i){
+    if(i<0)i=0;
+    if(i>=total)i=total-1;
+    idx=i;
+    slides[i].scrollIntoView({behavior:'smooth',block:'start'});
+    curEl.textContent=i+1;
+    document.querySelectorAll('.dot').forEach((d,j)=>d.classList.toggle('active',j===i));
+  }
+
+  document.getElementById('prev').addEventListener('click',()=>go(idx-1));
+  document.getElementById('next').addEventListener('click',()=>go(idx+1));
+
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' ')go(idx+1);
+    if(e.key==='ArrowLeft'||e.key==='PageUp')go(idx-1);
+  });
+
+  // Update current slide on scroll
+  let scrollTimer;
+  window.addEventListener('scroll',()=>{
+    clearTimeout(scrollTimer);
+    scrollTimer=setTimeout(()=>{
+      const mid=window.scrollY+window.innerHeight/2;
+      slides.forEach((s,i)=>{
+        const top=s.offsetTop, bot=top+s.offsetHeight;
+        if(mid>=top&&mid<bot){
+          idx=i;
+          curEl.textContent=i+1;
+          document.querySelectorAll('.dot').forEach((d,j)=>d.classList.toggle('active',j===i));
+        }
+      });
+    },80);
+  });
+})();
+</script>
+</body>
+</html>

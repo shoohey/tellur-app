@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>TELLUR MDM Console — 専用タブレット一括管理</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: #f5f7fa;
+  color: #1a3a4a;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+.num { font-family: 'Inter', sans-serif; font-weight: 800; }
+
+/* Layout */
+.app { display: flex; min-height: 100vh; }
+
+/* Sidebar */
+.sidebar {
+  width: 230px;
+  background: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+.sidebar-logo {
+  padding: 22px 22px 18px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-mark {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, #4ecdc4, #1e3a5f);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  color: #1a3a4a;
+  letter-spacing: 0.5px;
+}
+.logo-sub {
+  font-size: 10px;
+  color: #718096;
+  letter-spacing: 1px;
+}
+.nav { padding: 14px 12px; flex: 1; }
+.nav-label {
+  font-size: 10px;
+  color: #a0aec0;
+  letter-spacing: 1.5px;
+  padding: 12px 12px 6px;
+  text-transform: uppercase;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  border-radius: 8px;
+  color: #4a5568;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 2px;
+  width: 100%;
+  text-align: left;
+  transition: all 0.15s;
+}
+.nav-item:hover { background: #f5f7fa; color: #1a3a4a; }
+.nav-item.active {
+  background: #e6fffb;
+  color: #0d7377;
+  font-weight: 700;
+}
+.nav-item.active svg { color: #4ecdc4; }
+.nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+.sidebar-foot {
+  padding: 14px 18px;
+  border-top: 1px solid #e2e8f0;
+  font-size: 11px;
+  color: #a0aec0;
+}
+
+/* Main */
+.main {
+  margin-left: 230px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.topbar {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.topbar-left h1 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a3a4a;
+}
+.topbar-left .crumb {
+  font-size: 11px;
+  color: #a0aec0;
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+}
+.topbar-right { display: flex; align-items: center; gap: 16px; }
+.search {
+  position: relative;
+}
+.search input {
+  width: 280px;
+  padding: 9px 12px 9px 36px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f5f7fa;
+  font-size: 13px;
+  font-family: inherit;
+  color: #1a3a4a;
+  outline: none;
+}
+.search input:focus { border-color: #4ecdc4; background: #fff; }
+.search svg {
+  position: absolute;
+  left: 11px; top: 50%;
+  transform: translateY(-50%);
+  width: 16px; height: 16px;
+  color: #a0aec0;
+}
+.icon-btn {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4a5568;
+  position: relative;
+}
+.icon-btn:hover { background: #f5f7fa; }
+.icon-btn .badge {
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 8px; height: 8px;
+  background: #c53030;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+.user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 16px;
+  border-left: 1px solid #e2e8f0;
+}
+.avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4ecdc4, #1e3a5f);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+}
+.user-info { line-height: 1.3; }
+.user-name { font-size: 13px; font-weight: 700; color: #1a3a4a; }
+.user-role { font-size: 11px; color: #718096; }
+
+/* Content */
+.content { padding: 24px 28px 40px; }
+
+/* KPI Cards */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.kpi {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 18px 20px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+  position: relative;
+  overflow: hidden;
+}
+.kpi-icon {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.kpi-icon svg { width: 22px; height: 22px; }
+.kpi-label {
+  font-size: 12px;
+  color: #718096;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+.kpi-value {
+  font-size: 36px;
+  font-weight: 800;
+  font-family: 'Inter', sans-serif;
+  color: #1a3a4a;
+  margin: 6px 0 4px;
+  line-height: 1;
+}
+.kpi-unit { font-size: 14px; color: #718096; margin-left: 4px; font-weight: 500; }
+.kpi-delta {
+  font-size: 11px;
+  font-weight: 700;
+}
+.kpi-delta.up { color: #276749; }
+.kpi-delta.down { color: #c53030; }
+.kpi-delta.warn { color: #975a16; }
+
+.kpi-c1 { background: #e6fffb; color: #0d7377; }
+.kpi-c2 { background: #e6f9ee; color: #276749; }
+.kpi-c3 { background: #fef5e7; color: #975a16; }
+.kpi-c4 { background: #ebf3ff; color: #1e3a5f; }
+
+/* Layout grid */
+.row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+.card-head {
+  padding: 16px 20px;
+  border-bottom: 1px solid #edf2f7;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a3a4a;
+}
+.card-sub {
+  font-size: 11px;
+  color: #a0aec0;
+  margin-top: 2px;
+}
+.card-body { padding: 18px 20px; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #f5f7fa;
+  color: #4a5568;
+}
+.chip.live { background: #e6fffb; color: #0d7377; }
+.chip.live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #4ecdc4; }
+
+/* Chart */
+.chart-wrap {
+  position: relative;
+  height: 240px;
+  padding: 8px 4px 0;
+}
+svg.chart { width: 100%; height: 100%; }
+
+/* Map */
+.map-wrap {
+  position: relative;
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+svg.japan-map { width: 100%; height: 100%; }
+.map-legend {
+  position: absolute;
+  top: 12px; left: 12px;
+  background: rgba(255,255,255,0.9);
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #4a5568;
+  border: 1px solid #e2e8f0;
+}
+.map-legend div { display: flex; align-items: center; gap: 6px; margin: 3px 0; }
+.map-legend span { width: 8px; height: 8px; border-radius: 50%; }
+
+/* Table */
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  background: #f5f7fa;
+  font-size: 11px;
+  color: #718096;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid #e2e8f0;
+  text-transform: uppercase;
+}
+tbody td {
+  padding: 13px 14px;
+  font-size: 13px;
+  color: #1a3a4a;
+  border-bottom: 1px solid #edf2f7;
+}
+tbody tr { cursor: pointer; transition: background 0.12s; }
+tbody tr:nth-child(even) { background: #fafbfc; }
+tbody tr:hover { background: #e6fffb; }
+.tab-id { font-family: 'Inter', sans-serif; font-weight: 700; color: #0d7377; }
+.bat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.bat-bar {
+  width: 38px;
+  height: 6px;
+  background: #edf2f7;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.bat-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+}
+.bat-pct { font-size: 12px; font-family: 'Inter', sans-serif; font-weight: 700; color: #4a5568; }
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+.status.online { background: #e6f9ee; color: #276749; }
+.status.online::before { background: #38a169; }
+.status.offline { background: #edf2f7; color: #4a5568; }
+.status.offline::before { background: #a0aec0; }
+.status.alert { background: #fff5f5; color: #c53030; }
+.status.alert::before { background: #e53e3e; }
+.status.warn { background: #fef5e7; color: #975a16; }
+.status.warn::before { background: #dd6b20; }
+
+/* Alerts list */
+.alert-item {
+  padding: 14px 20px;
+  border-bottom: 1px solid #edf2f7;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.alert-item:last-child { border-bottom: none; }
+.alert-icon {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.alert-icon svg { width: 18px; height: 18px; }
+.alert-icon.red { background: #fff5f5; color: #c53030; }
+.alert-icon.orange { background: #fef5e7; color: #975a16; }
+.alert-icon.blue { background: #ebf3ff; color: #1e3a5f; }
+.alert-body { flex: 1; min-width: 0; }
+.alert-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a3a4a;
+}
+.alert-desc {
+  font-size: 12px;
+  color: #718096;
+  margin-top: 2px;
+}
+.alert-time {
+  font-size: 11px;
+  color: #a0aec0;
+  margin-top: 4px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Page hidden */
+.page { display: none; }
+.page.active { display: block; }
+
+/* Filters */
+.filter-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+.filter-bar select, .filter-bar input {
+  padding: 9px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 13px;
+  font-family: inherit;
+  color: #1a3a4a;
+  outline: none;
+}
+.filter-bar input { min-width: 240px; }
+.btn-primary {
+  padding: 9px 16px;
+  background: #4ecdc4;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-primary:hover { background: #3db8af; }
+.btn-secondary {
+  padding: 9px 16px;
+  background: #fff;
+  color: #4a5568;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-secondary:hover { background: #f5f7fa; }
+
+/* Modal */
+.modal-bg {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 58, 74, 0.55);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+.modal-bg.show { display: flex; }
+.modal {
+  background: #fff;
+  width: 560px;
+  max-width: 92vw;
+  border-radius: 12px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+  overflow: hidden;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+.modal-head {
+  padding: 18px 22px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-head h3 {
+  font-size: 16px;
+  font-weight: 700;
+}
+.modal-close {
+  width: 30px; height: 30px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #718096;
+}
+.modal-close:hover { background: #f5f7fa; }
+.modal-body {
+  padding: 22px;
+  overflow-y: auto;
+}
+.modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 22px;
+  margin-bottom: 16px;
+}
+.detail-row { }
+.detail-label {
+  font-size: 11px;
+  color: #a0aec0;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.detail-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a3a4a;
+}
+.modal-foot {
+  padding: 14px 22px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #4a5568;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin: 18px 0 8px;
+}
+.action-list {
+  background: #f5f7fa;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+.action-list-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 12px;
+  color: #4a5568;
+  border-bottom: 1px solid #edf2f7;
+}
+.action-list-item:last-child { border-bottom: none; }
+.action-list-item span:last-child { font-family: 'Inter', sans-serif; color: #1a3a4a; }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>
+      </div>
+      <div>
+        <div class="logo-text">TELLUR</div>
+        <div class="logo-sub">MDM CONSOLE</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <div class="nav-label">運用管理</div>
+      <button class="nav-item active" data-page="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        ダッシュボード
+      </button>
+      <button class="nav-item" data-page="devices">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        端末一覧
+      </button>
+      <button class="nav-item" data-page="apps">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        アプリ配信
+      </button>
+      <button class="nav-item" data-page="alerts">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        アラート
+      </button>
+      <div class="nav-label">セキュリティ</div>
+      <button class="nav-item" data-page="security">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        セキュリティ
+      </button>
+      <button class="nav-item" data-page="logs">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        ログ
+      </button>
+      <button class="nav-item" data-page="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        設定
+      </button>
+    </nav>
+    <div class="sidebar-foot">
+      v2.4.1 — © NBS Connect<br>
+      48台 / 12施設 リース管理中
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="crumb" id="crumb">RUNTIME / DASHBOARD</div>
+        <h1 id="page-title">ダッシュボード</h1>
+      </div>
+      <div class="topbar-right">
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="端末ID / 施設名で検索...">
+        </div>
+        <button class="icon-btn" title="通知">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="badge"></span>
+        </button>
+        <button class="icon-btn" title="ヘルプ">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </button>
+        <div class="user">
+          <div class="avatar">YS</div>
+          <div class="user-info">
+            <div class="user-name">山田 翔太</div>
+            <div class="user-role">本部管理者</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- DASHBOARD PAGE -->
+      <div class="page active" id="page-dashboard">
+        <div class="kpi-grid">
+          <div class="kpi">
+            <div class="kpi-icon kpi-c1">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            </div>
+            <div class="kpi-label">登録端末数</div>
+            <div class="kpi-value">48<span class="kpi-unit">台</span></div>
+            <div class="kpi-delta up">+ 4台 (今月新規)</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-icon kpi-c2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="kpi-label">オンライン</div>
+            <div class="kpi-value">45<span class="kpi-unit">/ 48</span></div>
+            <div class="kpi-delta up">稼働率 93.7%</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-icon kpi-c3">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="kpi-label">アラート</div>
+            <div class="kpi-value">2<span class="kpi-unit">件</span></div>
+            <div class="kpi-delta warn">要対応 1件</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-icon kpi-c4">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div class="kpi-label">リース契約中</div>
+            <div class="kpi-value">48<span class="kpi-unit">件</span></div>
+            <div class="kpi-delta up">12施設 / 全国</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <div class="card-title">直近30日 端末稼働率</div>
+                <div class="card-sub">日次平均オンライン率（%）</div>
+              </div>
+              <span class="chip live">リアルタイム</span>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap">
+                <svg class="chart" id="chart" viewBox="0 0 720 240" preserveAspectRatio="none"></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <div class="card-title">最近のアラート</div>
+                <div class="card-sub">過去24時間</div>
+              </div>
+              <button class="chip">すべて表示</button>
+            </div>
+            <div>
+              <div class="alert-item">
+                <div class="alert-icon red">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="7" width="12" height="10" rx="1"/><line x1="22" y1="11" x2="22" y2="13"/></svg>
+                </div>
+                <div class="alert-body">
+                  <div class="alert-title">バッテリー低下</div>
+                  <div class="alert-desc">TAB-027 / みどり介護センター 残量 12%</div>
+                  <div class="alert-time">14分前</div>
+                </div>
+              </div>
+              <div class="alert-item">
+                <div class="alert-icon orange">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l22 22"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+                </div>
+                <div class="alert-body">
+                  <div class="alert-title">オフライン1時間</div>
+                  <div class="alert-desc">TAB-014 / さくら苑 ネットワーク切断</div>
+                  <div class="alert-time">1時間8分前</div>
+                </div>
+              </div>
+              <div class="alert-item">
+                <div class="alert-icon blue">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                </div>
+                <div class="alert-body">
+                  <div class="alert-title">アップデート必要</div>
+                  <div class="alert-desc">TELLURアプリ v2.4.1 が3台で未適用</div>
+                  <div class="alert-time">3時間前</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <div class="card-title">設置拠点マップ</div>
+                <div class="card-sub">12施設 / 全国</div>
+              </div>
+            </div>
+            <div class="card-body" style="padding:12px 16px 18px;">
+              <div class="map-wrap">
+                <div class="map-legend">
+                  <div><span style="background:#38a169"></span>正常</div>
+                  <div><span style="background:#dd6b20"></span>注意</div>
+                  <div><span style="background:#e53e3e"></span>アラート</div>
+                </div>
+                <svg class="japan-map" viewBox="0 0 400 360"></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <div class="card-title">端末ステータス一覧</div>
+                <div class="card-sub">直近の通信状態</div>
+              </div>
+              <button class="chip" onclick="showPage('devices')">すべて表示 →</button>
+            </div>
+            <div style="overflow-x:auto;">
+              <table id="device-table-mini">
+                <thead>
+                  <tr>
+                    <th>端末ID</th>
+                    <th>施設</th>
+                    <th>モデル</th>
+                    <th>バッテリー</th>
+                    <th>最終通信</th>
+                    <th>状態</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEVICES PAGE -->
+      <div class="page" id="page-devices">
+        <div class="filter-bar">
+          <input type="text" placeholder="端末ID / 施設名で検索">
+          <select>
+            <option>全施設</option>
+            <option>さくら苑</option>
+            <option>みどり介護センター</option>
+            <option>あじさいホーム</option>
+          </select>
+          <select>
+            <option>全ステータス</option>
+            <option>オンライン</option>
+            <option>オフライン</option>
+            <option>アラート</option>
+          </select>
+          <select>
+            <option>全モデル</option>
+            <option>iPad (10th)</option>
+            <option>Lenovo Tab M10</option>
+          </select>
+          <div style="flex:1"></div>
+          <button class="btn-secondary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            CSVエクスポート
+          </button>
+          <button class="btn-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            端末を追加
+          </button>
+        </div>
+
+        <div class="card">
+          <div style="overflow-x:auto;">
+            <table id="device-table-full">
+              <thead>
+                <tr>
+                  <th>端末ID</th>
+                  <th>施設名</th>
+                  <th>地域</th>
+                  <th>モデル</th>
+                  <th>OS</th>
+                  <th>バッテリー</th>
+                  <th>最終通信</th>
+                  <th>ステータス</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- OTHER PAGES -->
+      <div class="page" id="page-apps">
+        <div class="card">
+          <div class="card-head"><div class="card-title">アプリ配信</div></div>
+          <div class="card-body" style="padding:40px;text-align:center;color:#a0aec0;">この画面はデモ版では構築中です。本番版では一括アプリ配信・バージョン管理・適用履歴の確認が可能です。</div>
+        </div>
+      </div>
+      <div class="page" id="page-alerts">
+        <div class="card">
+          <div class="card-head"><div class="card-title">アラート一覧</div></div>
+          <div class="card-body" style="padding:40px;text-align:center;color:#a0aec0;">過去のアラート履歴・対応状況の管理画面（デモ版では省略）</div>
+        </div>
+      </div>
+      <div class="page" id="page-security">
+        <div class="card">
+          <div class="card-head"><div class="card-title">セキュリティ</div></div>
+          <div class="card-body" style="padding:40px;text-align:center;color:#a0aec0;">パスコードポリシー / 紛失時リモートロック / データワイプ機能（デモ版では省略）</div>
+        </div>
+      </div>
+      <div class="page" id="page-logs">
+        <div class="card">
+          <div class="card-head"><div class="card-title">操作ログ</div></div>
+          <div class="card-body" style="padding:40px;text-align:center;color:#a0aec0;">監査ログ・ユーザー操作履歴の表示画面（デモ版では省略）</div>
+        </div>
+      </div>
+      <div class="page" id="page-settings">
+        <div class="card">
+          <div class="card-head"><div class="card-title">設定</div></div>
+          <div class="card-body" style="padding:40px;text-align:center;color:#a0aec0;">テナント設定・通知設定・ユーザー権限管理（デモ版では省略）</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-title">端末詳細</h3>
+      <button class="modal-close" onclick="closeModal()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-foot">
+      <button class="btn-secondary">リモートロック</button>
+      <button class="btn-secondary">再起動</button>
+      <button class="btn-primary">詳細を開く</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ Data ============
+const facilities = [
+  { name: 'さくら苑', region: '北海道 札幌市', x: 295, y: 80 },
+  { name: 'みどり介護センター', region: '宮城県 仙台市', x: 285, y: 145 },
+  { name: 'あじさいホーム', region: '東京都 世田谷区', x: 260, y: 200 },
+  { name: 'ひまわり苑', region: '神奈川県 横浜市', x: 258, y: 210 },
+  { name: 'もみじ介護ホーム', region: '愛知県 名古屋市', x: 220, y: 215 },
+  { name: 'こすもす苑', region: '京都府 京都市', x: 195, y: 215 },
+  { name: 'なでしこホーム', region: '大阪府 大阪市', x: 188, y: 220 },
+  { name: 'すみれの里', region: '兵庫県 神戸市', x: 178, y: 220 },
+  { name: 'ふじの杜', region: '広島県 広島市', x: 138, y: 225 },
+  { name: 'うめの里', region: '福岡県 福岡市', x: 95, y: 250 },
+  { name: 'つばき荘', region: '熊本県 熊本市', x: 92, y: 270 },
+  { name: 'やまぶき苑', region: '北海道 旭川市', x: 305, y: 65 }
+];
+const models = [
+  { name: 'iPad (10th)', os: 'iPadOS 17.4' },
+  { name: 'iPad (10th)', os: 'iPadOS 17.5' },
+  { name: 'Lenovo Tab M10', os: 'Android 13' },
+  { name: 'Lenovo Tab M10', os: 'Android 14' }
+];
+const statuses = ['online','online','online','online','online','online','online','online','online','offline','alert','warn'];
+
+function rndPick(a){ return a[Math.floor(Math.random()*a.length)]; }
+function pad(n){ return String(n).padStart(3,'0'); }
+
+// Seeded random
+let seed = 42;
+function srand(){ seed = (seed*9301+49297)%233280; return seed/233280; }
+function spick(a){ return a[Math.floor(srand()*a.length)]; }
+
+const devices = [];
+for (let i = 1; i <= 48; i++) {
+  const fac = spick(facilities);
+  const mod = spick(models);
+  let st = spick(statuses);
+  if (i === 14) st = 'offline';
+  if (i === 27) st = 'alert';
+  if (i === 33) st = 'warn';
+  let bat;
+  if (st === 'alert') bat = 8 + Math.floor(srand()*8);
+  else if (st === 'warn') bat = 18 + Math.floor(srand()*10);
+  else if (st === 'offline') bat = 30 + Math.floor(srand()*40);
+  else bat = 55 + Math.floor(srand()*45);
+  let last;
+  if (st === 'online') last = Math.floor(srand()*5)+1 + '分前';
+  else if (st === 'offline') last = (Math.floor(srand()*3)+1) + '時間前';
+  else last = Math.floor(srand()*30)+5 + '分前';
+  devices.push({
+    id: 'TAB-' + pad(i),
+    facility: fac.name,
+    region: fac.region,
+    model: mod.name,
+    os: mod.os,
+    battery: bat,
+    last: last,
+    status: st
+  });
+}
+
+// ============ Render Functions ============
+function statusLabel(s){
+  return {online:'オンライン', offline:'オフライン', alert:'アラート', warn:'注意'}[s];
+}
+function batColor(b){
+  if (b < 20) return '#e53e3e';
+  if (b < 40) return '#dd6b20';
+  if (b < 60) return '#d69e2e';
+  return '#38a169';
+}
+
+function renderDeviceRow(d, mini=false) {
+  const bat = `<div class="bat"><div class="bat-bar"><i style="width:${d.battery}%;background:${batColor(d.battery)}"></i></div><span class="bat-pct">${d.battery}%</span></div>`;
+  if (mini) {
+    return `<tr data-id="${d.id}">
+      <td class="tab-id">${d.id}</td>
+      <td>${d.facility}</td>
+      <td>${d.model}</td>
+      <td>${bat}</td>
+      <td>${d.last}</td>
+      <td><span class="status ${d.status}">${statusLabel(d.status)}</span></td>
+    </tr>`;
+  }
+  return `<tr data-id="${d.id}">
+    <td class="tab-id">${d.id}</td>
+    <td>${d.facility}</td>
+    <td>${d.region}</td>
+    <td>${d.model}</td>
+    <td>${d.os}</td>
+    <td>${bat}</td>
+    <td>${d.last}</td>
+    <td><span class="status ${d.status}">${statusLabel(d.status)}</span></td>
+  </tr>`;
+}
+
+function renderTables() {
+  document.querySelector('#device-table-mini tbody').innerHTML =
+    devices.slice(0,15).map(d => renderDeviceRow(d, true)).join('');
+  document.querySelector('#device-table-full tbody').innerHTML =
+    devices.map(d => renderDeviceRow(d, false)).join('');
+
+  document.querySelectorAll('tbody tr').forEach(tr => {
+    tr.addEventListener('click', () => openModal(tr.dataset.id));
+  });
+}
+
+// ============ Chart ============
+function renderChart() {
+  const svg = document.getElementById('chart');
+  const W = 720, H = 240, P = 36;
+  const data = [];
+  let v = 92;
+  for (let i = 0; i < 30; i++) {
+    v += (srand()-0.5)*4;
+    if (v > 99) v = 99;
+    if (v < 86) v = 86;
+    data.push(v);
+  }
+  data[28] = 88.5;
+  data[29] = 93.7;
+
+  const min = 84, max = 100;
+  const stepX = (W - P*2) / (data.length - 1);
+  const yScale = v => H - P - ((v - min) / (max - min)) * (H - P*2);
+
+  let grid = '';
+  for (let i = 0; i <= 4; i++) {
+    const y = P + (H - P*2) * i / 4;
+    const val = max - (max-min)*i/4;
+    grid += `<line x1="${P}" y1="${y}" x2="${W-P/2}" y2="${y}" stroke="#edf2f7" stroke-width="1"/>`;
+    grid += `<text x="${P-8}" y="${y+4}" font-size="10" fill="#a0aec0" text-anchor="end" font-family="Inter">${val.toFixed(0)}</text>`;
+  }
+
+  let xLabels = '';
+  [0, 7, 14, 21, 29].forEach(i => {
+    const x = P + i * stepX;
+    xLabels += `<text x="${x}" y="${H-12}" font-size="10" fill="#a0aec0" text-anchor="middle" font-family="Inter">${i === 29 ? '今日' : (29-i)+'日前'}</text>`;
+  });
+
+  let path = '';
+  let area = '';
+  data.forEach((d, i) => {
+    const x = P + i * stepX;
+    const y = yScale(d);
+    path += (i === 0 ? `M${x},${y}` : ` L${x},${y}`);
+  });
+  area = path + ` L${P + (data.length-1)*stepX},${H-P} L${P},${H-P} Z`;
+
+  let circles = '';
+  data.forEach((d, i) => {
+    const x = P + i * stepX;
+    const y = yScale(d);
+    const r = i === 29 ? 4 : 0;
+    if (r > 0) circles += `<circle cx="${x}" cy="${y}" r="${r}" fill="#4ecdc4" stroke="#fff" stroke-width="2"/>`;
+  });
+
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="lg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#4ecdc4" stop-opacity="0.35"/>
+        <stop offset="100%" stop-color="#4ecdc4" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    ${grid}
+    <path d="${area}" fill="url(#lg)"/>
+    <path d="${path}" fill="none" stroke="#4ecdc4" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    ${circles}
+    ${xLabels}
+  `;
+}
+
+// ============ Japan Map ============
+function renderMap() {
+  const svg = document.querySelector('.japan-map');
+  // Simplified Japan outline (rough)
+  const islands = `
+    <!-- Hokkaido -->
+    <path d="M270,30 Q290,15 320,25 Q345,35 340,75 Q335,100 305,105 Q275,108 268,85 Q260,55 270,30 Z" fill="#e2e8f0" stroke="#cbd5e0" stroke-width="1"/>
+    <!-- Honshu -->
+    <path d="M255,135 Q280,125 295,140 Q305,150 280,160 Q260,170 240,200 Q220,220 200,225 Q175,230 155,225 Q135,220 120,225 Q105,230 95,225 Q105,205 130,200 Q160,195 190,195 Q220,185 240,170 Q250,150 255,135 Z" fill="#e2e8f0" stroke="#cbd5e0" stroke-width="1"/>
+    <!-- Shikoku -->
+    <path d="M155,235 Q175,232 180,245 Q175,255 155,253 Q140,250 145,240 Q150,235 155,235 Z" fill="#e2e8f0" stroke="#cbd5e0" stroke-width="1"/>
+    <!-- Kyushu -->
+    <path d="M75,240 Q95,225 110,245 Q115,265 100,285 Q85,295 70,285 Q60,270 65,255 Q70,245 75,240 Z" fill="#e2e8f0" stroke="#cbd5e0" stroke-width="1"/>
+    <!-- Okinawa hint -->
+    <circle cx="40" cy="320" r="3" fill="#e2e8f0"/>
+  `;
+
+  // Pin colors based on facility status
+  const pinColors = ['#38a169','#38a169','#38a169','#38a169','#dd6b20','#38a169','#38a169','#38a169','#38a169','#e53e3e','#38a169','#38a169'];
+
+  let pins = '';
+  facilities.forEach((f, i) => {
+    const c = pinColors[i];
+    pins += `
+      <g>
+        <circle cx="${f.x}" cy="${f.y}" r="9" fill="${c}" opacity="0.2"/>
+        <circle cx="${f.x}" cy="${f.y}" r="5" fill="${c}" stroke="#fff" stroke-width="2"/>
+      </g>
+    `;
+  });
+
+  svg.innerHTML = islands + pins;
+}
+
+// ============ Navigation ============
+const titles = {
+  dashboard: ['ダッシュボード', 'RUNTIME / DASHBOARD'],
+  devices: ['端末一覧', 'DEVICE / LIST'],
+  apps: ['アプリ配信', 'APPS / DEPLOY'],
+  alerts: ['アラート', 'OPS / ALERTS'],
+  security: ['セキュリティ', 'SECURITY'],
+  logs: ['操作ログ', 'AUDIT / LOGS'],
+  settings: ['設定', 'SETTINGS']
+};
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === name));
+  document.getElementById('page-title').textContent = titles[name][0];
+  document.getElementById('crumb').textContent = titles[name][1];
+  window.scrollTo(0, 0);
+}
+
+document.querySelectorAll('.nav-item').forEach(n => {
+  n.addEventListener('click', () => showPage(n.dataset.page));
+});
+
+// ============ Modal ============
+function openModal(id) {
+  const d = devices.find(x => x.id === id);
+  if (!d) return;
+  document.getElementById('modal-title').textContent = d.id + ' 端末詳細';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-grid">
+      <div class="detail-row"><div class="detail-label">端末ID</div><div class="detail-value tab-id">${d.id}</div></div>
+      <div class="detail-row"><div class="detail-label">ステータス</div><div class="detail-value"><span class="status ${d.status}">${statusLabel(d.status)}</span></div></div>
+      <div class="detail-row"><div class="detail-label">設置施設</div><div class="detail-value">${d.facility}</div></div>
+      <div class="detail-row"><div class="detail-label">地域</div><div class="detail-value">${d.region}</div></div>
+      <div class="detail-row"><div class="detail-label">モデル</div><div class="detail-value">${d.model}</div></div>
+      <div class="detail-row"><div class="detail-label">OS バージョン</div><div class="detail-value">${d.os}</div></div>
+      <div class="detail-row"><div class="detail-label">バッテリー</div><div class="detail-value">${d.battery}%</div></div>
+      <div class="detail-row"><div class="detail-label">最終通信</div><div class="detail-value">${d.last}</div></div>
+    </div>
+    <div class="section-title">インストール済みアプリ</div>
+    <div class="action-list">
+      <div class="action-list-item"><span>TELLUR 介護記録</span><span>v2.4.1</span></div>
+      <div class="action-list-item"><span>TELLUR 見守り</span><span>v1.8.3</span></div>
+      <div class="action-list-item"><span>TELLUR 連絡帳</span><span>v3.2.0</span></div>
+    </div>
+    <div class="section-title">直近のアクティビティ</div>
+    <div class="action-list">
+      <div class="action-list-item"><span>記録入力</span><span>2分前</span></div>
+      <div class="action-list-item"><span>セキュリティチェック</span><span>1時間前</span></div>
+      <div class="action-list-item"><span>OS更新確認</span><span>本日 09:00</span></div>
+    </div>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+function closeModal(){ document.getElementById('modal').classList.remove('show'); }
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target.id === 'modal') closeModal();
+});
+
+// ============ Init ============
+renderTables();
+renderChart();
+renderMap();
+</script>
+</body>
+</html>

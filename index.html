@@ -328,6 +328,40 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sa
 .facility-mini-stat .mini-label { font-size: 10px; color: var(--text-light); margin-top: 2px; }
 
 @media print { .bottom-nav, .header .back-btn, .btn-primary, .btn-secondary { display: none !important; } }
+
+/* 相談履歴カード */
+.consult-history-card { background: var(--surface-card); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 10px; box-shadow: var(--shadow); border: 1px solid var(--border); cursor: pointer; transition: var(--transition); }
+.consult-history-card:hover { border-color: var(--accent); transform: translateX(4px); }
+.consult-history-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+.consult-category-badge { padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+.consult-category-badge.cat-認知症対応 { background: #e8d5f5; color: #6b21a8; }
+.consult-category-badge.cat-拒否対応 { background: #fff3e0; color: #e65100; }
+.consult-category-badge.cat-急変時 { background: #fce4ec; color: #c62828; }
+.consult-category-badge.cat-その他 { background: #e3f2fd; color: #1565c0; }
+.consult-history-question { font-size: 14px; color: var(--text); line-height: 1.6; margin-bottom: 6px; }
+.consult-history-footer { display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: var(--text-light); }
+.consult-resolve-badge { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.consult-resolve-badge.resolved { background: #eafaec; color: #276749; }
+.consult-resolve-badge.unresolved { background: #fdf2f2; color: #c53030; }
+.consult-resolve-badge.pending { background: #f5f7fa; color: #6b7c8a; }
+.consult-feedback-row { display: flex; gap: 8px; margin-top: 8px; justify-content: center; }
+.consult-feedback-btn { padding: 6px 16px; border-radius: 20px; border: 1.5px solid var(--border); background: white; font-size: 14px; cursor: pointer; transition: var(--transition); font-family: inherit; }
+.consult-feedback-btn:hover { border-color: var(--accent); background: rgba(78,205,196,0.05); }
+.consult-feedback-btn.selected { border-color: var(--accent); background: var(--accent); color: white; }
+.consult-detail-answer { background: var(--surface); border-radius: var(--radius-sm); padding: 14px; font-size: 14px; line-height: 1.8; color: var(--text); margin: 12px 0; white-space: pre-wrap; }
+.consult-detail-actions { display: flex; gap: 8px; margin-top: 12px; }
+.consult-detail-actions button { flex: 1; padding: 10px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; border: 1.5px solid var(--border); background: white; transition: var(--transition); }
+.consult-detail-actions button:hover { border-color: var(--accent); }
+.consult-detail-actions button.active-resolve { background: var(--confirmed); color: white; border-color: var(--confirmed); }
+.consult-detail-actions button.active-unresolve { background: var(--danger); color: white; border-color: var(--danger); }
+.consult-empty { text-align: center; padding: 40px 20px; color: var(--text-light); font-size: 14px; }
+
+/* AI相談ログ（本部管理画面用） */
+.admin-consult-category { display:inline-block; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600; }
+.admin-consult-category.ninchi { background:#e3f2fd; color:#1565c0; }
+.admin-consult-category.kyohi { background:#fff3e0; color:#e65100; }
+.admin-consult-category.kyuhen { background:#fdf2f2; color:#c53030; }
+.admin-consult-category.other { background:#f5f5f5; color:#666; }
 </style>
 </head>
 <body>
@@ -397,10 +431,19 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sa
     </div>
   </div>
   <div class="content" style="padding-top:20px;">
+    <!-- v2.0 お知らせバナー: 本番 SaaS 版 tellur.site への移行案内 -->
+    <div style="background:linear-gradient(135deg,#fef5e7,#fff3da);border:1px solid #f4d4a0;border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;gap:12px;align-items:flex-start;">
+      <div style="font-size:20px;flex-shrink:0;">✨</div>
+      <div style="flex:1;font-size:13px;color:#975a16;line-height:1.6;">
+        <strong>TELLUR v2.0 リリース</strong>(2026年4月) — AI施設長が隣にいる新機能を追加。
+        6エージェント / Agentic L2 / 3プラン（Light / Standard / Enterprise）対応。
+        本番SaaS版は <a href="https://tellur.site" style="color:#1a3a4a;font-weight:600;text-decoration:underline;" target="_blank" rel="noopener">tellur.site</a> からご利用ください。
+      </div>
+    </div>
     <div class="hero-section">
-      <div class="auth-subtitle" style="color:rgba(255,255,255,0.7);">介護施設AI支援システム</div>
+      <div class="auth-subtitle" style="color:rgba(255,255,255,0.7);">介護施設AI支援システム v2.0</div>
       <div class="app-name">TELLUR</div>
-      <p>現場の業務を、AIでもっとスマートに</p>
+      <p>AI施設長が隣にいる。</p>
     </div>
 
     <div class="facility-bar" id="facilityBar">
@@ -844,23 +887,40 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sa
     <div class="subtitle">ケアの困りごとに、AIが対応策を提案</div>
   </div>
   <div class="content">
-    <div class="card" style="padding:14px 16px;">
-      <label class="form-label" style="margin-bottom:8px;">相談カテゴリ</label>
-      <div class="check-group">
-        <span class="check-pill active" onclick="selectConsultCategory(this,'認知症対応')">認知症対応</span>
-        <span class="check-pill" onclick="selectConsultCategory(this,'拒否対応')">拒否対応</span>
-        <span class="check-pill" onclick="selectConsultCategory(this,'急変時')">急変時</span>
-        <span class="check-pill" onclick="selectConsultCategory(this,'その他')">その他</span>
+    <div class="admission-tab-bar">
+      <button class="admission-tab active" onclick="showConsultTab('chat',this)">相談する</button>
+      <button class="admission-tab" onclick="showConsultTab('history',this)">相談履歴 <span id="consultCountBadge" class="report-count-badge" style="margin-left:4px;">0</span></button>
+    </div>
+    <div id="consultTabChat">
+      <div class="card" style="padding:14px 16px;">
+        <label class="form-label" style="margin-bottom:8px;">相談カテゴリ</label>
+        <div class="check-group">
+          <span class="check-pill active" onclick="selectConsultCategory(this,'認知症対応')">認知症対応</span>
+          <span class="check-pill" onclick="selectConsultCategory(this,'拒否対応')">拒否対応</span>
+          <span class="check-pill" onclick="selectConsultCategory(this,'急変時')">急変時</span>
+          <span class="check-pill" onclick="selectConsultCategory(this,'その他')">その他</span>
+        </div>
+      </div>
+      <div id="chatMessages" style="min-height:200px;margin-bottom:16px;">
+        <div class="chat-bubble ai">こんにちは。AI施設長です。ケアで困っていることを教えてください。認知症の方への対応、拒否された場合の対処法など、具体的な選択肢を提案します。</div>
+      </div>
+      <div class="chat-input-row">
+        <input class="form-input" type="text" id="chatInput" placeholder="相談内容を入力..." onkeydown="if(event.key==='Enter')sendConsultation()">
+        <button class="voice-btn" style="width:48px;height:48px;font-size:18px;" id="voiceBtnChat" onclick="toggleVoiceInput('chat')">🎤</button>
+        <button class="chat-send-btn" onclick="sendConsultation()">➤</button>
       </div>
     </div>
-    <div id="chatMessages" style="min-height:200px;margin-bottom:16px;">
-      <div class="chat-bubble ai">こんにちは。AI施設長です。ケアで困っていることを教えてください。認知症の方への対応、拒否された場合の対処法など、具体的な選択肢を提案します。</div>
+    <div id="consultTabHistory" style="display:none;">
+      <div id="consultHistoryContainer"></div>
     </div>
-    <div class="chat-input-row">
-      <input class="form-input" type="text" id="chatInput" placeholder="相談内容を入力..." onkeydown="if(event.key==='Enter')sendConsultation()">
-      <button class="voice-btn" style="width:48px;height:48px;font-size:18px;" id="voiceBtnChat" onclick="toggleVoiceInput('chat')">🎤</button>
-      <button class="chat-send-btn" onclick="sendConsultation()">➤</button>
-    </div>
+  </div>
+</div>
+
+<!-- 相談詳細モーダル -->
+<div class="modal-overlay" id="consultDetailModal">
+  <div class="modal-content" style="max-width:500px;">
+    <div id="consultDetailContent"></div>
+    <button class="btn-secondary" onclick="closeConsultDetail()" style="margin-top:12px;">閉じる</button>
   </div>
 </div>
 
@@ -1015,6 +1075,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sa
       <div class="admin-stat clickable" onclick="toggleStatDetail('users')"><div class="stat-value" id="adminTotalUsers">24</div><div class="stat-label">利用ユーザー数</div></div>
       <div class="admin-stat clickable" onclick="toggleStatDetail('reports')"><div class="stat-value" id="adminTotalReports">156</div><div class="stat-label">今月の報告書</div></div>
       <div class="admin-stat clickable" onclick="toggleStatDetail('hiyari')"><div class="stat-value" id="adminTotalHiyari">89</div><div class="stat-label">今月のヒヤリハット</div></div>
+      <div class="admin-stat clickable" onclick="toggleStatDetail('consult')"><div class="stat-value" id="adminTotalConsult">0</div><div class="stat-label">AI相談件数</div></div>
     </div>
     <div id="statDetailPanel"></div>
 
@@ -1023,6 +1084,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sa
       <button class="admin-tab" onclick="showAdminTab('reports',this)">報告書集計</button>
       <button class="admin-tab" onclick="showAdminTab('users',this)">ユーザー管理</button>
       <button class="admin-tab" onclick="showAdminTab('activity',this)">活動ログ</button>
+      <button class="admin-tab" onclick="showAdminTab('consult',this)">AI相談ログ</button>
     </div>
 
     <div id="adminTabFacilities">
@@ -1054,6 +1116,39 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sa
       <div class="section-label">直近の活動ログ</div>
       <div id="adminActivityLog"></div>
     </div>
+
+    <div id="adminTabConsult" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div class="section-label" style="margin-bottom:0;">全施設のAI相談ログ <span id="adminConsultCount" class="report-count-badge">0</span></div>
+      </div>
+      <div class="filter-bar">
+        <select id="adminConsultFacility" onchange="renderAdminConsultLog()">
+          <option value="all">全施設</option>
+        </select>
+        <select id="adminConsultCategory" onchange="renderAdminConsultLog()">
+          <option value="all">全カテゴリ</option>
+          <option value="認知症対応">認知症対応</option>
+          <option value="拒否対応">拒否対応</option>
+          <option value="急変時">急変時</option>
+          <option value="その他">その他</option>
+        </select>
+        <select id="adminConsultStatus" onchange="renderAdminConsultLog()">
+          <option value="all">全ステータス</option>
+          <option value="resolved">解決済み</option>
+          <option value="unresolved">未解決</option>
+          <option value="pending">未評価</option>
+        </select>
+      </div>
+      <div id="adminConsultList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- AI相談ログ詳細モーダル（本部管理用） -->
+<div class="modal-overlay" id="adminConsultDetailModal">
+  <div class="modal-content" style="max-width:540px;">
+    <div id="adminConsultDetailContent"></div>
+    <button class="btn-secondary" onclick="document.getElementById('adminConsultDetailModal').classList.remove('open')" style="margin-top:12px;">閉じる</button>
   </div>
 </div>
 
@@ -1318,7 +1413,10 @@ function showScreen(num) {
   var navMap = {1:'1',10:'10',11:'10',15:'10',20:'20',30:'30',40:'40',50:'40',60:'1',70:'1'};
   var navEl = document.getElementById('nav'+(navMap[num]||'1'));
   if (navEl) navEl.classList.add('active');
-  if (num === 60) renderAdminFacilities();
+  if (num === 60) {
+    renderAdminFacilities();
+    document.getElementById('adminTotalConsult').textContent = getConsultations().length;
+  }
   window.scrollTo({top:0, behavior:'smooth'});
 }
 var goTo = showScreen;
@@ -1539,7 +1637,7 @@ function generateAccidentFormatA(d) {
   ws['!cols'] = [{wch:18},{wch:16},{wch:14},{wch:14},{wch:16},{wch:4},{wch:4}];
   var wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, '原本');
-  XLSX.writeFile(wb, '事故報告書_' + (d.residentName||'名称未設定') + '.xlsx');
+  saveExcelFile(wb, '事故報告書_' + (d.residentName||'名称未設定') + '.xlsx');
 }
 
 // --- フォーマットB: さらさ伊達/富良野（26列詳細） ---
@@ -1573,7 +1671,7 @@ function generateAccidentFormatB(d) {
   ws['!cols'][5] = {wch:14};
   var wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, '事故報告書');
-  XLSX.writeFile(wb, '事故報告書_' + (d.residentName||'名称未設定') + '_さらさ.xlsx');
+  saveExcelFile(wb, '事故報告書_' + (d.residentName||'名称未設定') + '_さらさ.xlsx');
 }
 
 // --- フォーマットC: さらさ岩見沢（37列チェックボックス付き） ---
@@ -1605,7 +1703,7 @@ function generateAccidentFormatC(d) {
   ws['!cols'] = Array(37).fill({wch:4});
   var wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, '事故報告書様式（１）');
-  XLSX.writeFile(wb, '事故報告書_' + (d.residentName||'名称未設定') + '_岩見沢.xlsx');
+  saveExcelFile(wb, '事故報告書_' + (d.residentName||'名称未設定') + '_岩見沢.xlsx');
 }
 
 // --- ヒヤリハットExcel ---
@@ -1629,7 +1727,7 @@ function generateHiyariFormatA(d) {
   ws['!merges'] = [{s:{r:0,c:0},e:{r:0,c:2}},{s:{r:4,c:0},e:{r:4,c:6}},{s:{r:5,c:0},e:{r:9,c:6}},{s:{r:10,c:0},e:{r:10,c:6}},{s:{r:11,c:0},e:{r:14,c:6}}];
   var wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'ヒヤリハット');
-  XLSX.writeFile(wb, 'ヒヤリハット報告書_' + (d.residentName||'名称未設定') + '.xlsx');
+  saveExcelFile(wb, 'ヒヤリハット報告書_' + (d.residentName||'名称未設定') + '.xlsx');
 }
 // --- ヒヤリハット フォーマットB: さらさ伊達/富良野（26列） ---
 function generateHiyariFormatB(d) {
@@ -1661,7 +1759,7 @@ function generateHiyariFormatB(d) {
   ws['!cols'][0] = {wch:10}; ws['!cols'][1] = {wch:12}; ws['!cols'][5] = {wch:14};
   var wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'ヒヤリハット');
-  XLSX.writeFile(wb, 'ヒヤリハット報告書_' + (d.residentName||'名称未設定') + '_' + facName + '.xlsx');
+  saveExcelFile(wb, 'ヒヤリハット報告書_' + (d.residentName||'名称未設定') + '_' + facName + '.xlsx');
 }
 
 // --- ヒヤリハット フォーマットC: さらさ岩見沢（37列チェックボックス付き） ---
@@ -1693,7 +1791,7 @@ function generateHiyariFormatC(d) {
   ws['!cols'] = Array(37).fill({wch:4});
   var wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'ヒヤリハット報告書');
-  XLSX.writeFile(wb, 'ヒヤリハット報告書_' + (d.residentName||'名称未設定') + '_岩見沢.xlsx');
+  saveExcelFile(wb, 'ヒヤリハット報告書_' + (d.residentName||'名称未設定') + '_岩見沢.xlsx');
 }
 
 // ============================================================
@@ -1739,9 +1837,168 @@ function sendConsultation() {
   var pool = answers[consultCategory] || answers['その他'];
   var answer = pool[Math.floor(Math.random() * pool.length)];
   setTimeout(function() {
+    var logId = Date.now();
     container.innerHTML += '<div class="chat-bubble ai">' + answer.replace(/\n/g, '<br>') + '</div>';
+    container.innerHTML += '<div class="consult-feedback-row" id="feedback_' + logId + '">' +
+      '<button class="consult-feedback-btn" onclick="feedbackConsultation(' + logId + ', true, this)">👍 参考になった</button>' +
+      '<button class="consult-feedback-btn" onclick="feedbackConsultation(' + logId + ', false, this)">👎 解決しない</button>' +
+      '</div>';
     container.scrollTop = container.scrollHeight;
+
+    // localStorageに保存
+    var log = {
+      id: logId,
+      facilityId: currentFacility ? currentFacility.id : 0,
+      facilityName: currentFacility ? currentFacility.name : '',
+      userName: currentUser ? currentUser.displayName : '',
+      category: consultCategory,
+      question: question,
+      answer: answer,
+      resolved: null,
+      createdAt: new Date().toISOString()
+    };
+    var consultations = JSON.parse(localStorage.getItem('tellur_ai_consultations') || '[]');
+    consultations.unshift(log);
+    localStorage.setItem('tellur_ai_consultations', JSON.stringify(consultations));
+    updateConsultCountBadge();
   }, 800);
+}
+
+function feedbackConsultation(id, resolved, el) {
+  var row = document.getElementById('feedback_' + id);
+  if (row) {
+    row.querySelectorAll('.consult-feedback-btn').forEach(function(b){ b.classList.remove('selected'); });
+    el.classList.add('selected');
+  }
+  resolveConsultation(id, resolved);
+}
+
+function getConsultations() {
+  var stored = JSON.parse(localStorage.getItem('tellur_ai_consultations') || '[]');
+  if (stored.length === 0) {
+    var demoConsultations = [
+      {id:3001, facilityId:2, facilityName:'花・水・木 駒場', userName:'石田リカ', category:'認知症対応', question:'夕方になると帰宅願望が強くなる入居者さんがいます。毎日16時頃から不穏になり、玄関に向かおうとします。声かけしても聞き入れてもらえず、他の入居者への影響も出ています。', answer:'帰宅願望がある方には：\n\n1. 「お家に帰りたい」気持ちを否定しない\n2. 「夕ご飯の準備をしましょう」など、役割を提示する\n3. 散歩に誘うなど気分転換を図る\n4. 時間帯のパターンを記録し、事前に対応を準備する\n\n16時頃に決まって不穏になるとのことなので、15:45頃から好きな活動（おやつ作り、洗濯物たたみなど）に誘導するのが有効です。', resolved:true, createdAt:'2026-03-25T16:30:00'},
+      {id:3002, facilityId:2, facilityName:'花・水・木 駒場', userName:'ケアマネ', category:'拒否対応', question:'入浴を強く拒否される方がいて、1週間以上入浴できていません。清潔保持の観点から心配です。', answer:'入浴拒否の場合の対応例：\n\n1. 時間をずらして再度声かけする\n2. 「足だけお湯につけましょう」と部分的に提案\n3. 信頼関係のある職員から声かけ\n4. 好きな入浴剤や音楽で雰囲気づくり\n\n1週間以上の場合は清拭やシャワー浴など代替手段も検討してください。', resolved:false, createdAt:'2026-03-22T10:15:00'},
+      {id:3003, facilityId:4, facilityName:'さらさ伊達', userName:'長内祥子', category:'急変時', question:'夜間に入居者が嘔吐し、意識がもうろうとしています。夜勤は私一人です。', answer:'急変時の初期対応：\n\n1. バイタルサイン測定（血圧・脈拍・SpO2・体温）\n2. 意識レベルの確認\n3. 看護師・主治医への連絡\n4. 家族への連絡\n5. 必要に応じて救急搬送\n\n嘔吐がある場合は誤嚥防止のため側臥位にしてください。', resolved:true, createdAt:'2026-03-20T02:45:00'},
+      {id:3004, facilityId:5, facilityName:'さらさ岩見沢', userName:'池田', category:'認知症対応', question:'他の入居者の部屋に入ってしまう方がいます。トラブルになりそうで困っています。', answer:'他者の居室に入ってしまう場合：\n\n1. 動線に注目し、なぜその部屋に向かうのか理由を探る\n2. ご本人の居室の目印を工夫する（写真、表札、色分け）\n3. 活動の場を提供し、徘徊のきっかけを減らす\n4. 他入居者にも事情を説明し理解を求める', resolved:null, createdAt:'2026-03-18T14:00:00'},
+      {id:3005, facilityId:1, facilityName:'花・水・木 二ツ岩', userName:'黒川', category:'その他', question:'スタッフの夜勤明けの疲労が激しく、日勤との引き継ぎミスが増えています。', answer:'引き継ぎミス防止には：\n\n1. 引き継ぎシートの標準化（チェックリスト形式）\n2. 口頭＋書面のダブル確認\n3. 重要事項は赤字・太字で強調\n4. 夜勤明け→日勤の15分間の重複時間を確保\n\nまた、夜勤シフトの負担軽減も根本的な解決策です。', resolved:true, createdAt:'2026-03-15T08:30:00'},
+      {id:3006, facilityId:2, facilityName:'花・水・木 駒場', userName:'石田リカ', category:'認知症対応', question:'食事中に突然怒り出して食器を投げる入居者さんがいます。周囲の入居者が怖がっています。', answer:'食事中の興奮への対応：\n\n1. まず他の入居者の安全を確保\n2. 穏やかに声をかけ、無理に制止しない\n3. 食事の環境を見直す（席の配置、騒音、照明）\n4. 食事前の体調・気分を確認する習慣をつける\n5. パターンがある場合は食事時間をずらすことも検討\n\n記録を残してカンファレンスで共有してください。', resolved:null, createdAt:'2026-03-28T12:00:00'}
+    ];
+    localStorage.setItem('tellur_ai_consultations', JSON.stringify(demoConsultations));
+    return demoConsultations;
+  }
+  return stored;
+}
+
+function updateConsultCountBadge() {
+  var consultations = getConsultations();
+  var badge = document.getElementById('consultCountBadge');
+  if (badge) badge.textContent = consultations.length;
+}
+
+function showConsultTab(tab, el) {
+  var tabBar = el.parentElement;
+  tabBar.querySelectorAll('.admission-tab').forEach(function(t){ t.classList.remove('active'); });
+  el.classList.add('active');
+  document.getElementById('consultTabChat').style.display = tab === 'chat' ? 'block' : 'none';
+  document.getElementById('consultTabHistory').style.display = tab === 'history' ? 'block' : 'none';
+  if (tab === 'history') {
+    renderConsultHistory();
+  }
+}
+
+function renderConsultHistory() {
+  var consultations = getConsultations();
+  var container = document.getElementById('consultHistoryContainer');
+  var facilityId = currentFacility ? currentFacility.id : 0;
+
+  // 自施設の相談のみフィルタ（本部の場合は全件表示）
+  var filtered = consultations.filter(function(c) {
+    if (currentUser && currentUser.role === 'honbu') return true;
+    return c.facilityId === facilityId;
+  });
+
+  updateConsultCountBadge();
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="consult-empty">まだ相談履歴がありません。<br>「相談する」タブからAI施設長に質問してみましょう。</div>';
+    return;
+  }
+
+  var html = '';
+  filtered.forEach(function(c) {
+    var resolveLabel = c.resolved === true ? '<span class="consult-resolve-badge resolved">解決済み</span>'
+      : c.resolved === false ? '<span class="consult-resolve-badge unresolved">未解決</span>'
+      : '<span class="consult-resolve-badge pending">未評価</span>';
+    var dateStr = c.createdAt ? new Date(c.createdAt).toLocaleDateString('ja-JP', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}) : '';
+    var questionPreview = c.question.length > 60 ? c.question.substring(0, 60) + '...' : c.question;
+
+    html += '<div class="consult-history-card" onclick="showConsultDetail(' + c.id + ')">' +
+      '<div class="consult-history-meta">' +
+      '<span class="consult-category-badge cat-' + escapeHtml(c.category) + '">' + escapeHtml(c.category) + '</span>' +
+      resolveLabel +
+      '</div>' +
+      '<div class="consult-history-question">' + escapeHtml(questionPreview) + '</div>' +
+      '<div class="consult-history-footer">' +
+      '<span>' + escapeHtml(c.userName || '') + '</span>' +
+      '<span>' + dateStr + '</span>' +
+      '</div>' +
+      '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function showConsultDetail(id) {
+  var consultations = getConsultations();
+  var c = null;
+  for (var i = 0; i < consultations.length; i++) {
+    if (consultations[i].id === id) { c = consultations[i]; break; }
+  }
+  if (!c) return;
+
+  var resolvedClass = c.resolved === true ? ' active-resolve' : '';
+  var unresolvedClass = c.resolved === false ? ' active-unresolve' : '';
+  var dateStr = c.createdAt ? new Date(c.createdAt).toLocaleString('ja-JP', {year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}) : '';
+
+  var html = '<div style="margin-bottom:12px;">' +
+    '<span class="consult-category-badge cat-' + escapeHtml(c.category) + '">' + escapeHtml(c.category) + '</span>' +
+    '<span style="font-size:12px;color:var(--text-light);margin-left:8px;">' + dateStr + '</span>' +
+    '</div>' +
+    '<div style="font-size:12px;color:var(--text-light);margin-bottom:4px;">質問者: ' + escapeHtml(c.userName || '') + ' (' + escapeHtml(c.facilityName || '') + ')</div>' +
+    '<div style="font-size:15px;font-weight:600;color:var(--primary);margin-bottom:8px;line-height:1.7;">' + escapeHtml(c.question) + '</div>' +
+    '<div style="font-size:12px;font-weight:700;color:var(--text-light);margin-bottom:4px;">AI施設長の回答</div>' +
+    '<div class="consult-detail-answer">' + escapeHtml(c.answer) + '</div>' +
+    '<div style="font-size:12px;font-weight:700;color:var(--text-light);margin-bottom:8px;">この回答は参考になりましたか？</div>' +
+    '<div class="consult-detail-actions">' +
+    '<button class="' + resolvedClass + '" onclick="resolveConsultation(' + c.id + ', true)">👍 解決した</button>' +
+    '<button class="' + unresolvedClass + '" onclick="resolveConsultation(' + c.id + ', false)">👎 未解決</button>' +
+    '</div>';
+
+  document.getElementById('consultDetailContent').innerHTML = html;
+  document.getElementById('consultDetailModal').classList.add('open');
+}
+
+function resolveConsultation(id, resolved) {
+  var consultations = JSON.parse(localStorage.getItem('tellur_ai_consultations') || '[]');
+  for (var i = 0; i < consultations.length; i++) {
+    if (consultations[i].id === id) {
+      consultations[i].resolved = resolved;
+      break;
+    }
+  }
+  localStorage.setItem('tellur_ai_consultations', JSON.stringify(consultations));
+  // モーダルが開いていたら再描画
+  if (document.getElementById('consultDetailModal').classList.contains('open')) {
+    showConsultDetail(id);
+  }
+  // 履歴タブが表示中なら再描画
+  if (document.getElementById('consultTabHistory').style.display !== 'none') {
+    renderConsultHistory();
+  }
+}
+
+function closeConsultDetail() {
+  document.getElementById('consultDetailModal').classList.remove('open');
 }
 
 // ============================================================
@@ -1895,6 +2152,21 @@ function toggleStatDetail(type) {
     var totalH = 0;
     adminDemoFacilityData.forEach(function(f){ totalH+=f.hiyari; html += '<div class="stat-detail-row"><span class="detail-label">'+escapeHtml(f.name)+'</span><span class="detail-value">'+f.hiyari+'件</span></div>'; });
     html += '<div class="stat-detail-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:8px;"><span class="detail-label" style="font-weight:700;">合計</span><span class="detail-value" style="font-size:16px;">'+totalH+'件</span></div></div>';
+  } else if (type === 'consult') {
+    var consultData = getConsultations();
+    html = '<div class="stat-detail-panel"><h4>🤖 AI相談 施設別内訳</h4>';
+    var facCounts = {};
+    consultData.forEach(function(c){
+      if(!facCounts[c.facilityName]) facCounts[c.facilityName] = {total:0, resolved:0, unresolved:0};
+      facCounts[c.facilityName].total++;
+      if(c.resolved === true) facCounts[c.facilityName].resolved++;
+      if(c.resolved === false) facCounts[c.facilityName].unresolved++;
+    });
+    Object.keys(facCounts).forEach(function(name){
+      var fc = facCounts[name];
+      html += '<div class="stat-detail-row"><span class="detail-label">'+escapeHtml(name)+'</span><span class="detail-value">'+fc.total+'件 <span style="font-size:11px;font-weight:400;color:var(--text-light);">(解決'+fc.resolved+' / 未解決'+fc.unresolved+')</span></span></div>';
+    });
+    html += '</div>';
   }
   panel.innerHTML = html;
 }
@@ -1979,7 +2251,7 @@ function renderAdminUsers() {
 }
 
 function showAdminTab(tab, el) {
-  ['Facilities','Reports','Users','Activity'].forEach(function(t){
+  ['Facilities','Reports','Users','Activity','Consult'].forEach(function(t){
     var panel = document.getElementById('adminTab'+t);
     if(panel) panel.style.display='none';
   });
@@ -1990,6 +2262,7 @@ function showAdminTab(tab, el) {
   if (tab==='reports') renderAdminReports();
   if (tab==='users') renderAdminUsers();
   if (tab==='activity') renderAdminActivity();
+  if (tab==='consult') renderAdminConsultLog();
 }
 
 function renderAdminActivity() {
@@ -2009,6 +2282,126 @@ function renderAdminActivity() {
   el.innerHTML = activities.map(function(a){
     return '<div class="card" style="padding:12px 16px;margin-bottom:6px;display:flex;align-items:center;gap:12px;"><div style="font-size:20px;">'+a.icon+'</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;">'+escapeHtml(a.user)+' <span style="font-weight:400;color:var(--text-light);">が</span> '+escapeHtml(a.action)+'</div><div style="font-size:11px;color:var(--text-light);">'+escapeHtml(a.facility)+' ・ '+escapeHtml(a.time)+'</div></div></div>';
   }).join('');
+}
+
+// ============================================================
+// AI相談ログ一括閲覧（本部管理画面）
+// ============================================================
+var adminConsultFacilityInitialized = false;
+
+function renderAdminConsultLog() {
+  var consultData = getConsultations();
+
+  // 施設フィルタの動的生成（初回のみ）
+  if (!adminConsultFacilityInitialized) {
+    var facSelect = document.getElementById('adminConsultFacility');
+    var facNames = {};
+    consultData.forEach(function(c){ facNames[c.facilityName] = true; });
+    var currentVal = facSelect.value;
+    facSelect.innerHTML = '<option value="all">全施設</option>';
+    Object.keys(facNames).sort().forEach(function(name){
+      facSelect.innerHTML += '<option value="'+escapeHtml(name)+'">'+escapeHtml(name)+'</option>';
+    });
+    facSelect.value = currentVal || 'all';
+    adminConsultFacilityInitialized = true;
+  }
+
+  // フィルタ適用
+  var facFilter = document.getElementById('adminConsultFacility').value;
+  var catFilter = document.getElementById('adminConsultCategory').value;
+  var statusFilter = document.getElementById('adminConsultStatus').value;
+
+  var filtered = consultData.filter(function(c){
+    if (facFilter !== 'all' && c.facilityName !== facFilter) return false;
+    if (catFilter !== 'all' && c.category !== catFilter) return false;
+    if (statusFilter === 'resolved' && c.resolved !== true) return false;
+    if (statusFilter === 'unresolved' && c.resolved !== false) return false;
+    if (statusFilter === 'pending' && c.resolved !== null && c.resolved !== undefined) return false;
+    return true;
+  });
+
+  // 日付降順ソート
+  filtered.sort(function(a,b){ return (b.createdAt||'').localeCompare(a.createdAt||''); });
+
+  document.getElementById('adminConsultCount').textContent = filtered.length;
+
+  // 施設バッジ色マップ
+  var facilityColors = ['#1a3a4a','#2e7d32','#c62828','#ad1457','#4527a0','#00695c','#ef6c00'];
+  var facColorMap = {};
+  var colorIdx = 0;
+  consultData.forEach(function(c){
+    if (!facColorMap[c.facilityName]) {
+      facColorMap[c.facilityName] = facilityColors[colorIdx % facilityColors.length];
+      colorIdx++;
+    }
+  });
+
+  // カテゴリCSSクラスマップ
+  function getCatClass(cat) {
+    if (cat === '認知症対応') return 'ninchi';
+    if (cat === '拒否対応') return 'kyohi';
+    if (cat === '急変時') return 'kyuhen';
+    return 'other';
+  }
+
+  var listEl = document.getElementById('adminConsultList');
+  if (filtered.length === 0) {
+    listEl.innerHTML = '<div class="consult-empty">該当する相談ログがありません</div>';
+    return;
+  }
+
+  var html = '';
+  filtered.forEach(function(c, idx){
+    var question = escapeHtml((c.question || '').substring(0, 80)) + ((c.question||'').length > 80 ? '...' : '');
+    var dateStr = c.createdAt ? new Date(c.createdAt).toLocaleDateString('ja-JP', {year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
+    var resolveClass = c.resolved === true ? 'resolved' : (c.resolved === false ? 'unresolved' : 'pending');
+    var resolveLabel = c.resolved === true ? '解決済み' : (c.resolved === false ? '未解決' : '未評価');
+    var facColor = facColorMap[c.facilityName] || '#666';
+
+    html += '<div class="card" style="padding:14px 16px;margin-bottom:8px;cursor:pointer;" onclick="showAdminConsultDetail('+idx+')">';
+    html += '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px;">';
+    html += '<span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:'+facColor+';color:white;">'+escapeHtml(c.facilityName)+'</span>';
+    html += '<span class="admin-consult-category '+getCatClass(c.category)+'">'+escapeHtml(c.category||'その他')+'</span>';
+    html += '<span class="consult-resolve-badge '+resolveClass+'">'+resolveLabel+'</span>';
+    html += '</div>';
+    html += '<div style="font-size:14px;color:var(--text);line-height:1.6;margin-bottom:6px;">'+question+'</div>';
+    html += '<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-light);">';
+    html += '<span>'+escapeHtml(c.userName||'')+'</span>';
+    html += '<span>'+dateStr+'</span>';
+    html += '</div></div>';
+  });
+  listEl.innerHTML = html;
+
+  // filteredをグローバルに保持（詳細表示用）
+  window._adminConsultFiltered = filtered;
+}
+
+function showAdminConsultDetail(idx) {
+  var data = window._adminConsultFiltered;
+  if (!data || !data[idx]) return;
+  var c = data[idx];
+  var dateStr = c.createdAt ? new Date(c.createdAt).toLocaleDateString('ja-JP', {year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
+  var resolveClass = c.resolved === true ? 'resolved' : (c.resolved === false ? 'unresolved' : 'pending');
+  var resolveLabel = c.resolved === true ? '解決済み' : (c.resolved === false ? '未解決' : '未評価');
+
+  var html = '<div style="margin-bottom:16px;">';
+  html += '<div style="font-size:16px;font-weight:700;color:var(--primary);margin-bottom:8px;">AI相談ログ詳細</div>';
+  html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">';
+  html += '<span class="consult-resolve-badge '+resolveClass+'">'+resolveLabel+'</span>';
+  html += '</div>';
+  html += '</div>';
+
+  html += '<div class="report-detail-modal">';
+  html += '<div class="detail-field"><div class="detail-label">施設名</div><div class="detail-value">'+escapeHtml(c.facilityName||'')+'</div></div>';
+  html += '<div class="detail-field"><div class="detail-label">相談者</div><div class="detail-value">'+escapeHtml(c.userName||'')+'</div></div>';
+  html += '<div class="detail-field"><div class="detail-label">カテゴリ</div><div class="detail-value">'+escapeHtml(c.category||'')+'</div></div>';
+  html += '<div class="detail-field"><div class="detail-label">相談日時</div><div class="detail-value">'+dateStr+'</div></div>';
+  html += '<div class="detail-field"><div class="detail-label">質問内容</div><div class="detail-value" style="white-space:pre-wrap;">'+escapeHtml(c.question||'')+'</div></div>';
+  html += '<div class="detail-field"><div class="detail-label">AI回答</div><div class="consult-detail-answer">'+escapeHtml(c.answer||'（回答なし）')+'</div></div>';
+  html += '</div>';
+
+  document.getElementById('adminConsultDetailContent').innerHTML = html;
+  document.getElementById('adminConsultDetailModal').classList.add('open');
 }
 
 // ============================================================
@@ -2482,7 +2875,7 @@ function generateKasanDocument(templateId) {
       ws['!cols'] = [{wch:4},{wch:16},{wch:30},{wch:10},{wch:12},{wch:20}];
       ws['!merges'] = [{s:{r:0,c:0},e:{r:0,c:5}}];
       XLSX.utils.book_append_sheet(wb, ws, '看取り指針');
-      XLSX.writeFile(wb, '看取りに関する指針_' + facName + '.xlsx');
+      saveExcelFile(wb, '看取りに関する指針_' + facName + '.xlsx');
       break;
 
     case 'mitori_kenshu':
@@ -2526,7 +2919,7 @@ function generateKasanDocument(templateId) {
       ws = XLSX.utils.aoa_to_sheet(ws_data);
       ws['!cols'] = [{wch:6},{wch:14},{wch:16},{wch:10},{wch:6},{wch:14},{wch:10}];
       XLSX.utils.book_append_sheet(wb, ws, '研修記録');
-      XLSX.writeFile(wb, '看取り介護研修記録_' + facName + '.xlsx');
+      saveExcelFile(wb, '看取り介護研修記録_' + facName + '.xlsx');
       break;
 
     case 'mitori_doui':
@@ -2565,7 +2958,7 @@ function generateKasanDocument(templateId) {
       ws['!cols'] = [{wch:4},{wch:18},{wch:20},{wch:10},{wch:10},{wch:10}];
       ws['!merges'] = [{s:{r:0,c:0},e:{r:0,c:5}}];
       XLSX.utils.book_append_sheet(wb, ws, '同意書');
-      XLSX.writeFile(wb, '看取り介護同意書_' + facName + '.xlsx');
+      saveExcelFile(wb, '看取り介護同意書_' + facName + '.xlsx');
       break;
 
     case 'mitori_keikaku':
@@ -2604,7 +2997,7 @@ function generateKasanDocument(templateId) {
       ws = XLSX.utils.aoa_to_sheet(ws_data);
       ws['!cols'] = [{wch:12},{wch:18},{wch:10},{wch:12},{wch:14},{wch:10},{wch:10}];
       XLSX.utils.book_append_sheet(wb, ws, '看取り計画書');
-      XLSX.writeFile(wb, '看取り介護計画書_' + facName + '.xlsx');
+      saveExcelFile(wb, '看取り介護計画書_' + facName + '.xlsx');
       break;
 
     case 'koku_keikaku':
@@ -2633,7 +3026,7 @@ function generateKasanDocument(templateId) {
       ws = XLSX.utils.aoa_to_sheet(ws_data);
       ws['!cols'] = [{wch:16},{wch:30},{wch:10},{wch:12},{wch:16},{wch:10}];
       XLSX.utils.book_append_sheet(wb, ws, '口腔衛生管理計画');
-      XLSX.writeFile(wb, '口腔衛生管理体制計画書_' + facName + '.xlsx');
+      saveExcelFile(wb, '口腔衛生管理体制計画書_' + facName + '.xlsx');
       break;
 
     case 'koku_renkei':
@@ -2666,7 +3059,7 @@ function generateKasanDocument(templateId) {
       ws = XLSX.utils.aoa_to_sheet(ws_data);
       ws['!cols'] = [{wch:8},{wch:30},{wch:20},{wch:10},{wch:10}];
       XLSX.utils.book_append_sheet(wb, ws, '連携協定書');
-      XLSX.writeFile(wb, '歯科医療機関連携協定書_' + facName + '.xlsx');
+      saveExcelFile(wb, '歯科医療機関連携協定書_' + facName + '.xlsx');
       break;
 
     case 'reha_renkei':
@@ -2699,7 +3092,7 @@ function generateKasanDocument(templateId) {
       ws = XLSX.utils.aoa_to_sheet(ws_data);
       ws['!cols'] = [{wch:8},{wch:30},{wch:20},{wch:10},{wch:10}];
       XLSX.utils.book_append_sheet(wb, ws, '連携協定書');
-      XLSX.writeFile(wb, 'リハビリ連携協定書_' + facName + '.xlsx');
+      saveExcelFile(wb, 'リハビリ連携協定書_' + facName + '.xlsx');
       break;
 
     case 'reha_keikaku':
@@ -2730,7 +3123,7 @@ function generateKasanDocument(templateId) {
       ws = XLSX.utils.aoa_to_sheet(ws_data);
       ws['!cols'] = [{wch:16},{wch:16},{wch:12},{wch:18},{wch:8},{wch:8},{wch:8}];
       XLSX.utils.book_append_sheet(wb, ws, '連携計画書');
-      XLSX.writeFile(wb, '生活機能向上連携計画書_' + facName + '.xlsx');
+      saveExcelFile(wb, '生活機能向上連携計画書_' + facName + '.xlsx');
       break;
 
     case 'yakan_taisei':
@@ -2754,7 +3147,7 @@ function generateKasanDocument(templateId) {
       ws = XLSX.utils.aoa_to_sheet(ws_data);
       ws['!cols'] = [{wch:12},{wch:8},{wch:8},{wch:8},{wch:8},{wch:8},{wch:8},{wch:8},{wch:10}];
       XLSX.utils.book_append_sheet(wb, ws, '夜間勤務体制');
-      XLSX.writeFile(wb, '夜間勤務体制表_' + facName + '.xlsx');
+      saveExcelFile(wb, '夜間勤務体制表_' + facName + '.xlsx');
       break;
 
     case 'service_haichi':
@@ -2786,7 +3179,7 @@ function generateKasanDocument(templateId) {
       ws = XLSX.utils.aoa_to_sheet(ws_data);
       ws['!cols'] = [{wch:6},{wch:14},{wch:12},{wch:20},{wch:14},{wch:12}];
       XLSX.utils.book_append_sheet(wb, ws, '配置状況');
-      XLSX.writeFile(wb, '介護福祉士配置状況一覧表_' + facName + '.xlsx');
+      saveExcelFile(wb, '介護福祉士配置状況一覧表_' + facName + '.xlsx');
       break;
 
     default:
@@ -2816,10 +3209,39 @@ function generateKasanDocument(templateId) {
       ws = XLSX.utils.aoa_to_sheet(ws_data);
       ws['!cols'] = [{wch:16},{wch:24},{wch:10},{wch:12},{wch:16}];
       XLSX.utils.book_append_sheet(wb, ws, '届出書');
-      XLSX.writeFile(wb, '加算体制届出書_' + facName + '.xlsx');
+      saveExcelFile(wb, '加算体制届出書_' + facName + '.xlsx');
       break;
   }
-  showToast('書類をダウンロードしました', 'success');
+}
+
+// ============================================================
+// Excel保存（デスクトップ優先 + 保存先選択対応）
+// ============================================================
+async function saveExcelFile(wb, defaultFileName) {
+  // File System Access API対応ブラウザでは「名前を付けて保存」ダイアログ
+  if (window.showSaveFilePicker) {
+    try {
+      var handle = await window.showSaveFilePicker({
+        suggestedName: defaultFileName,
+        startIn: 'desktop',
+        types: [{
+          description: 'Excelファイル',
+          accept: { 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'] }
+        }]
+      });
+      var writable = await handle.createWritable();
+      var buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      await writable.write(new Uint8Array(buf));
+      await writable.close();
+      showToast('デスクトップに保存しました', 'success');
+      return;
+    } catch (e) {
+      if (e.name === 'AbortError') return; // ユーザーがキャンセル
+    }
+  }
+  // 非対応ブラウザ → 通常ダウンロード
+  saveExcelFile(wb, defaultFileName);
+  showToast('ダウンロードフォルダに保存しました', 'success');
 }
 
 // ============================================================
@@ -2856,6 +3278,8 @@ function init() {
   var admCount = getAdmissions().length;
   var badge = document.getElementById('admissionCountBadge');
   if (badge) badge.textContent = admCount;
+  // 相談履歴件数バッジ初期化
+  updateConsultCountBadge();
 }
 init();
 </script>

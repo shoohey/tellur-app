@@ -13,9 +13,13 @@
 勤務表データ/
 事故報告書*/
 screenshots/
-docs/
-assets/
+/docs/
+/assets/
 
 # 環境設定
 .env
 .env.local
+.vercel
+
+# tellur-saas は独立リポジトリ（Vercelで別途管理）
+tellur-saas/

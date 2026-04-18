@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TELLUR タブレット最適化UI ショーケース</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Inter:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-sub: #f5f7fa;
+    --text: #1a1a2e;
+    --text-sub: #4a5568;
+    --accent: #4ecdc4;
+    --accent-dark: #3aa89f;
+    --navy: #1a3a4a;
+    --border: #e2e8f0;
+    --success: #276749;
+    --warn: #975a16;
+    --error: #c53030;
+    --shadow: 0 4px 16px rgba(0,0,0,0.06);
+    --shadow-lg: 0 12px 32px rgba(0,0,0,0.1);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg-sub);
+    color: var(--text);
+    font-size: 18px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== ページ全体ヘッダー ===== */
+  .page-header {
+    background: var(--navy);
+    color: #fff;
+    padding: 40px 32px;
+    text-align: center;
+  }
+  .page-header .label {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .page-header h1 {
+    font-size: 34px;
+    margin: 0 0 8px;
+    font-weight: 900;
+  }
+  .page-header p {
+    margin: 0;
+    color: rgba(255,255,255,0.7);
+    font-size: 16px;
+  }
+
+  /* ===== タブナビ ===== */
+  .tab-nav {
+    position: sticky; top: 0; z-index: 50;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    padding: 0 16px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .tab-nav-inner {
+    display: inline-flex;
+    gap: 4px;
+    padding: 12px 0;
+  }
+  .tab-btn {
+    background: transparent;
+    border: none;
+    padding: 14px 20px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-sub);
+    cursor: pointer;
+    border-radius: 8px;
+    min-height: 48px;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { background: var(--bg-sub); color: var(--text); }
+  .tab-btn.active {
+    background: var(--navy);
+    color: #fff;
+  }
+
+  /* ===== セクション共通 ===== */
+  .section {
+    padding: 64px 32px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  .section-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent-dark);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .section-title {
+    font-size: 32px;
+    margin: 0 0 12px;
+    color: var(--navy);
+    font-weight: 900;
+  }
+  .section-desc {
+    color: var(--text-sub);
+    margin: 0 0 32px;
+    max-width: 720px;
+  }
+
+  /* ===== タブレット枠 ===== */
+  .tablet-frame {
+    background: #1a1a2e;
+    border-radius: 28px;
+    padding: 18px;
+    box-shadow: var(--shadow-lg);
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .tablet-frame::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 6px;
+    width: 6px; height: 36px;
+    background: #2a2a3e;
+    border-radius: 3px;
+    transform: translateY(-50%);
+  }
+  .tablet-screen {
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    position: relative;
+  }
+
+  /* ===== 共通: 画面ヘッダー ===== */
+  .app-bar {
+    background: var(--navy);
+    color: #fff;
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 72px;
+  }
+  .app-bar .brand {
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+  .app-bar .brand-mark {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--navy);
+    font-weight: 900;
+  }
+  .app-bar .meta {
+    display: flex; gap: 20px; align-items: center;
+    font-size: 15px;
+    color: rgba(255,255,255,0.8);
+  }
+
+  /* ========================================== */
+  /* 画面1: ログイン                              */
+  /* ========================================== */
+  .login-screen { display: flex; height: calc(100% - 72px); }
+  .login-left {
+    flex: 1.1;
+    background: var(--bg-sub);
+    padding: 32px;
+    overflow-y: auto;
+  }
+  .login-left h3 {
+    margin: 0 0 16px;
+    font-size: 18px;
+    color: var(--text-sub);
+    font-weight: 700;
+  }
+  .user-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .user-card {
+    background: #fff;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 10px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .user-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .user-card.selected { border-color: var(--accent); background: #effaf9; box-shadow: 0 4px 12px rgba(78,205,196,0.25); }
+  .user-card:active { transform: scale(0.97); }
+  .user-avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4ecdc4, #1a3a4a);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+  }
+  .user-name { font-size: 14px; font-weight: 700; color: var(--text); }
+  .user-role { font-size: 11px; color: var(--text-sub); }
+
+  .login-right {
+    flex: 1;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .pin-label {
+    font-size: 16px;
+    color: var(--text-sub);
+    margin-bottom: 8px;
+  }
+  .pin-display {
+    display: flex; gap: 14px;
+    margin-bottom: 24px;
+  }
+  .pin-dot {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: #fff;
+    transition: all 0.2s;
+  }
+  .pin-dot.filled {
+    background: var(--accent);
+    border-color: var(--accent);
+    transform: scale(1.1);
+  }
+  .keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    width: 280px;
+  }
+  .key {
+    min-height: 64px;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.1s;
+  }
+  .key:hover { background: var(--bg-sub); }
+  .key:active { transform: scale(0.95); background: var(--accent); color: #fff; }
+  .key.action { background: var(--bg-sub); font-size: 14px; font-weight: 700; color: var(--text-sub); }
+  .key.enter { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* ========================================== */
+  /* 画面2: ホーム                                */
+  /* ========================================== */
+  .home-screen { padding: 32px; height: calc(100% - 72px); }
+  .home-greeting {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .home-greeting h2 {
+    margin: 0;
+    font-size: 22px;
+    color: var(--navy);
+  }
+  .home-greeting .date {
+    color: var(--text-sub);
+    font-size: 15px;
+  }
+  .tile-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 18px;
+    height: calc(100% - 70px);
+  }
+  .tile {
+    background: #fff;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 130px;
+    position: relative;
+    overflow: hidden;
+  }
+  .tile:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: var(--shadow); }
+  .tile:active { transform: scale(0.97); }
+  .tile-icon {
+    width: 56px; height: 56px;
+    border-radius: 12px;
+    background: #effaf9;
+    color: var(--accent-dark);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tile.warn .tile-icon { background: #fef5e7; color: var(--warn); }
+  .tile.error .tile-icon { background: #fde8e8; color: var(--error); }
+  .tile.navy .tile-icon { background: #e6ecf0; color: var(--navy); }
+  .tile-title {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--text);
+    margin-top: 12px;
+  }
+  .tile-sub {
+    font-size: 13px;
+    color: var(--text-sub);
+    margin-top: 4px;
+  }
+  .tile-badge {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: var(--error);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 999px;
+    min-width: 24px;
+    text-align: center;
+  }
+
+  /* ========================================== */
+  /* 画面3: 介護記録入力                          */
+  /* ========================================== */
+  .record-screen { padding: 28px 32px; height: calc(100% - 72px); display: flex; gap: 24px; }
+  .record-left { flex: 1.2; }
+  .record-right { flex: 1; display: flex; flex-direction: column; }
+  .record-section { margin-bottom: 18px; }
+  .record-section h4 {
+    font-size: 14px;
+    color: var(--text-sub);
+    margin: 0 0 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .quick-row {
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .chip {
+    background: var(--bg-sub);
+    border: 1.5px solid var(--border);
+    border-radius: 999px;
+    padding: 12px 18px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    cursor: pointer;
+    min-height: 48px;
+    transition: all 0.15s;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chip:active { transform: scale(0.96); }
+
+  .record-textarea {
+    width: 100%;
+    min-height: 110px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    font-family: inherit;
+    font-size: 16px;
+    resize: none;
+    background: var(--bg-sub);
+  }
+  .record-textarea:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+
+  .voice-area {
+    flex: 1;
+    background: var(--bg-sub);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  .voice-btn {
+    width: 130px; height: 130px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: none;
+    box-shadow: 0 8px 24px rgba(78,205,196,0.4);
+    cursor: pointer;
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .voice-btn:hover { transform: scale(1.05); }
+  .voice-btn:active { transform: scale(0.95); }
+  .voice-btn.recording { background: var(--error); animation: pulse 1.4s infinite; }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(197,48,48,0.5); }
+    70% { box-shadow: 0 0 0 24px rgba(197,48,48,0); }
+    100% { box-shadow: 0 0 0 0 rgba(197,48,48,0); }
+  }
+  .voice-label { font-size: 16px; font-weight: 700; color: var(--text); }
+  .waveform {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 32px;
+    opacity: 0.3;
+    transition: opacity 0.3s;
+  }
+  .waveform.active { opacity: 1; }
+  .waveform .bar {
+    width: 4px;
+    background: var(--accent-dark);
+    border-radius: 2px;
+    height: 8px;
+  }
+  .waveform.active .bar { animation: wave 0.9s infinite ease-in-out; }
+  .waveform .bar:nth-child(1) { animation-delay: 0s; }
+  .waveform .bar:nth-child(2) { animation-delay: 0.1s; }
+  .waveform .bar:nth-child(3) { animation-delay: 0.2s; }
+  .waveform .bar:nth-child(4) { animation-delay: 0.3s; }
+  .waveform .bar:nth-child(5) { animation-delay: 0.2s; }
+  .waveform .bar:nth-child(6) { animation-delay: 0.1s; }
+  .waveform .bar:nth-child(7) { animation-delay: 0s; }
+  @keyframes wave {
+    0%, 100% { height: 8px; }
+    50% { height: 28px; }
+  }
+
+  /* ========================================== */
+  /* 画面4: AI相談チャット                         */
+  /* ========================================== */
+  .chat-screen { display: flex; flex-direction: column; height: calc(100% - 72px); padding: 24px 32px; }
+  .chat-suggestions {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .chat-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+  }
+  .bubble {
+    max-width: 70%;
+    padding: 14px 18px;
+    border-radius: 16px;
+    margin-bottom: 12px;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+  .bubble.ai {
+    background: var(--bg-sub);
+    color: var(--text);
+    border-bottom-left-radius: 4px;
+  }
+  .bubble.me {
+    background: var(--accent);
+    color: #fff;
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+  }
+  .chat-input-row {
+    display: flex; gap: 12px;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .chat-input {
+    flex: 1;
+    min-height: 56px;
+    border: 1.5px solid var(--border);
+    border-radius: 28px;
+    padding: 0 22px;
+    font-family: inherit;
+    font-size: 16px;
+    background: var(--bg-sub);
+  }
+  .chat-input:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+  .chat-send {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    box-shadow: 0 4px 12px rgba(78,205,196,0.35);
+  }
+  .chat-send:hover { background: var(--accent-dark); }
+  .chat-send:active { transform: scale(0.93); }
+
+  /* ========================================== */
+  /* 画面5: 入居者リスト                          */
+  /* ========================================== */
+  .resident-screen { padding: 28px 32px; height: calc(100% - 72px); overflow-y: auto; }
+  .filter-row {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .resident-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .resident-card {
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    min-height: 100px;
+  }
+  .resident-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow); }
+  .resident-card:active { transform: scale(0.98); }
+  .resident-photo {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffd6d6, #ffb3b3);
+    color: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .resident-photo.b { background: linear-gradient(135deg, #d6e9ff, #b3d4ff); }
+  .resident-photo.c { background: linear-gradient(135deg, #d6ffe6, #b3ffcc); }
+  .resident-info { flex: 1; min-width: 0; }
+  .resident-name { font-size: 18px; font-weight: 800; color: var(--text); }
+  .resident-meta { font-size: 13px; color: var(--text-sub); margin-top: 4px; }
+  .resident-tag {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    background: #effaf9;
+    color: var(--accent-dark);
+    margin-right: 4px;
+  }
+  .resident-tag.warn { background: #fef5e7; color: var(--warn); }
+
+  /* ========================================== */
+  /* 画面6: 設定                                  */
+  /* ========================================== */
+  .settings-screen { padding: 32px; height: calc(100% - 72px); display: flex; gap: 24px; }
+  .settings-left { flex: 1; }
+  .settings-right { flex: 1; }
+  .info-card {
+    background: var(--bg-sub);
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 14px;
+  }
+  .info-card h4 {
+    margin: 0 0 12px;
+    font-size: 14px;
+    color: var(--text-sub);
+    letter-spacing: 0.5px;
+  }
+  .info-row {
+    display: flex; justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 15px;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-label { color: var(--text-sub); }
+  .info-value { font-weight: 700; color: var(--text); }
+  .danger-card {
+    background: #fff5f5;
+    border: 1.5px solid #fed7d7;
+    border-radius: 14px;
+    padding: 22px;
+  }
+  .danger-card h4 {
+    margin: 0 0 8px;
+    color: var(--error);
+    font-size: 16px;
+  }
+  .danger-card p {
+    margin: 0 0 16px;
+    font-size: 14px;
+    color: var(--text-sub);
+  }
+  .btn-large {
+    width: 100%;
+    min-height: 64px;
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-large:active { transform: scale(0.98); }
+  .btn-danger { background: var(--error); color: #fff; }
+  .btn-danger:hover { background: #a52525; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-dark); }
+
+  /* ===== モーダル ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: #fff;
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: var(--shadow-lg);
+  }
+  .modal h3 {
+    margin: 0 0 8px;
+    color: var(--navy);
+    font-size: 22px;
+  }
+  .modal p {
+    margin: 0 0 20px;
+    color: var(--text-sub);
+  }
+  .modal input {
+    width: 100%;
+    min-height: 56px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 0 18px;
+    font-family: inherit;
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+  .modal input:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+  .modal-actions { display: flex; gap: 12px; }
+  .modal-actions button { flex: 1; min-height: 56px; border-radius: 10px; border: none; font-family: inherit; font-size: 16px; font-weight: 700; cursor: pointer; }
+  .modal-cancel { background: var(--bg-sub); color: var(--text); }
+  .modal-confirm { background: var(--error); color: #fff; }
+
+  /* ===== レスポンシブ ===== */
+  @media (max-width: 900px) {
+    .section { padding: 40px 16px; }
+    .section-title { font-size: 24px; }
+    .resident-grid { grid-template-columns: repeat(2, 1fr); }
+    .tile-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 1fr); }
+    .login-screen { flex-direction: column; }
+    .record-screen, .settings-screen { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="label">TELLUR / TABLET KIOSK UI</div>
+  <h1>TELLUR タブレット最適化UI ショーケース</h1>
+  <p>介護現場のタブレットキオスクを想定したタッチ操作UIコンポーネント集</p>
+</header>
+
+<nav class="tab-nav">
+  <div class="tab-nav-inner">
+    <button class="tab-btn active" data-target="screen-1">画面1: ログイン</button>
+    <button class="tab-btn" data-target="screen-2">画面2: ホーム</button>
+    <button class="tab-btn" data-target="screen-3">画面3: 介護記録入力</button>
+    <button class="tab-btn" data-target="screen-4">画面4: AI相談</button>
+    <button class="tab-btn" data-target="screen-5">画面5: 入居者リスト</button>
+    <button class="tab-btn" data-target="screen-6">画面6: 設定</button>
+  </div>
+</nav>
+
+<!-- ========================================== -->
+<!-- 画面1: ログイン                              -->
+<!-- ========================================== -->
+<section class="section" id="screen-1">
+  <div class="section-label">SCREEN 01 / SIGN-IN</div>
+  <h2 class="section-title">画面1: ログイン</h2>
+  <p class="section-desc">スタッフ写真の選択 + 4桁PINコードでログイン。タッチ操作だけで完結し、キーボード入力を排除。</p>
+
+  <div class="tablet-frame">
+    <div class="tablet-screen">
+      <div class="app-bar">
+        <div class="brand"><div class="brand-mark">T</div>TELLUR</div>
+        <div class="meta">伊達さくら苑 / 2026年4月11日(土)</div>
+      </div>
+      <div class="login-screen">
+        <div class="login-left">
+          <h3>スタッフを選択してください</h3>
+          <div class="user-grid" id="userGrid">
+            <div class="user-card" data-name="田中 美咲"><div class="user-avatar">田</div><div class="user-name">田中 美咲</div><div class="user-role">介護福祉士</div></div>
+            <div class="user-card" data-name="佐藤 健太"><div class="user-avatar">佐</div><div class="user-name">佐藤 健太</div><div class="user-role">介護職員</div></div>
+            <div class="user-card" data-name="鈴木 葵"><div class="user-avatar">鈴</div><div class="user-name">鈴木 葵</div><div class="user-role">看護師</div></div>
+            <div class="user-card" data-name="高橋 翔"><div class="user-avatar">高</div><div class="user-name">高橋 翔</div><div class="user-role">介護職員</div></div>
+            <div class="user-card" data-name="山田 結衣"><div class="user-avatar">山</div><div class="user-name">山田 結衣</div><div class="user-role">介護福祉士</div></div>
+            <div class="user-card" data-name="伊藤 大輔"><div class="user-avatar">伊</div><div class="user-name">伊藤 大輔</div><div class="user-role">機能訓練士</div></div>
+          </div>
+        </div>
+        <div class="login-right">
+          <div class="pin-label" id="pinLabel">スタッフを選んでPINを入力</div>
+          <div class="pin-display" id="pinDisplay">
+            <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+          </div>
+          <div class="keypad" id="keypad">
+            <button class="key" data-k="1">1</button>
+            <button class="key" data-k="2">2</button>
+            <button class="key" data-k="3">3</button>
+            <button class="key" data-k="4">4</button>
+            <button class="key" data-k="5">5</button>
+            <button class="key" data-k="6">6</button>
+            <button class="key" data-k="7">7</button>
+            <button class="key" data-k="8">8</button>
+            <button class="key" data-k="9">9</button>
+            <button class="key action" data-k="clear">クリア</button>
+            <button class="key" data-k="0">0</button>
+            <button class="key enter" data-k="enter">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 画面2: ホーム                                -->
+<!-- ========================================== -->
+<section class="section" id="screen-2">
+  <div class="section-label">SCREEN 02 / HOME</div>
+  <h2 class="section-title">画面2: ホーム</h2>
+  <p class="section-desc">大型タイルで主要メニューを表示。視認性と押しやすさを最優先。バッジで未対応件数を可視化。</p>
+
+  <div class="tablet-frame">
+    <div class="tablet-screen">
+      <div class="app-bar">
+        <div class="brand"><div class="brand-mark">T</div>TELLUR</div>
+        <div class="meta">田中 美咲 さん / 早番</div>
+      </div>
+      <div class="home-screen">
+        <div class="home-greeting">
+          <h2>おはようございます</h2>
+          <div class="date">2026年4月11日(土) 08:42</div>
+        </div>
+        <div class="tile-grid">
+          <div class="tile">
+            <div class="tile-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="15" y2="11"/></svg>
+            </div>
+            <div>
+              <div class="tile-title">介護記録</div>
+              <div class="tile-sub">日々のケアを記録</div>
+            </div>
+          </div>
+          <div class="tile warn">
+            <span class="tile-badge">3</span>
+            <div class="tile-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div>
+              <div class="tile-title">ヒヤリハット</div>
+              <div class="tile-sub">気づきを記録</div>
+            </div>
+          </div>
+          <div class="tile error">
+            <span class="tile-badge">1</span>
+            <div class="tile-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div>
+              <div class="tile-title">事故報告</div>
+              <div class="tile-sub">事故・インシデント</div>
+            </div>
+          </div>
+          <div class="tile">
+            <div class="tile-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div>
+              <div class="tile-title">AI相談</div>
+              <div class="tile-sub">加算・ケアの相談</div>
+            </div>
+          </div>
+          <div class="tile navy">
+            <div class="tile-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div>
+              <div class="tile-title">入居者一覧</div>
+              <div class="tile-sub">42名 / 入居中</div>
+            </div>
+          </div>
+          <div class="tile navy">
+            <span class="tile-badge">5</span>
+            <div class="tile-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div>
+              <div class="tile-title">連絡・申送り</div>
+              <div class="tile-sub">未読メッセージあり</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 画面3: 介護記録入力                          -->
+<!-- ========================================== -->
+<section class="section" id="screen-3">
+  <div class="section-label">SCREEN 03 / RECORD</div>
+  <h2 class="section-title">画面3: 介護記録入力</h2>
+  <p class="section-desc">音声入力をメインにした記録UI。よく使う定型文をワンタップで挿入。タイピング不要で30秒記録。</p>
+
+  <div class="tablet-frame">
+    <div class="tablet-screen">
+      <div class="app-bar">
+        <div class="brand"><div class="brand-mark">T</div>介護記録 - 入力</div>
+        <div class="meta">田中 美咲 / 102号室 山本 トキさん</div>
+      </div>
+      <div class="record-screen">
+        <div class="record-left">
+          <div class="record-section">
+            <h4>記録の種類</h4>
+            <div class="quick-row">
+              <button class="chip active">バイタル</button>
+              <button class="chip">食事</button>
+              <button class="chip">排泄</button>
+              <button class="chip">入浴</button>
+              <button class="chip">服薬</button>
+              <button class="chip">様子</button>
+            </div>
+          </div>
+          <div class="record-section">
+            <h4>定型文（タップで挿入）</h4>
+            <div class="quick-row">
+              <button class="chip">体調良好</button>
+              <button class="chip">食事8割摂取</button>
+              <button class="chip">排泄介助</button>
+              <button class="chip">入浴拒否</button>
+              <button class="chip">夜間良眠</button>
+            </div>
+          </div>
+          <div class="record-section">
+            <h4>記録内容</h4>
+            <textarea class="record-textarea" id="recordText" placeholder="音声入力ボタンを押すか、定型文をタップして記録を作成します..."></textarea>
+          </div>
+        </div>
+        <div class="record-right">
+          <div class="voice-area">
+            <div class="voice-label" id="voiceLabel">マイクボタンをタップ</div>
+            <button class="voice-btn" id="voiceBtn">
+              <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </button>
+            <div class="waveform" id="waveform">
+              <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 画面4: AI相談チャット                         -->
+<!-- ========================================== -->
+<section class="section" id="screen-4">
+  <div class="section-label">SCREEN 04 / AI CHAT</div>
+  <h2 class="section-title">画面4: AI相談チャット</h2>
+  <p class="section-desc">介護加算・ケア手順・服薬の疑問をAIに質問。質問候補ボタンで素早く相談。送信ボタンは親指の届く位置。</p>
+
+  <div class="tablet-frame">
+    <div class="tablet-screen">
+      <div class="app-bar">
+        <div class="brand"><div class="brand-mark">T</div>TELLUR AI 相談</div>
+        <div class="meta">アシスタント / オンライン</div>
+      </div>
+      <div class="chat-screen">
+        <div class="chat-suggestions">
+          <button class="chip" data-q="この入居者でADL維持等加算は取れる？">ADL維持等加算は取れる？</button>
+          <button class="chip" data-q="褥瘡予防の手順を教えて">褥瘡予防の手順</button>
+          <button class="chip" data-q="認知症加算の算定要件は？">認知症加算の要件</button>
+          <button class="chip" data-q="服薬拒否の対応方法は？">服薬拒否の対応</button>
+        </div>
+        <div class="chat-area" id="chatArea">
+          <div class="bubble ai">こんにちは、田中さん。介護記録・加算算定・ケア手順など、お気軽にご相談ください。</div>
+          <div class="bubble me">この入居者でADL維持等加算は取れる？</div>
+          <div class="bubble ai">山本トキさん（要介護3）について確認しました。<br>過去6ヶ月のBarthel Indexの変化を見ると、加算算定の要件を満たしています。<br>必要書類は「ADL維持等加算 算定様式」です。準備しますか？</div>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" class="chat-input" id="chatInput" placeholder="質問を入力 または 候補をタップ">
+          <button class="chat-send" id="chatSend">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 画面5: 入居者リスト                          -->
+<!-- ========================================== -->
+<section class="section" id="screen-5">
+  <div class="section-label">SCREEN 05 / RESIDENTS</div>
+  <h2 class="section-title">画面5: 入居者リスト</h2>
+  <p class="section-desc">写真+氏名+介護度+部屋番号のカード表示。フィルタチップで素早く絞り込み。タップで詳細画面へ。</p>
+
+  <div class="tablet-frame">
+    <div class="tablet-screen">
+      <div class="app-bar">
+        <div class="brand"><div class="brand-mark">T</div>入居者一覧</div>
+        <div class="meta">42名 / 入居中</div>
+      </div>
+      <div class="resident-screen">
+        <div class="filter-row">
+          <button class="chip active">全員</button>
+          <button class="chip">1F</button>
+          <button class="chip">2F</button>
+          <button class="chip">要介護1-2</button>
+          <button class="chip">要介護3-5</button>
+          <button class="chip">要注意</button>
+        </div>
+        <div class="resident-grid">
+          <div class="resident-card">
+            <div class="resident-photo">山</div>
+            <div class="resident-info">
+              <div class="resident-name">山本 トキ</div>
+              <div class="resident-meta">102号室 / 89歳</div>
+              <div style="margin-top:4px"><span class="resident-tag">要介護3</span></div>
+            </div>
+          </div>
+          <div class="resident-card">
+            <div class="resident-photo b">佐</div>
+            <div class="resident-info">
+              <div class="resident-name">佐々木 茂</div>
+              <div class="resident-meta">103号室 / 84歳</div>
+              <div style="margin-top:4px"><span class="resident-tag">要介護2</span></div>
+            </div>
+          </div>
+          <div class="resident-card">
+            <div class="resident-photo c">小</div>
+            <div class="resident-info">
+              <div class="resident-name">小林 ハル</div>
+              <div class="resident-meta">105号室 / 91歳</div>
+              <div style="margin-top:4px"><span class="resident-tag warn">要介護4</span></div>
+            </div>
+          </div>
+          <div class="resident-card">
+            <div class="resident-photo">井</div>
+            <div class="resident-info">
+              <div class="resident-name">井上 三郎</div>
+              <div class="resident-meta">201号室 / 78歳</div>
+              <div style="margin-top:4px"><span class="resident-tag">要介護2</span></div>
+            </div>
+          </div>
+          <div class="resident-card">
+            <div class="resident-photo b">中</div>
+            <div class="resident-info">
+              <div class="resident-name">中村 ミツ</div>
+              <div class="resident-meta">202号室 / 87歳</div>
+              <div style="margin-top:4px"><span class="resident-tag warn">要介護5</span></div>
+            </div>
+          </div>
+          <div class="resident-card">
+            <div class="resident-photo c">渡</div>
+            <div class="resident-info">
+              <div class="resident-name">渡辺 文子</div>
+              <div class="resident-meta">203号室 / 82歳</div>
+              <div style="margin-top:4px"><span class="resident-tag">要介護3</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 画面6: 設定・ログアウト                       -->
+<!-- ========================================== -->
+<section class="section" id="screen-6">
+  <div class="section-label">SCREEN 06 / SETTINGS</div>
+  <h2 class="section-title">画面6: 設定・ログアウト</h2>
+  <p class="section-desc">キオスクモードの状態確認。設定変更とキオスク解除は管理者パスワードが必要。誤操作を物理的に防止。</p>
+
+  <div class="tablet-frame">
+    <div class="tablet-screen">
+      <div class="app-bar">
+        <div class="brand"><div class="brand-mark">T</div>設定</div>
+        <div class="meta">キオスクモード: 有効</div>
+      </div>
+      <div class="settings-screen">
+        <div class="settings-left">
+          <div class="info-card">
+            <h4>デバイス情報</h4>
+            <div class="info-row"><span class="info-label">端末名</span><span class="info-value">伊達さくら苑 1F-01</span></div>
+            <div class="info-row"><span class="info-label">バージョン</span><span class="info-value">TELLUR v1.4.2</span></div>
+            <div class="info-row"><span class="info-label">最終同期</span><span class="info-value">08:40</span></div>
+            <div class="info-row"><span class="info-label">バッテリー</span><span class="info-value">87%</span></div>
+          </div>
+          <div class="info-card">
+            <h4>キオスクモード</h4>
+            <div class="info-row"><span class="info-label">状態</span><span class="info-value" style="color:var(--success)">有効</span></div>
+            <div class="info-row"><span class="info-label">許可アプリ</span><span class="info-value">TELLURのみ</span></div>
+            <div class="info-row"><span class="info-label">解除方法</span><span class="info-value">管理者PW</span></div>
+          </div>
+        </div>
+        <div class="settings-right">
+          <div class="info-card">
+            <h4>音声・通知</h4>
+            <div class="info-row"><span class="info-label">音声入力</span><span class="info-value">ON</span></div>
+            <div class="info-row"><span class="info-label">通知音</span><span class="info-value">ON</span></div>
+            <div class="info-row"><span class="info-label">画面の明るさ</span><span class="info-value">自動</span></div>
+          </div>
+          <div class="danger-card">
+            <h4>キオスクモードの解除</h4>
+            <p>解除には管理者パスワードが必要です。施設管理者にお問い合わせください。</p>
+            <button class="btn-large btn-danger" id="kioskBtn">キオスクを解除</button>
+          </div>
+          <div style="height:14px"></div>
+          <button class="btn-large btn-primary" id="logoutBtn">ログアウト</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 管理者パスワードモーダル -->
+<div class="modal-overlay" id="adminModal">
+  <div class="modal">
+    <h3>管理者パスワード</h3>
+    <p>キオスクモードを解除するには管理者パスワードを入力してください。</p>
+    <input type="password" placeholder="パスワード" id="adminPwInput">
+    <div class="modal-actions">
+      <button class="modal-cancel" id="modalCancel">キャンセル</button>
+      <button class="modal-confirm" id="modalConfirm">解除する</button>
+    </div>
+  </div>
+</div>
+
+<footer style="padding:32px;text-align:center;color:var(--text-sub);font-size:13px;background:#fff;border-top:1px solid var(--border)">
+  TELLUR Tablet Kiosk UI Showcase / 株式会社NBS Connect
+</footer>
+
+<script>
+  // ===== タブ切替 =====
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const target = document.getElementById(btn.dataset.target);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // スクロール連動でタブをハイライト
+  const sections = document.querySelectorAll('section.section');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(sec => {
+      const top = sec.getBoundingClientRect().top;
+      if (top < 200) current = sec.id;
+    });
+    if (current) {
+      tabBtns.forEach(b => b.classList.toggle('active', b.dataset.target === current));
+    }
+  });
+
+  // ===== ログイン: ユーザー選択 =====
+  const userCards = document.querySelectorAll('.user-card');
+  const pinLabel = document.getElementById('pinLabel');
+  let selectedUser = null;
+  userCards.forEach(card => {
+    card.addEventListener('click', () => {
+      userCards.forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedUser = card.dataset.name;
+      pinLabel.textContent = selectedUser + ' さん / PINを入力';
+    });
+  });
+
+  // ===== ログイン: PIN入力 =====
+  const pinDots = document.querySelectorAll('.pin-dot');
+  let pin = '';
+  document.querySelectorAll('.key').forEach(key => {
+    key.addEventListener('click', () => {
+      const k = key.dataset.k;
+      if (k === 'clear') {
+        pin = '';
+      } else if (k === 'enter') {
+        if (pin.length === 4 && selectedUser) {
+          pinLabel.textContent = 'ログインしました（デモ）';
+          pinLabel.style.color = 'var(--success)';
+          setTimeout(() => { pinLabel.style.color = ''; }, 2000);
+        } else {
+          pinLabel.textContent = 'スタッフを選んで4桁のPINを入力';
+        }
+      } else if (pin.length < 4) {
+        pin += k;
+      }
+      pinDots.forEach((dot, i) => dot.classList.toggle('filled', i < pin.length));
+    });
+  });
+
+  // ===== 画面3: チップ選択トグル =====
+  document.querySelectorAll('.record-section .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      // 「記録の種類」セクションは単一選択
+      const isType = chip.parentElement.previousElementSibling && chip.parentElement.previousElementSibling.textContent === '記録の種類';
+      if (isType) {
+        chip.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      } else {
+        // 定型文: テキストエリアに挿入
+        const textarea = document.getElementById('recordText');
+        if (textarea) {
+          textarea.value += (textarea.value ? '、' : '') + chip.textContent;
+        }
+      }
+    });
+  });
+
+  // ===== 音声入力ボタン =====
+  const voiceBtn = document.getElementById('voiceBtn');
+  const voiceLabel = document.getElementById('voiceLabel');
+  const waveform = document.getElementById('waveform');
+  let recording = false;
+  if (voiceBtn) {
+    voiceBtn.addEventListener('click', () => {
+      recording = !recording;
+      voiceBtn.classList.toggle('recording', recording);
+      waveform.classList.toggle('active', recording);
+      if (recording) {
+        voiceLabel.textContent = '録音中... もう一度タップで停止';
+        setTimeout(() => {
+          if (recording) {
+            const textarea = document.getElementById('recordText');
+            if (textarea) textarea.value += (textarea.value ? '\n' : '') + '血圧128/76、脈拍72、体温36.5度。朝食は8割摂取。';
+          }
+        }, 2000);
+      } else {
+        voiceLabel.textContent = '記録に追加しました';
+        setTimeout(() => { voiceLabel.textContent = 'マイクボタンをタップ'; }, 2000);
+      }
+    });
+  }
+
+  // ===== AI相談チャット =====
+  const chatArea = document.getElementById('chatArea');
+  const chatInput = document.getElementById('chatInput');
+  const chatSend = document.getElementById('chatSend');
+
+  function sendMessage(text) {
+    if (!text.trim()) return;
+    const me = document.createElement('div');
+    me.className = 'bubble me';
+    me.textContent = text;
+    chatArea.appendChild(me);
+    chatArea.scrollTop = chatArea.scrollHeight;
+    setTimeout(() => {
+      const ai = document.createElement('div');
+      ai.className = 'bubble ai';
+      ai.textContent = 'ご質問ありがとうございます。関連する情報を確認しています...（デモ応答）';
+      chatArea.appendChild(ai);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }, 700);
+  }
+  if (chatSend) {
+    chatSend.addEventListener('click', () => {
+      sendMessage(chatInput.value);
+      chatInput.value = '';
+    });
+    chatInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        sendMessage(chatInput.value);
+        chatInput.value = '';
+      }
+    });
+  }
+  document.querySelectorAll('.chat-suggestions .chip').forEach(c => {
+    c.addEventListener('click', () => sendMessage(c.dataset.q));
+  });
+
+  // ===== 入居者フィルタ =====
+  document.querySelectorAll('.filter-row .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      chip.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+
+  // ===== 設定: 管理者モーダル =====
+  const adminModal = document.getElementById('adminModal');
+  const kioskBtn = document.getElementById('kioskBtn');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const modalCancel = document.getElementById('modalCancel');
+  const modalConfirm = document.getElementById('modalConfirm');
+
+  if (kioskBtn) kioskBtn.addEventListener('click', () => adminModal.classList.add('show'));
+  if (modalCancel) modalCancel.addEventListener('click', () => adminModal.classList.remove('show'));
+  if (modalConfirm) modalConfirm.addEventListener('click', () => {
+    adminModal.classList.remove('show');
+    alert('キオスクモードを解除しました（デモ）');
+  });
+  if (logoutBtn) logoutBtn.addEventListener('click', () => {
+    alert('ログアウトしました（デモ）');
+  });
+</script>
+</body>
+</html>
